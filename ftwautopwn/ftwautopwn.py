@@ -90,7 +90,7 @@ def main(argv):
     
     # Print header
     print('Fire Through the Wire Autopwn v.0.0.1')
-    print('by Carsten Maartmann-Moe\n')
+    print('by Carsten Maartmann-Moe 2011\n')
     
     try:
         opts, args = getopt.getopt(argv, 'hlvt:', ['help', 'list', 'verbose', 'target='])

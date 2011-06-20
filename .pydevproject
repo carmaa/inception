@@ -5,9 +5,9 @@
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Python 3.2</pydev_property>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 3.0</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
-<path>/FTWAutopwn/src</path>
+<path>/FTWAutopwn/ftwautopwn</path>
 </pydev_pathproperty>
 <pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
-<path>/Users/carmaa/src/libforensic1394-0.2/python/dist/Forensic1394-0.1.tar.gz</path>
+<path>/Library/Frameworks/Python.framework/Versions/3.2/lib/python3.2/site-packages</path>
 </pydev_pathproperty>
 </pydev_project>

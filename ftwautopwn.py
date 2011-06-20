@@ -10,9 +10,8 @@ from binascii import unhexlify, hexlify
 from time import sleep
 import getopt
 import sys
-from patch import Patch
-import util
-from util import print_msg
+from ftwautopwn.util import print_msg
+#from util import print_msg
 import configparser
 
 VERBOSE = False
@@ -86,7 +85,7 @@ def initialize_fw(d):
 def main(argv):
     encoding = sys.getdefaultencoding()
     config = configparser.ConfigParser()
-    config.read('../config.cfg')
+    config.read('config.cfg')
     
     # Print header
     print('Fire Through the Wire Autopwn v.0.0.1')

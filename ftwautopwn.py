@@ -4,12 +4,11 @@ Created on Jun 10, 2011
 @author: carmaa
 '''
 #!/usr/bin/env python3.2
+from ftwautopwn import unlock
+from ftwautopwn.util import Context
+import configparser
 import getopt
 import sys
-import configparser
-from ftwautopwn import unlock
-from ftwautopwn.context import Context
-
 
 def usage():
     print('''Usage: ftwautopwn [OPTIONS] -t target

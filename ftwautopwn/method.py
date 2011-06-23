@@ -10,9 +10,11 @@ class Method(object):
     '''
 
 
-    def __init__(self, desc, patches):
+    def __init__(self, number, desc, patches):
         '''
         Constructor
         '''
+        self.number = number
         self.desc = desc
         self.patches = patches
+        

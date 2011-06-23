@@ -77,7 +77,7 @@ def initialize_fw(d):
     # Enable SBP-2 support to ensure we get DMA
     b.enable_sbp2()
     for i in range(fw_delay, 0, -1):
-        sys.stdout.write('[+] Initializing bus and enabling SBP2, please fw_delay %2d seconds\r' % i)
+        sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait %2d seconds\r' % i)
         sys.stdout.flush()
         sleep(1)
     # Open the first device
@@ -98,7 +98,7 @@ def main(argv):
     print('by Carsten Maartmann-Moe 2011\n')
     
     try:
-        opts, args = getopt.getopt(argv, 'hlvt:w:', ['help', 'list', 'verbose', 'target=', 'fw_delay='])
+        opts, args = getopt.getopt(argv, 'hlvt:d:', ['help', 'list', 'verbose', 'target=', 'delay='])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -115,7 +115,7 @@ def main(argv):
             verbose = True
         elif opt in ('-t', '--target'):
             target = int(arg)
-        elif opt in ('-w', '--fw_delay'):
+        elif opt in ('-d', '--delay'):
             global fw_delay
             fw_delay = int(arg)
         else:

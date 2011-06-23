@@ -29,7 +29,8 @@ def findsig(d, sig, off):
         for caddr, cand  in d.readv(r):
             if cand == sig: return caddr
         mibaddr = addr/(1024*1024)
-        sys.stdout.write('[+] Searching for signature, %4d MiB so far...\r' % mibaddr)
+        sys.stdout.write('[+] Searching for signature, %4d MiB so far...\r' % \
+                         mibaddr)
         sys.stdout.flush()
         addr += PAGESIZE * 128
 
@@ -51,7 +52,7 @@ def list_targets(config):
     i = 1
     for target in config.sections():
         print_msg(str(i), target)
-        print('\t' + config.get(target, 'notes'))
+        if verbose: print('\t' + config.get(target, 'notes'))
         i += 1
 
 
@@ -63,11 +64,13 @@ def select_target(config):
     except:
         if selected == 'q': sys.exit()
         else:
-            print_msg('!', 'Invalid selection, please try again. Type \'q\' to quit.')
+            print_msg('!', 'Invalid selection, please try again. Type \'q\' ' \
+                      'to quit.')
             return select_target(config)
     if selected <= nof_targets: return list(config)[selected]
     else:
-        print_msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) +'. Type \'q\' to quit.')
+        print_msg('!', 'Please enter a selection between 1 and ' + \
+                  str(nof_targets) +'. Type \'q\' to quit.')
         return select_target(config)
 
 
@@ -77,7 +80,8 @@ def initialize_fw(d):
     # Enable SBP-2 support to ensure we get DMA
     b.enable_sbp2()
     for i in range(fw_delay, 0, -1):
-        sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait %2d seconds\r' % i)
+        sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait' \
+                         ' %2d seconds\r' % i)
         sys.stdout.flush()
         sleep(1)
     # Open the first device
@@ -98,7 +102,9 @@ def main(argv):
     print('by Carsten Maartmann-Moe 2011\n')
     
     try:
-        opts, args = getopt.getopt(argv, 'hlvt:d:', ['help', 'list', 'verbose', 'target=', 'delay='])
+        opts, args = getopt.getopt(argv, 'hlvt:d:', ['help', 'list', \
+                                                     'verbose', 'target=', \
+                                                     'delay='])
     except getopt.GetoptError as err:
         print(err)
         usage()

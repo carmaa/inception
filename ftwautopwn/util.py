@@ -17,6 +17,8 @@ class Context(object):
     # Global variables
     verbose = False
     fw_delay = 30
+    file_mode = False
+    file_name = ''
 
     def __init__(self):
         '''

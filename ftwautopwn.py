@@ -30,14 +30,14 @@ def main(argv):
     ctx.set_encoding(encoding)
     config = configparser.ConfigParser()
     config.read('config.cfg')
-    ctx.set_config(config)
+    ctx.config = (config)
     
     # Print header
     print('Fire Through the Wire Autopwn v.0.0.1')
     print('by Carsten Maartmann-Moe 2011\n')
     
     try:
-        opts, args = getopt.getopt(argv, 'hvt:d:', ['help', 'verbose', \
+        opts, args = getopt.getopt(argv, 'f:hvt:d:', ['file=', 'help', 'verbose', \
                                                     'target=', 'delay='])
     except getopt.GetoptError as err:
         print(err)
@@ -47,8 +47,11 @@ def main(argv):
         if opt in ('-h', '--help'):
             usage()
             sys.exit()
+        elif opt in ('-f', '--file'):
+            ctx.file_mode = True
+            ctx.file_name = str(arg)
         elif opt in ('-v', '--verbose'):
-            ctx.set_verbose(True)
+            ctx.verbose = True
         elif opt in ('-t', '--target'):
             target = int(arg)
         elif opt in ('-d', '--delay'):

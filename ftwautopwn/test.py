@@ -4,7 +4,7 @@ Created on Jun 23, 2011
 @author: carmaa
 '''
 
-class MyClass(object):
+class Bus(object):
     '''
     classdocs
     '''
@@ -14,4 +14,10 @@ class MyClass(object):
         '''
         Constructor
         '''
+        
+    def devices(self):
+        pass
+    
+    def open(self):
+        pass
         

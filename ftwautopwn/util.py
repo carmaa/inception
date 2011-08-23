@@ -18,6 +18,8 @@ class Context(object):
     verbose = False
     fw_delay = 30
     file_mode = False
+    dry_run = False
+    target = False
     file_name = ''
 
     def __init__(self):

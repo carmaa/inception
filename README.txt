@@ -13,7 +13,7 @@ INTRODUCTION
 ------------
 
 Name: FTWAutopwn
-Version: 0.0.1 (pre-alpha)
+Version: 0.0.1a (alpha)
 License: GPL
 Author: Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
 Twitter: breaknenter
@@ -29,10 +29,11 @@ FTWAutopwn aims to provide a stable and easy way of performing intrusive and
 non-intrusive memory analysis on live machines using FireWire SBP2 DMA.
 
 As of version 0.0.1, it is able to unlock Windows 7 32 and 64-bit machines. More
-signatures will be added rapidly.
+signatures will be added.
 
 The tool makes extensive use of the libforensic1394 library provided by Freddie
 Witherden on a LGPL license.
+
 
 REQUIREMENTS
 ------------
@@ -42,11 +43,14 @@ FTWAutopwn requires:
  * Python 3.2 (http://www.python.org)
  * libforensic1394 (https://freddie.witherden.org/tools/libforensic1394/)
 
+
 INSTALLATION
 ------------
 
-For now you should be able to run the tool without any installation on Mac OS X
-and Linux distros. I'll add the setup.py packaging at a later stage.
+For now you should be able to run the tool without any installation except
+dependencies on Mac OS X and Linux distros. Check out the README file in 
+libforensic1394 for installation and FireWire pro-tips. I'll add the setup.py
+packaging at a later stage.
 
 
 USAGE
@@ -66,6 +70,7 @@ PLANNED FEATURES
 
  * Patch signatures for Windows XP, Mac OS X and Ubuntu
  * Complete memory (RAM) dumps
- * Extraction of AES, Serpent and Twofish encryption keys
+ * Extraction of AES (and perhaps Serpent and Twofish) encryption keys
  * Extraction of NTLM/LM hashes
  * Extraction of passwords
+ * XML support through miniDOM

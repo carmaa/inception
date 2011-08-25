@@ -13,7 +13,7 @@ import sys
 def usage():
     print('''Usage: ftwautopwn [OPTIONS]
 
-Supply an URL to grab the web server's 'Server' HTTP Header.
+Attack machines over the IEEE1394 interface by exploiting SBP2 DMA.
 
     -d --delay=TIME:      Delay attack by TIME seconds. This is useful in order
                           to guarantee that the target machine has successfully
@@ -42,7 +42,7 @@ def main(argv):
     # Print banner
     print('Fire Through the Wire Autopwn v.0.0.1')
     print('by Carsten Maartmann-Moe <carsten@carmaa.com> 2011\n')
-    print('For updated, check out https://github.com/carmaa/FTWAutopwn')
+    print('For updates, check out https://github.com/carmaa/FTWAutopwn')
     
     try:
         opts, args = getopt.getopt(argv, 'f:hlvt:d:n', ['file=', 'help', 'list' \

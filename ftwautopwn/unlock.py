@@ -101,7 +101,7 @@ def run(context):
         addr = findsig(d, sigs, off)
         print()
         print_msg('+', 'Signature found at 0x%x.' % addr)
-        # Patch and verify
+        # Patch and verify if not dry run
         if not ctx.dry_run: 
             d.write(addr, patch)
             if d.read(addr, len(patch)) == patch:
@@ -154,7 +154,7 @@ def list_targets(config):
 
 
 def select_target(config, selected):
-    if not selected: selected = input('Please select target: ')
+    if not selected: selected = input('Please select target (or enter \'q\' to quit): ')
     nof_targets = len(config.sections())
     try:
         selected = int(selected)
@@ -205,19 +205,22 @@ def findsig(d, sig, off):
         sys.stdout.write('\r')
         sys.stdout.flush()
         
+        # Append read data to buffer, and check if the all entries in the buffer
+        # is equal. If they are, we're likely not getting data
         buf.appendleft(cand)
-        if checkEqual(buf):
+        if all_equal(buf):
             print()
             cont = input('[-] Looks like we\'re not getting any data. We ' \
                          'could be outside memory\n    boundaries, or simply ' \
                          'not have DMA. Try using -v/--verbose to debug.\n    '\
-                         'Continue? [Y/n]')
+                         'Continue? [Y/n]: ')
             if cont == 'n': sys.exit(1)
-            else: buf = collections.deque(buf.maxlen*2*[0], buf.maxlen*2)
+            else: # Double the buffer
+                buf = collections.deque(buf.maxlen*2*[0], buf.maxlen*2)
         
         addr += ctx.PAGESIZE * 128
 
-def checkEqual(iterator):
+def all_equal(iterator):
     try:
         iterator = iter(iterator)
         first = next(iterator)

@@ -67,6 +67,7 @@ class MemoryFile:
         '''
         For now, dummy method in order to simulate a write
         '''
+        print_msg('!', 'Write to file not supported at the moment.')
         pass
         
 
@@ -81,10 +82,12 @@ def run(context):
         list_targets(config)
         ctx.target = select_target(config, False)
     
-    # Parse the command line arguments
-    sigs = unhexlify(bytes(config.get(ctx.target, 'signature'), enc))
-    patch = unhexlify(bytes(config.get(ctx.target, 'patch'), enc))
-    off = int(config.get(ctx.target, 'pageoffset'))
+    # Parse the config file parameters
+    sigs = unhexlify(bytes(config.get(ctx.target, 'signature').strip('0x'), enc))
+    patch = unhexlify(bytes(config.get(ctx.target, 'patch').strip('0x'), enc))
+    off = int(config.get(ctx.target, 'pageoffset'), 0)
+    
+    # Print patch parameters
     print_msg('+', 'You have selected: ' + ctx.target)
     print('    Using signature: ' + hexlify(sigs).decode(enc))
     print('    Using patch: ' + hexlify(patch).decode(enc))

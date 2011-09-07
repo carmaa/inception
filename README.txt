@@ -74,3 +74,8 @@ PLANNED FEATURES
  * Extraction of NTLM/LM hashes
  * Extraction of passwords
  * XML support through miniDOM
+ 
+ DEVELOPMENT HISTORY
+ -------------------
+ 
+ 0.0.1 - First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and Ubuntu Gnome unlocking

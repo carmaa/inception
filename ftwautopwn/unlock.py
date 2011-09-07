@@ -7,6 +7,7 @@ from binascii import hexlify
 from forensic1394 import Bus
 from ftwautopwn.util import print_msg, Context, clean_hex, all_equal
 from time import sleep
+
 import sys
 import math
 import collections

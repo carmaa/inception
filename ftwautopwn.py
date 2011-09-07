@@ -60,7 +60,7 @@ def main(argv):
             ctx.file_mode = True
             ctx.file_name = str(arg)
         elif opt in ('-l', '--list'):
-            unlock.list_targets(ctx.config)
+            unlock.list_targets(unlock.populate_methods(ctx.config))
             sys.exit()
         elif opt in ('-v', '--verbose'):
             ctx.verbose = True

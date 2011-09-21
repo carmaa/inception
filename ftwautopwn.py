@@ -40,7 +40,7 @@ def main(argv):
     ctx.config = (config)
     
     # Print banner
-    print('Fire Through the Wire Autopwn v.0.0.1')
+    print('Fire Through the Wire Autopwn v.0.0.2')
     print('by Carsten Maartmann-Moe <carsten@carmaa.com> 2011\n')
     print('For updates, check out https://github.com/carmaa/FTWAutopwn')
     

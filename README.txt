@@ -40,7 +40,7 @@ REQUIREMENTS
 
 FTWAutopwn requires:
 
- * Python 3.2 (http://www.python.org)
+ * Python 3 (http://www.python.org)
  * libforensic1394 (https://freddie.witherden.org/tools/libforensic1394/)
 
 
@@ -75,7 +75,9 @@ PLANNED FEATURES
  * Extraction of passwords
  * XML support through miniDOM
  
+ 
  DEVELOPMENT HISTORY
  -------------------
  
  0.0.1 - First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and Ubuntu Gnome unlocking
+ 0.0.2 - Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1

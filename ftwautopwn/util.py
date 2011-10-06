@@ -29,14 +29,15 @@ class Context(object):
     # Constants
     PAGESIZE = 4096
     
-    # Global variables
-    verbose = False
-    fw_delay = 30
-    file_mode = False
-    dry_run = False
-    target = False
-    file_name = ''
-    buflen = 15
+    # Global variables/defaults
+    verbose = False         # Not verbose
+    fw_delay = 15           # 15 sec delay before attacking
+    file_mode = False       # Search in file instead of FW DMA
+    dry_run = False         # No write-back into memory
+    target = False          # No target set
+    file_name = ''          # No filename set
+    buflen = 15             # Buffer length for checking if we get data
+    memsize = 4294967296    # 4GB
 
     def __init__(self):
         '''

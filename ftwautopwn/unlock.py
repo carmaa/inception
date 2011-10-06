@@ -129,11 +129,13 @@ def run(context):
         d = initialize_fw(d)
     
     # Find memory size
+    print_msg('*', 'Detecting memory size...')
     memsize = findmemsize(d)
     if not memsize:
         fail('Could not determine memory size. Try increasing the delay after enabling SBP2 (-d switch)')
     else:
         ctx.memsize = memsize
+        print('   {0} MiB main memory detected'.format(int(ctx.memsize/(1024 * 1024))))
     
     # Attack
     print_msg('+', 'Starting attack...')

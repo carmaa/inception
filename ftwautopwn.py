@@ -45,9 +45,7 @@ def main(argv):
     print('For updates, check out https://github.com/carmaa/FTWAutopwn')
     
     try:
-        opts, args = getopt.getopt(argv, 'f:hlvt:d:n', ['file=', 'help', 'list' \
-                                                        'verbose', \
-                                                    'target=', 'delay=', 'no-write'])
+        opts, args = getopt.getopt(argv, 'f:hlvt:d:n', ['file=', 'help', 'list'  'verbose', 'target=', 'delay=', 'no-write'])
     except getopt.GetoptError as err:
         print(err)
         usage()

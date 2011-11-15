@@ -16,8 +16,8 @@ import os
 def main(argv):
     settings.encoding = sys.getdefaultencoding()
     
-    if not os.geteuid()==0:
-        fail("You must be root to run FTWA")
+    if not os.geteuid() == 0:
+        fail("You must be root to run FTWA.")
     
     # Load available JSON targets
     #===========================================================================

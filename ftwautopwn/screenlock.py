@@ -113,6 +113,8 @@ def patch(device, address, chunks):
     success = True
     for c in chunks:
         patch = c['patch']
+        if not patch:
+            continue
         ioffset = c['internaloffset']
         poffset = c['patchoffset']
         if not poffset: 
@@ -140,8 +142,11 @@ def searchanddestroy(device, target, memsize):
         offsets = signature['offsets'] # Offsets within pages
         for chunk in signature['chunks']:
             chunk['chunk'] = int2binhex(chunk['chunk'])
-            chunk['patch'] = int2binhex(chunk['patch'])
-
+            try:
+                chunk['patch'] = int2binhex(chunk['patch'])
+            except KeyError:
+                chunk['patch'] = None
+            
     try:
         # Build a batch of read requests of the form: [(addr1, len1), ...] and
         # a corresponding match vector: [(chunks1, patchoffset1), ...]
@@ -174,6 +179,7 @@ def searchanddestroy(device, target, memsize):
                         m = 0
                         for caddr, cand  in device.readv(r):
                             if match(cand, p[m]):
+                                print()
                                 return (caddr, p[m])
                             m += 1                    
                         # Jump to next pages (we're finished with these)
@@ -199,9 +205,12 @@ def searchanddestroy(device, target, memsize):
             
     except IOError:
         print()
-        msg('!', 'I/O Error, make sure FireWire interfaces are properly '\
+        fail('I/O Error, make sure FireWire interfaces are properly '\
                  'connected.')
-
+    
+    # If we get here, we haven't found anything :-/
+    print()    
+    return (None, None)
 
 def attack(targets):
     '''

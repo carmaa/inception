@@ -5,7 +5,7 @@ Created on Jun 23, 2011
 '''
 from binascii import hexlify, unhexlify
 from forensic1394 import Bus
-from ftwautopwn.util import msg, clean_hex, all_equal, select, MemoryFile
+from ftwautopwn.util import msg, clean_hex, all_equal, select, MemoryFile, fail
 from time import sleep
 
 import sys
@@ -265,11 +265,3 @@ def attack(targets):
         else:
             msg('-', 'Write-back could not be verified; patching unsuccessful.')
     
-
-def fail(err = None):
-    '''
-    Called if FTWA fails. Optional parameter is an error message string.
-    '''
-    if err: msg('!', err)
-    print('[!] Attack unsuccessful.')
-    sys.exit(1)

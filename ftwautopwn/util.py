@@ -37,6 +37,14 @@ def all_equal(iterator):
     
 def select(text, options):
     return input(text + '[' + str(o) +']:' for o in options)
+
+def fail(err = None):
+    '''
+    Called if FTWA fails. Optional parameter is an error message string.
+    '''
+    if err: msg('!', err)
+    print('[!] Attack unsuccessful.')
+    sys.exit(1)
         
 class Context(object):
     '''

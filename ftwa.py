@@ -8,12 +8,16 @@ import sys
 import json
 import getopt
 import ftwautopwn.settings as settings
-from ftwautopwn.util import msg
+from ftwautopwn.util import msg, fail
 from ftwautopwn import screenlock
+import os
 
 
 def main(argv):
     settings.encoding = sys.getdefaultencoding()
+    
+    if not os.geteuid()==0:
+        fail("You must be root to run FTWA")
     
     # Load available JSON targets
     #===========================================================================

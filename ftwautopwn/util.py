@@ -9,7 +9,7 @@ import binascii
 def msg(sign, message):
     # TODO: Add fancy print method that formats everything to 80 char wide string
     print('[' + str(sign) + '] ' + str(message))
-    
+        
     
 def clean_hex(s):
     if isinstance(s, str) and s.startswith('0x'):

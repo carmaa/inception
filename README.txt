@@ -88,6 +88,10 @@ The tool automatically uses config.cfg as a config file, but you can specify
 your own config file if you want to. The config file contains a simple, .ini-
 style syntax defining search signatures, patches and offsets.
 
+The experimental version can be run by:
+
+./ftwa.py
+
 
 KNOWN BUGS
 ----------------

@@ -37,7 +37,8 @@ vectorsize = 128        # Read vector size
 # [{'OS': 'OS 1 name' # Used for matching and OS guessing
 #  'versions': ['SP0', SP2],
 #  'architecture': 'x86',
-#  'name': 'Target 1 name', # Name
+#  'name': 'Target 1 name',
+#  'notes': 'Target 1 notes',
 #  'signatures': [
 #                 # 1st signature. Signatures are in an ordered list, and are
 #                 # searched for in the sequence listed. If not 'keepsearching'

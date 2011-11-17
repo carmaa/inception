@@ -3,13 +3,12 @@ Created on Jun 23, 2011
 
 @author: carmaa
 '''
-from binascii import hexlify, unhexlify
+from binascii import hexlify
 from forensic1394 import Bus
-from ftwautopwn.util import msg, clean_hex, all_equal, select, MemoryFile, fail
+from ftwautopwn.util import msg, clean_hex, MemoryFile, fail
 from time import sleep
 
 import sys
-import math
 import ftwautopwn.settings as settings
 from pprint import pprint
 
@@ -44,7 +43,7 @@ def initfw():
     b.enable_sbp2()
     try:
         for i in range(settings.fw_delay, 0, -1):
-            sys.stdout.write('[+] Initializing bus and enabling SBP2, please wait %2d seconds or press Ctrl+C\r' % i)
+            sys.stdout.write('[*] Initializing bus and enabling SBP2, please wait %2d seconds or press Ctrl+C\r' % i)
             sys.stdout.flush()
             sleep(1)
     except KeyboardInterrupt:
@@ -150,11 +149,9 @@ def searchanddestroy(device, target, memsize):
     try:
         # Build a batch of read requests of the form: [(addr1, len1), ...] and
         # a corresponding match vector: [(chunks1, patchoffset1), ...]
-        j = 0
-        count = 0
+        j = count = 0
         cand = b'\x00'
-        r = []
-        p = []
+        r = p = []
         while pageaddress < memsize:
             sig_len = len(signatures)
             
@@ -187,10 +184,8 @@ def searchanddestroy(device, target, memsize):
                         if sig_len == i and offset_len == n:
                             pageaddress = pageaddress + settings.PAGESIZE
                         # Zero out counters and vectors
-                        j = 0
-                        count = 0
-                        r = []
-                        p = []
+                        j = count = 0
+                        r = p = []
                         # Print status
                         mibaddr = pageaddress // settings.MiB
                         sys.stdout.write('[*] Searching for signature, {0:>4d} MiB so far.'.format(mibaddr))
@@ -219,8 +214,10 @@ def attack(targets):
     # If not detected, list targets
     for number, target in enumerate(targets, 1):
                 msg(number, target['OS'] + ': ' + target['name'])
+                
     # Select target
     target = select_target(targets)
+    
     # Print selection. If verbose, print selection with signatures
     msg('*', 'Selected target: ' + target['OS'] + ': ' + target['name'])
     if settings.verbose:
@@ -229,12 +226,14 @@ def attack(targets):
         # TODO: Create a pretty print method that can print this in a fashionable way
         pprint(target['signatures'])
         print()
+        
     # Initialize and lower DMA shield
     device = None
     if settings.filemode:
         device = MemoryFile(settings.filename, settings.PAGESIZE)
     else:
         device = initfw()
+        
     # TODO: Check that we have DMA (use isStale())
     # Determine memory size and set to default if not found
     memsize = findmemsize(device)

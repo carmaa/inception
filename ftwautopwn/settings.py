@@ -106,10 +106,15 @@ targets=[{'OS': 'Windows 7',
                                       'patchoffset': 0x01},
                                      {'chunk': 0xb8,
                                       'internaloffset': 0x07}]},
-                         {'offsets': [0x926, 0x312], #x86
+                         {'offsets': [0x926], #x86
                           'chunks': [{'chunk': 0x83f8107513b0018b,
                                       'internaloffset': 0x00,
                                       'patch': 0x83f8109090b0018b,
+                                      'patchoffset': 0x00}]},
+                         {'offsets': [0x312], #x86
+                          'chunks': [{'chunk': 0x83f8100f85509400,
+                                      'internaloffset': 0x00,
+                                      'patch': 0x83f8109090509400,
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Windows Vista',
           'versions': ['SP0'],

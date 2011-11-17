@@ -78,12 +78,15 @@ vectorsize = 128        # Read vector size
 #                                      'patch': 0xb001,
 #                                      'patchoffset': 0x0a}]}]},
 # 
-#   |-- Offset 0x00
-#  /
-# /\             |-patchoffset--------------->[  ] (patch here)
-# 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f  (byte offset)
+# EQUALS:
+#
+#   |-- Offset 0x00                     
+#  /                                           
+# /\             |-patchoffset--------------->[b0 01]   
+# 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f .. (byte offset)
 # -----------------------------------------------
-# c6 0f 85 a0 b8 00 00 b8 ab 05 03 ff ef 01 00 00
+# c6 0f 85 a0 b8 00 00 b8 ab 05 03 ff ef 01 00 00 .. (chunk of memory)
+# -----------------------------------------------
 # \______/ \___/ \______/
 #     \      \       \
 #      \      \       |-- Chunk 2 at internaloffset 0x05

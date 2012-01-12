@@ -5,7 +5,6 @@ Created on Oct 15, 2011
 @author: carsten
 '''
 import sys
-import json
 import getopt
 import ftwautopwn.settings as settings
 from ftwautopwn.util import msg, fail
@@ -16,9 +15,6 @@ import os
 def main(argv):
     settings.encoding = sys.getdefaultencoding()
     
-    if not os.geteuid() == 0:
-        fail("You must be root to run FTWA.")
-    
     # Load available JSON targets
     #===========================================================================
     # configuration = open(settings.configfile, 'r')
@@ -28,7 +24,7 @@ def main(argv):
     targets = settings.targets
     
     # Print banner
-    print('Fire Through the Wire Autopwn v.0.1.0\n'\
+    print('Fire Through the Wire Autopwn (FTWA) v.0.1.0\n'\
           'by Carsten Maartmann-Moe aka ntropy <carsten@carmaa.com> 2011\n'\
           '\n'\
           'For updates, check out https://github.com/carmaa/FTWAutopwn\n')
@@ -63,6 +59,9 @@ def main(argv):
             settings.dry_run = True
         else:
             assert False, 'Unhandled option: ' + opt
+    
+    if not settings.filemode and not os.geteuid() == 0:
+        fail("You must be root to run FTWA wiht FireWire input.")
     
     # TODO: Detect devices
     

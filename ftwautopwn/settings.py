@@ -35,7 +35,7 @@ vectorsize = 128        # Read vector size
 #===============================================================================
 # Targets are collected in a list of dicts using the following syntax:
 # [{'OS': 'OS 1 name' # Used for matching and OS guessing
-#  'versions': ['SP0', SP2],
+#  'versions': ['SP0', 'SP2'],
 #  'architecture': 'x86',
 #  'name': 'Target 1 name',
 #  'notes': 'Target 1 notes',

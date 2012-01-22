@@ -72,9 +72,12 @@ cd FTWAutopwn
 python3 ftwautopwn.py
 
 On BackTrack and some other configurations, you may have to set LD_LIBRARY path
-to /us/local/lib to make it find the libforensics1394 libs:
+to /usr/local/lib to make it find the libforensics1394 libs:
 
 export LD_LIBRARY_PATH=/usr/local/lib
+
+To permanently fix this, copy the libforensics1394 libs from /usr/local/lib to 
+/usr/lib.
 
 
 USAGE
@@ -93,13 +96,16 @@ The experimental version can be run by:
 ./ftwa.py
 
 
-KNOWN BUGS
-----------------
+KNOWN BUGS / CAVEATS
+--------------------
 
  * For some reason, it is broken on Mac OS X Lion
  * x64 signatures are unstable, and currently the signature only matches a
    single Patch version of the msv1_0.dll. You might be lucky and have the same
    version on your target, so it's not entirely unuseful, though
+ * Because of how physical memory is mapped at the hardware level, you may
+   experience trouble  memory over 2 GiB on machines with 4 GiB or more main
+   memory 
 
 
 PLANNED FEATURES
@@ -120,3 +126,4 @@ PLANNED FEATURES
  0.0.1 - First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and
          Ubuntu Gnome unlocking
  0.0.2 - Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1
+ 0.1.0 - Added some signatures (thanks Tekkenhead) and error handling

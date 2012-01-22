@@ -32,6 +32,6 @@ Fire Through the Wire Autopwn
 
 TODO
 
-This version requires Python 3.2 or later.
+This version requires Python 3 or later.
 """
 )

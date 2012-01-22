@@ -288,7 +288,9 @@ def attack(targets):
         fail('Could not locate signature(s).')
     
     # Signature found, let's patch
-    msg('+', 'Signature found at {0:#x}.'.format(address))
+    mask = 0xffff0000 # To find the page number
+    page = int((address & mask) / settings.PAGESIZE)
+    msg('+', 'Signature found at {0:#x} (@page # {1}).'.format(address, page))
     if not settings.dry_run:
         success = patch(device, address, chunks)
         if success:

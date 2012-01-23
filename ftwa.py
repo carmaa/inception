@@ -7,9 +7,11 @@ Created on Oct 15, 2011
 import sys
 import getopt
 import ftwautopwn.settings as settings
-from ftwautopwn.util import msg, fail
+from ftwautopwn.util import msg, fail, separator, businfo
 from ftwautopwn import screenlock
 import os
+import traceback
+from forensic1394.bus import Bus
 
 
 def main(argv):
@@ -25,7 +27,7 @@ def main(argv):
     
     # Print banner
     print('''
-Fire Through the Wire Autopwn (FTWA) v.0.1.0
+Fire Through the Wire Autopwn (FTWA) v.0.0.3
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 
 For updates, check/clone https://github.com/carmaa/FTWAutopwn
@@ -33,10 +35,10 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
     
     try:
         opts, args = getopt.getopt(argv, 
-                                   'd:f:hilvt:w:n', 
-                                   ['dump=', 'file=', 'help', 'interactive', 
-                                    'list'  'verbose', 'technique=', 'wait=', 
-                                    'no-write'])
+                                   'bd:f:hilvt:w:n', 
+                                   ['businfo', 'dump=', 'file=', 'help',
+                                    'interactive', 'list'  'verbose', 
+                                    'technique=', 'wait=', 'no-write'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -72,6 +74,10 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
             settings.interactive = True
             # TODO
             fail("Option not implemented yet, sorry.")
+        elif opt in ('-b', '--businfo'):
+            b = Bus()
+            businfo(b)
+            sys.exit()
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -79,10 +85,15 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
         fail("You must be root to run FTWA with FireWire input.")
     
     # TODO: Detect devices
-    
-    screenlock.attack(targets)
-    
-    
+    try:
+        screenlock.attack(targets)
+    except Exception as exc:
+        msg('!', 'Um, something went wrong: {0}'.format(exc))
+        separator()
+        traceback.print_exc()
+        separator()
+        
+        
 def usage(execname):
     print('''Usage: ''' + execname + ''' [OPTIONS]
 

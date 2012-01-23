@@ -6,6 +6,7 @@ Created on Jun 19, 2011
 import sys
 import binascii
 from ftwautopwn import settings
+from forensic1394.bus import Bus
 
 def msg(sign, message):
     # TODO: Add fancy print method that formats everything to 80 char wide string
@@ -50,6 +51,27 @@ def findmemsize(d):
         if buf:
             return addr
     return None
+
+def businfo(b):
+    '''
+    Prints all available information of the devices connected to the FireWire
+    bus
+    '''
+    msg('*', 'Connected FireWire devices:')
+    separator()
+    for number, device in enumerate(b.devices(), 1):
+        vendor = device.vendor_name.decode(settings.encoding)
+        product = device.product_name.decode(settings.encoding)
+        msg(number, 'Vendor: ' + vendor + ' | Product: ' + product)
+    separator()
+    
+    
+def separator():
+    '''
+    Prints a separator line
+    '''
+    print('-' * 80)
+    
     
 def select(text, options):
     return input(text + '[' + str(o) +']:' for o in options)

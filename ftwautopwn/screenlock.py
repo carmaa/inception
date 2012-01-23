@@ -74,19 +74,21 @@ def initfw():
     '''
     b = Bus()
     # TODO: Check that we are connected and can see a FW unit directory
+    # TODO: Use businfo method here, start timing and reduce the delay below based
+    # on how long time the user use to select a device
     # TODO: Drop enabling SBP-2 if target is OS X
     # Enable SBP-2 support to ensure we get DMA
     b.enable_sbp2()
     try:
         for i in range(settings.fw_delay, 0, -1):
-            sys.stdout.write('[*] Initializing bus and enabling SBP2, please wait %2d seconds or press Ctrl+C\r' % i)
+            sys.stdout.write('[*] Initializing bus and enabling SBP-2, please wait %2d seconds or press Ctrl+C\r' % i)
             sys.stdout.flush()
             sleep(1)
     except KeyboardInterrupt:
         msg('!', 'Interrupted')
         pass
     # TODO: Make sure that we actually have devices, plus error checking 
-    # Open the first device
+    # Open the first device for now
     d = b.devices()[0]
     d.open()
     print() # Create a newline so that next call to print() will start on a new line
@@ -252,7 +254,6 @@ def attack(targets):
     if settings.verbose:
         #msg('*', 'The attack contains the following signatures:')
         printdetails(target)
-        #print()
         # TODO: Create a pretty print method that can print this in a fashionable way
         #pprint(target['signatures'])
         #print()
@@ -288,7 +289,7 @@ def attack(targets):
         fail('Could not locate signature(s).')
     
     # Signature found, let's patch
-    mask = 0xffff0000 # To find the page number
+    mask = 0xffff0000 # Mask away the lower bytes to find the page number
     page = int((address & mask) / settings.PAGESIZE)
     msg('+', 'Signature found at {0:#x} (@page # {1}).'.format(address, page))
     if not settings.dry_run:

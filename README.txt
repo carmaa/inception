@@ -80,6 +80,14 @@ To permanently fix this, copy the libforensics1394 libs from /usr/local/lib to
 /usr/lib.
 
 
+INSTALLATION ON BACKTRACK 5.x
+-----------------------------
+
+Courtesy of Glenn P. Edwards Jr., I've bundled a nice shell script that should
+automagically take care of the above commands. Run ./bt5-setup.sh to set up and
+run FTWA on BT5.
+
+
 USAGE
 -----
 
@@ -126,4 +134,5 @@ PLANNED FEATURES
  0.0.1 - First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and
          Ubuntu Gnome unlocking
  0.0.2 - Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1
- 0.1.0 - Added some signatures (thanks Tekkenhead) and error handling
+ 0.0.3 - Added some signatures (thanks Tekkenhead) and error handling
+ 0.0.4 - Added businfo to display connected FireWire devices

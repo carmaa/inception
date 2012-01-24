@@ -44,7 +44,7 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
                                     'interactive', 'list'  'verbose', 
                                     'technique=', 'wait=', 'no-write'])
     except getopt.GetoptError as err:
-        msg('!', str(err).capitalize())
+        msg('!', err)
         usage(argv[0])
         sys.exit(2)
     for opt, arg in opts:
@@ -77,7 +77,7 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
                 start, size = str(arg).split(',')
                 # Fix start
                 if '0x' in start:
-                    start = int(start, 0) & 0xffff0000 # Address
+                    start = int(start, 0) & 0xfffff000 # Address
                 else:
                     start = int(start) * settings.PAGESIZE # Page number
                 settings.dumpstart = start
@@ -126,22 +126,22 @@ def usage(execname):
 
 Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
 
-    -d, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
-                          content from ADDR page. If no argument is given, all
-                          pages are dumped. Memory content is dumped to files
-                          with the file name syntax:
+    -D, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
+                          content from ADDR page. Memory content is dumped to 
+                          files with the file name syntax:
                           'ftwamemdump_START-END.bin'. ADDR can be a page
                           number or a hexadecimal address within a page. PAGES
                           can be a number of pages or a size of data using the
                           denomination KiB, MiB or GiB. Example: -d 0x00ff 5MiB
-                          This command dumps the first 5 MiB of memory.
+                          This command dumps the first 5 MiB of memory
+    -d                    Same as above, but dumps all available memory
     -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machines or
                           to ease testing and signature generation efforts
     -h, --help:           Displays this message
     -i, --interactive     Interactive mode. Use this to search for specific
                           signatures at specific offsets
-    -l, --list:           Lists available target operating systems
+    -l, --list:           Lists available operating system targets
     -n, --no-write:       Dry run, do not write back to memory
     -t TARGET, --technique=TARGET:
                           Specify target operating system (use --list to list 

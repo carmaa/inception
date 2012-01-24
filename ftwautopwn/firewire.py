@@ -4,7 +4,6 @@ Created on Jan 23, 2012
 @author: carsten
 '''
 import re
-from ftwautopwn.settings import OUICONF
 from ftwautopwn.util import msg, separator
 from ftwautopwn import settings
 
@@ -16,7 +15,7 @@ def resolv_oui(vendor):
     except KeyError:
         return ''
 
-def init_OUI(filename = OUICONF):
+def init_OUI(filename = settings.OUICONF):
     '''Populates the global OUI dictionary with mappings between 24 bit vendor
     identifier and a text string. Called during initialization. 
 
@@ -49,11 +48,11 @@ def businfo(b):
     '''
     msg('*', 'FireWire devices on the bus (names may appear blank if not present):')
     separator()
-    for number, device in enumerate(b.devices(), 1):
+    for n, device in enumerate(b.devices(), 1):
         vid = device.vendor_id
         vendorname = device.vendor_name.decode(settings.encoding)
         if not vendorname: vendorname = resolv_oui(vid) # Resolve not found name
         pid = device.product_id
         productname = device.product_name.decode(settings.encoding)
-        msg(number, 'Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'.format(vendorname, vid, productname, pid))
+        msg(n, 'Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'.format(vendorname, vid, productname, pid))
     separator()

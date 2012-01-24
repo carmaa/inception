@@ -8,7 +8,7 @@ import sys
 import getopt
 import ftwautopwn.settings as settings
 from ftwautopwn.util import msg, fail, separator
-from ftwautopwn import screenlock, firewire
+from ftwautopwn import screenlock, firewire, memdump
 import os
 import traceback
 from forensic1394.bus import Bus
@@ -39,12 +39,12 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
     # Parse args
     try:
         opts, args = getopt.getopt(argv, 
-                                   'bd:f:hilvt:w:n', 
+                                   'bdD:f:hilvt:w:n', 
                                    ['businfo', 'dump=', 'file=', 'help',
                                     'interactive', 'list'  'verbose', 
                                     'technique=', 'wait=', 'no-write'])
     except getopt.GetoptError as err:
-        msg('!', err)
+        msg('!', str(err).capitalize())
         usage(argv[0])
         sys.exit(2)
     for opt, arg in opts:
@@ -57,7 +57,7 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
         elif opt in ('-l', '--list'):
             msg('*', 'Available targets:')
             for n, target in enumerate(targets, 1):
-                msg(n, target.get("name"))
+                msg(n, target['OS'] + ': ' + target['name'])
             sys.exit()
         elif opt in ('-v', '--verbose'):
             settings.verbose = True
@@ -69,11 +69,31 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
             settings.fw_delay = int(arg)
         elif opt in ('-n', '--no-write'):
             settings.dry_run = True
-        elif opt in ('-d', '--dump'):
+        elif opt in ('-d', '--dump-all'):
             settings.memdump = True
-            start, end = int(str(arg).split(','))
-            settings.dumpstart = start
-            settings.dumpend = end
+        elif opt in ('-D', '--dump'):
+            settings.memdump = True
+            try:
+                start, size = str(arg).split(',')
+                # Fix start
+                if '0x' in start:
+                    start = int(start, 0) & 0xffff0000 # Address
+                else:
+                    start = int(start) * settings.PAGESIZE # Page number
+                settings.dumpstart = start
+                # Fix size
+                size = size.lower()
+                if size.find('kib') != -1 or size.find('kb') != -1:
+                    size = int(size.rstrip(' kib')) * settings.KiB
+                elif size.find('mib') != -1 or size.find('mb') != -1:
+                    size = int(size.rstrip(' mib')) * settings.MiB
+                elif size.find('gib') != -1 or size.find('gb') != -1:
+                    size = int(size.rstrip(' gib')) * settings.GiB
+                else:
+                    size = int(size) * settings.PAGESIZE
+                settings.dumpsize = size
+            except:
+                fail('Could not parse argument to {0}'.format(opt))
         elif opt in ('-i', '--interactive'):
             settings.interactive = True
             # TODO
@@ -90,7 +110,10 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
 
     # TODO: Detect devices
     try:
-        screenlock.attack(targets)
+        if settings.memdump:
+            memdump.dump()
+        else:
+            screenlock.attack(targets)
     except Exception as exc:
         msg('!', 'Um, something went wrong: {0}'.format(exc))
         separator()
@@ -103,10 +126,15 @@ def usage(execname):
 
 Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
 
-    -d, --dump=START,END  Dump memory from START address to END address. By
-                          default, all pages are dumped. Memory content is
-                          dumped to files with the file name syntax:
-                          'ftwamemdump_START-END.bin'
+    -d, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
+                          content from ADDR page. If no argument is given, all
+                          pages are dumped. Memory content is dumped to files
+                          with the file name syntax:
+                          'ftwamemdump_START-END.bin'. ADDR can be a page
+                          number or a hexadecimal address within a page. PAGES
+                          can be a number of pages or a size of data using the
+                          denomination KiB, MiB or GiB. Example: -d 0x00ff 5MiB
+                          This command dumps the first 5 MiB of memory.
     -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machines or
                           to ease testing and signature generation efforts

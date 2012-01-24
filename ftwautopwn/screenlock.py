@@ -36,12 +36,8 @@ def printdetails(target):
     Prints details about a target
     '''
     msg('*', 'The attack contains the following signatures:')
-    versions = '\tVersions:\t'
-    for value in target['versions']:
-        versions += value
-        if not value is target['versions'][-1]: versions += ', '
-    print(versions)
-    print('\tArchitecture:\t' + target['architecture'])
+    print('\tVersions:\t' + ', '.join(target['versions']).rstrip(', '))
+    print('\tArchitectures:\t' + ', '.join(target['architectures']).rstrip(', '))
     for signature in target['signatures']:
         offsets = '\n\t\tOffsets:\t'
         for offset in signature['offsets']:

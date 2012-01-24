@@ -5,12 +5,12 @@ Created on Jun 23, 2011
 '''
 from binascii import hexlify
 from forensic1394 import Bus
-from ftwautopwn.util import msg, clean_hex, MemoryFile, fail, findmemsize
+from ftwautopwn.util import msg, clean_hex, MemoryFile, fail, findmemsize,\
+    bytelen, int2binhex
 from time import sleep
 
 import sys
 import ftwautopwn.settings as settings
-from pprint import pprint
 
 
 def select_target(targets, selected=False):
@@ -106,18 +106,6 @@ def siglen(l):
             index = i
     # Must decrement bytelen with one since byte positions start at zero
     return bytelen(l[index]['chunk']) - 1 + value
-
-def bytelen(s):
-    '''
-    Returns the byte length of an integer
-    '''
-    return (len(hex(s))) // 2
-
-def int2binhex(i):
-    '''
-    Converts an integer to its binary hexadecimal representation
-    '''
-    return clean_hex(hex(i))
 
 
 def match(candidate, chunks):

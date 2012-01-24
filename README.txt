@@ -7,6 +7,7 @@ CONTENTS OF THIS FILE
  * Installation
  * Usage
  * Known bugs
+ * Troubleshooting
  * Planned features
 
 
@@ -113,7 +114,12 @@ KNOWN BUGS / CAVEATS
    version on your target, so it's not entirely unuseful, though
  * Because of how physical memory is mapped at the hardware level, you may
    experience trouble  memory over 2 GiB on machines with 4 GiB or more main
-   memory 
+   memory
+   
+
+TROUBLESHOOTING
+---------------
+Please see the tool home page at http://www.breaknenter.org/projects/ftwautopwn
 
 
 PLANNED FEATURES

@@ -7,8 +7,8 @@ Created on Oct 15, 2011
 import sys
 import getopt
 import ftwautopwn.settings as settings
-from ftwautopwn.util import msg, fail, separator, businfo
-from ftwautopwn import screenlock
+from ftwautopwn.util import msg, fail, separator
+from ftwautopwn import screenlock, firewire
 import os
 import traceback
 from forensic1394.bus import Bus
@@ -23,7 +23,6 @@ def main(argv):
     # targets = json.load(configuration)
     # configuration.close()
     #===========================================================================
-    targets = settings.targets
     
     # Print banner
     print('''
@@ -33,6 +32,11 @@ by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 For updates, check/clone https://github.com/carmaa/FTWAutopwn
 ''')
     
+    # Initialize
+    firewire.init_OUI(settings.OUICONF)
+    targets = settings.targets
+    
+    # Parse args
     try:
         opts, args = getopt.getopt(argv, 
                                    'bd:f:hilvt:w:n', 
@@ -76,14 +80,14 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
             fail("Option not implemented yet, sorry.")
         elif opt in ('-b', '--businfo'):
             b = Bus()
-            businfo(b)
+            firewire.businfo(b)
             sys.exit()
         else:
             assert False, 'Option not handled: ' + opt
     
     if not settings.filemode and not os.geteuid() == 0:
         fail("You must be root to run FTWA with FireWire input.")
-    
+
     # TODO: Detect devices
     try:
         screenlock.attack(targets)

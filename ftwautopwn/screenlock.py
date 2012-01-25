@@ -4,14 +4,12 @@ Created on Jun 23, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 from binascii import hexlify
-from forensic1394 import Bus
-from ftwautopwn.util import msg, clean_hex, MemoryFile, fail, findmemsize,\
-    bytelen, int2binhex, separator
-
-import sys
-import ftwautopwn.settings as settings
-import time
 from ftwautopwn.firewire import FireWire
+from ftwautopwn.util import msg, MemoryFile, fail, findmemsize, bytelen, \
+    int2binhex, separator
+import ftwautopwn.settings as settings
+import sys
+import time
 
 
 def select_target(targets, selected=False):

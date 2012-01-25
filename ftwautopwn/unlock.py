@@ -5,14 +5,13 @@ Created on Jun 23, 2011
 '''
 from binascii import hexlify
 from forensic1394 import Bus
-from ftwautopwn.util import msg, Context, clean_hex, all_equal
+from ftwautopwn.util import msg, clean_hex, all_equal
 from time import sleep
-
-import sys
-import math
 import collections
 import ftwautopwn.settings as settings
-from pprint import pprint
+import math
+import sys
+
 
 class Method(object):
     '''

@@ -8,10 +8,9 @@ import sys
 import getopt
 import ftwautopwn.settings as settings
 from ftwautopwn.util import msg, fail, separator
-from ftwautopwn import screenlock, firewire, memdump
+from ftwautopwn import screenlock, memdump
 import os
 import traceback
-from forensic1394.bus import Bus
 from ftwautopwn.firewire import FireWire
 
 
@@ -27,7 +26,7 @@ def main(argv):
     
     # Print banner
     print('''
-Fire Through the Wire Autopwn (FTWA) v.0.0.3
+Fire Through the Wire Autopwn (FTWA) v.0.0.4
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 
 For updates, check/clone https://github.com/carmaa/FTWAutopwn
@@ -40,7 +39,7 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
     # Parse args
     try:
         opts, args = getopt.getopt(argv, 
-                                   'bdD:f:hilvt:w:n', 
+                                   'bd:Df:hilvt:w:n', 
                                    ['businfo', 'dump=', 'file=', 'help',
                                     'interactive', 'list'  'verbose', 
                                     'technique=', 'wait=', 'no-write'])
@@ -72,9 +71,9 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
             settings.fw_delay = int(arg)
         elif opt in ('-n', '--no-write'):
             settings.dry_run = True
-        elif opt in ('-d', '--dump-all'):
+        elif opt in ('-D'):
             settings.memdump = True
-        elif opt in ('-D', '--dump'):
+        elif opt in ('-d', '--dump'):
             settings.memdump = True
             try:
                 start, size = str(arg).split(',')
@@ -130,7 +129,7 @@ def usage(execname):
 
 Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
 
-    -D, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
+    -d, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
                           content from ADDR page. Memory content is dumped to 
                           files with the file name syntax:
                           'ftwamemdump_START-END.bin'. ADDR can be a page
@@ -138,7 +137,7 @@ Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
                           can be a number of pages or a size of data using the
                           denomination KiB, MiB or GiB. Example: -d 0x00ff 5MiB
                           This command dumps the first 5 MiB of memory
-    -d                    Same as above, but dumps all available memory
+    -D                    Same as above, but dumps all available memory
     -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machines or
                           to ease testing and signature generation efforts

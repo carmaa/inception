@@ -41,10 +41,10 @@ homepage at http://breaknenter.org/projects/ftwautopwn
     # Parse args
     try:
         opts, args = getopt.getopt(argv, 
-                                   'bd:Df:hilvt:w:n', 
+                                   'bd:Df:hilvt:w:no', 
                                    ['businfo', 'dump=', 'file=', 'help',
                                     'interactive', 'list'  'verbose', 
-                                    'technique=', 'wait=', 'no-write'])
+                                    'technique=', 'wait=', 'no-write', 'override'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -108,6 +108,8 @@ homepage at http://breaknenter.org/projects/ftwautopwn
             fw = FireWire()
             fw.businfo()
             sys.exit()
+        elif opt in ('-o', '--override'):
+            settings.override = True
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -154,6 +156,10 @@ Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
                           signatures at specific offsets
     -l, --list:           Lists available operating system targets
     -n, --no-write:       Dry run, do not write back to memory
+    -o, --override:       Override access of upper memory area (0xa0000-
+                          0xfffff). This area is accessed by default. Use this
+                          if you are afraid of causing a system crash (usually
+                          not a problem these days)
     -t TARGET, --technique=TARGET:
                           Specify target operating system (use --list to list 
                           available targets)

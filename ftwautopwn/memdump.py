@@ -4,14 +4,12 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from forensic1394 import Bus 
 from binascii import hexlify
-from time import sleep
 from ftwautopwn import settings
-from ftwautopwn.util import msg, fail, MemoryFile, findmemsize
 from ftwautopwn.firewire import FireWire
-import time
+from ftwautopwn.util import msg, fail, MemoryFile, findmemsize, needtoavoid
 import sys
+import time
 
 def dump():
     # Initialize and lower DMA shield
@@ -55,17 +53,15 @@ the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
     filename = 'ftwamemdump_' + hex(start) + '-' + hex(end) + '.bin'
     file = open(filename, 'wb')
     
-    #-------------------------------------------------------------- print(start)
-    #--------------------------------------------------------------- print(size)
-    #---------------------------------------------------------------- print(end)
-    #-------------------------------------------------------- print(requestsize)
-    #---------------------------------------------- print(int(size/requestsize))
     msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2} MiB'.format(start, end, size/settings.MiB))
     
     try:
         for i in range(start, end, requestsize):
-            # TODO: Skip the first MB
-            data = device.read(i, requestsize)
+            # Avoid accessing upper memory area if we are using FireWire
+            if needtoavoid(i):
+                data = b'\x00' * requestsize
+            else: 
+                data = device.read(i, requestsize)
             file.write(data)
             # Print status
             mibaddr = i // settings.MiB

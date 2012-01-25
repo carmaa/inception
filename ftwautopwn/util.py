@@ -81,6 +81,9 @@ def fail(err = None):
     if err: msg('!', err)
     print('[!] Attack unsuccessful.')
     sys.exit(1)
+    
+def needtoavoid(address):
+    return settings.avoid[0] <= address <= settings.avoid[1] and not settings.filemode and settings.override
         
 class Context(object):
     '''

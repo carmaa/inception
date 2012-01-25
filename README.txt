@@ -143,7 +143,8 @@ DEVELOPMENT HISTORY
          Ubuntu Gnome unlocking
  0.0.2 - Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1
  0.0.3 - Added some signatures (thanks Tekkenhead) and error handling
- 0.0.4 - Added businfo to display connected FireWire devices
+ 0.0.4 - Added businfo to display connected FireWire devices as well as memory
+         dumping capabilities
  
  
 DISCLAIMER

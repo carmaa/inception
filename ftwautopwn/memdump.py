@@ -5,11 +5,13 @@ Created on Jan 22, 2012
 '''
 
 from forensic1394 import Bus 
+from binascii import hexlify
 from time import sleep
 from ftwautopwn import settings
 from ftwautopwn.util import msg, fail, MemoryFile, findmemsize
 from ftwautopwn.firewire import FireWire
 import time
+import sys
 
 def dump():
     # Initialize and lower DMA shield
@@ -37,9 +39,9 @@ def dump():
         if not size:
             # TODO: Create a select() method that can cope with defaults
             cont = input('''\
-    [-] Could not determine memory size: DMA shield may still be up. Try increasing
-        the delay after enabling SBP2 (-d switch). Do you want to continue and use
-        the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
+[-] Could not determine memory size: DMA shield may still be up. Try increasing
+the delay after enabling SBP2 (-d switch). Do you want to continue and use
+the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
             if cont in ['y', 'Y']:
                 size = settings.memsize
             else:
@@ -53,18 +55,29 @@ def dump():
     filename = 'ftwamemdump_' + hex(start) + '-' + hex(end) + '.bin'
     file = open(filename, 'wb')
     
-    print(start)
-    print(size)
-    print(end)
-    print(requestsize)
+    #-------------------------------------------------------------- print(start)
+    #--------------------------------------------------------------- print(size)
+    #---------------------------------------------------------------- print(end)
+    #-------------------------------------------------------- print(requestsize)
+    #---------------------------------------------- print(int(size/requestsize))
+    msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2} MiB'.format(start, end, size/settings.MiB))
     
     try:
-        
-        for i in range(start, int(size/requestsize)):
-        # Skip the first MB
-            file.write(device.read(settings.MiB + i * requestsize, requestsize))
+        for i in range(start, end, requestsize):
+            # TODO: Skip the first MB
+            data = device.read(i, requestsize)
+            file.write(data)
+            # Print status
+            mibaddr = i // settings.MiB
+            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far.'.format(mibaddr))
+            if settings.verbose:
+                sys.stdout.write(' Data read: 0x' + hexlify(data).decode(settings.encoding))
+            sys.stdout.write('\r')
+            sys.stdout.flush()
         file.close()
+        print()
         msg('*', 'Dumped memory to file ' + filename)
         device.close()
-    except IOError as exc:
-        print(exc)
+    except KeyboardInterrupt:
+        print()
+        raise KeyboardInterrupt

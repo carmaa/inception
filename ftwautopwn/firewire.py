@@ -95,24 +95,25 @@ class FireWire:
         nof_devices = len(self._vendors)
         if nof_devices == 1:
             msg('*', 'Only one device present, device auto-selected as target')
-            return 0
-        selected = input('Please select a device to attack (or enter \'q\' to quit): ')
-        try:
-            selected = int(selected)
-        except:
-            if selected == 'q': sys.exit()
-            else:
-                msg('!', 'Invalid selection, please try again. Type \'q\' to quit.')
-                return self.select_device()
+            selected = 0
+        else:
+            selected = input('Please select a device to attack (or enter \'q\' to quit): ')
+            try:
+                selected = int(selected)
+            except:
+                if selected == 'q': sys.exit()
+                else:
+                    msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
+                    return self.select_device()
         if selected <= nof_devices:
             i = selected - 1 
             vendor = self._vendors[i]
             if 'apple' in vendor.lower():
-                msg('*', 'The target machine seems to be a Mac, forcing max request size to 2 KiB.')
+                msg('*', 'The target machine seems to be a Mac, forcing max request size to 2 KiB')
                 settings.max_request_size = 2 * settings.KiB
             return i
         else:
-            msg('!', 'Please enter a selection between 1 and ' + str(nof_devices) + '. Type \'q\' to quit.')
+            msg('!', 'Please enter a selection between 1 and ' + str(nof_devices) + '. Type \'q\' to quit')
             return self.select_device()
     
     def detect_targets(self, targets, vendor_index):

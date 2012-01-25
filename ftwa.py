@@ -4,14 +4,14 @@ Created on Oct 15, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-import sys
-import getopt
-import ftwautopwn.settings as settings
-from ftwautopwn.util import msg, fail, separator
 from ftwautopwn import screenlock, memdump
-import os
-import traceback
 from ftwautopwn.firewire import FireWire
+from ftwautopwn.util import msg, fail, separator
+import ftwautopwn.settings as settings
+import getopt
+import os
+import sys
+import traceback
 
 
 def main(argv):
@@ -28,8 +28,10 @@ def main(argv):
     print('''
 Fire Through the Wire Autopwn (FTWA) v.0.0.4
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
+Twitter: @breaknenter Web: http://breaknenter.org
 
-For updates, check/clone https://github.com/carmaa/FTWAutopwn
+For updates, visit/clone https://github.com/carmaa/FTWAutopwn or visit the FTWA
+homepage at http://breaknenter.org/projects/ftwautopwn
 ''')
     
     # Initialize
@@ -93,12 +95,14 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
                     size = int(size.rstrip(' gib')) * settings.GiB
                 else:
                     size = int(size) * settings.PAGESIZE
+                if size < settings.PAGESIZE:
+                    msg('!', 'Minimum dump size is a page, {0} KiB'.format(settings.PAGESIZE // settings.KiB))
                 settings.dumpsize = size
             except:
                 fail('Could not parse argument to {0}'.format(opt))
         elif opt in ('-i', '--interactive'):
             settings.interactive = True
-            # TODO
+            # TODO: Implement interactive mode
             fail("Option not implemented yet, sorry.")
         elif opt in ('-b', '--businfo'):
             fw = FireWire()
@@ -106,6 +110,10 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
             sys.exit()
         else:
             assert False, 'Option not handled: ' + opt
+    
+    # We don't accept any args
+    if args:
+        msg('!', 'Arguments {0} ignored'.format(', '.join(args)))
     
     if not settings.filemode and not os.geteuid() == 0:
         fail("You must be root to run FTWA with FireWire input.")

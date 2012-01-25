@@ -143,5 +143,8 @@ class MemoryFile:
         '''
         msg('!', 'Write to file not supported at the moment.')
         pass
+    
+    def close(self):
+        pass
 
         

@@ -9,6 +9,7 @@ CONTENTS OF THIS FILE
  * Known bugs
  * Troubleshooting
  * Planned features
+ * Disclaimer
 
 
 INTRODUCTION
@@ -119,6 +120,7 @@ KNOWN BUGS / CAVEATS
 
 TROUBLESHOOTING
 ---------------
+
 Please see the tool home page at http://www.breaknenter.org/projects/ftwautopwn
 
 
@@ -134,11 +136,19 @@ PLANNED FEATURES
  * Extraction of passwords
  
  
- DEVELOPMENT HISTORY
- -------------------
+DEVELOPMENT HISTORY
+-------------------
  
  0.0.1 - First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and
          Ubuntu Gnome unlocking
  0.0.2 - Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1
  0.0.3 - Added some signatures (thanks Tekkenhead) and error handling
  0.0.4 - Added businfo to display connected FireWire devices
+ 
+ 
+DISCLAIMER
+----------
+Do no evil with this tool. Also, I am a pentester, not a developer. So if you
+see weird code that bugs your pythonesque purity senses, drop me a note on how
+I can improve it. Or even better, fork my code, change it and issue a pull
+request.

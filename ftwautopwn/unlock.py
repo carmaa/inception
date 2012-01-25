@@ -1,7 +1,7 @@
 '''
 Created on Jun 23, 2011
 
-@author: carmaa
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 from binascii import hexlify
 from forensic1394 import Bus

@@ -2,7 +2,7 @@
 '''
 Created on Oct 15, 2011
 
-@author: carsten
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 import sys
 import getopt
@@ -12,6 +12,7 @@ from ftwautopwn import screenlock, firewire, memdump
 import os
 import traceback
 from forensic1394.bus import Bus
+from ftwautopwn.firewire import FireWire
 
 
 def main(argv):
@@ -33,7 +34,7 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
 ''')
     
     # Initialize
-    firewire.init_OUI(settings.OUICONF)
+    #firewire.init_OUI(settings.OUICONF)
     targets = settings.targets
     
     # Parse args
@@ -55,9 +56,11 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
             settings.filemode = True
             settings.filename = str(arg)
         elif opt in ('-l', '--list'):
-            msg('*', 'Available targets:')
+            msg('*', 'Available targets (from settings.py):')
+            separator()
             for n, target in enumerate(targets, 1):
                 msg(n, target['OS'] + ': ' + target['name'])
+            separator()
             sys.exit()
         elif opt in ('-v', '--verbose'):
             settings.verbose = True
@@ -99,8 +102,8 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
             # TODO
             fail("Option not implemented yet, sorry.")
         elif opt in ('-b', '--businfo'):
-            b = Bus()
-            firewire.businfo(b)
+            fw = FireWire()
+            fw.businfo()
             sys.exit()
         else:
             assert False, 'Option not handled: ' + opt
@@ -119,7 +122,8 @@ For updates, check/clone https://github.com/carmaa/FTWAutopwn
         separator()
         traceback.print_exc()
         separator()
-        
+    except KeyboardInterrupt:
+        fail('Aborted')
         
 def usage(execname):
     print('''Usage: ''' + execname + ''' [OPTIONS]

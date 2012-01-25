@@ -1,7 +1,7 @@
 '''
 Created on Jun 19, 2011
 
-@author: carmaa
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 import sys
 import binascii

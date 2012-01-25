@@ -1,7 +1,7 @@
 '''
 Created on Jun 10, 2011
 
-@author: carmaa
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 #!/usr/bin/env python3.2
 from ftwautopwn import unlock

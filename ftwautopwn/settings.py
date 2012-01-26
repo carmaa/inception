@@ -36,7 +36,7 @@ memdump = False                 # Memory dump mode off
 dumpstart = 0x00000000          # Default memory dump start address
 dumpsize = False                # Not set by default
 interactive = False             # Interactive mode off
-max_request_size = PAGESIZE     # By default the max request size is the PSZ
+max_request_size = PAGESIZE//2  # By default the max request size is the PSZ/2
 avoid = [0xa0000, 0xfffff]      # Upper memory area (can cause BSOD if accessed)
 override = False                # By default, access the avoid area
 

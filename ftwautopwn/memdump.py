@@ -64,8 +64,8 @@ the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
                 data = device.read(i, requestsize)
             file.write(data)
             # Print status
-            mibaddr = i // settings.MiB
-            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far.'.format(mibaddr))
+            dumped = (i - start) // settings.MiB
+            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far.'.format(dumped))
             if settings.verbose:
                 sys.stdout.write(' Data read: 0x' + hexlify(data).decode(settings.encoding))
             sys.stdout.write('\r')

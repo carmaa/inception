@@ -179,9 +179,9 @@ def searchanddestroy(device, target, memsize):
                         p = []
                         # Print status
                         mibaddr = pageaddress // settings.MiB
-                        sys.stdout.write('[*] Searching for signature, {0:>4d} MiB so far.'.format(mibaddr))
+                        sys.stdout.write('[*] Searching, {0:>4d} MiB so far.'.format(mibaddr))
                         if settings.verbose:
-                            sys.stdout.write(' Data read: 0x' + hexlify(cand).decode(settings.encoding))
+                            sys.stdout.write(' Sample data read: 0x' + hexlify(cand[0:8]).decode(settings.encoding))
                         sys.stdout.write('\r')
                         sys.stdout.flush()
                          
@@ -193,6 +193,8 @@ def searchanddestroy(device, target, memsize):
                  'connected.')
     except KeyboardInterrupt:
         print()
+        msg('!', 'Aborted.')
+        fail('Could not locate signature(s).')
         raise KeyboardInterrupt
     
     # If we get here, we haven't found anything :-/
@@ -238,7 +240,7 @@ def attack(targets):
         memsize = settings.memsize
     
     # Perform parallel search for all signatures for each OS at the known offsets
-    msg('*', 'Attacking...')
+    msg('*', 'DMA shields down. Attacking...')
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
         # TODO: Fall-back sequential search?

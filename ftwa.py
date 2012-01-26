@@ -41,9 +41,8 @@ homepage at http://breaknenter.org/projects/ftwautopwn
     # Parse args
     try:
         opts, args = getopt.getopt(argv, 
-                                   'bd:Df:hilvt:w:no', 
-                                   ['businfo', 'dump=', 'file=', 'help',
-                                    'interactive', 'list'  'verbose', 
+                                   'bd:Df:hlvt:w:no', 
+                                   ['businfo', 'dump=', 'file=', 'help', 'list'  'verbose', 
                                     'technique=', 'wait=', 'no-write', 'override'])
     except getopt.GetoptError as err:
         msg('!', err)
@@ -115,7 +114,7 @@ homepage at http://breaknenter.org/projects/ftwautopwn
     
     # We don't accept any args
     if args:
-        msg('!', 'Arguments {0} ignored'.format(', '.join(args)))
+        msg('!', 'Arguments {0} ignored.'.format(', '.join(args)))
     
     if not settings.filemode and not os.geteuid() == 0:
         fail("You must be root to run FTWA with FireWire input.")
@@ -132,7 +131,7 @@ homepage at http://breaknenter.org/projects/ftwautopwn
         traceback.print_exc()
         separator()
     except KeyboardInterrupt:
-        msg('!', 'Aborted')
+        msg('!', 'Aborted.')
         
 def usage(execname):
     print('''Usage: ''' + execname + ''' [OPTIONS]
@@ -152,14 +151,13 @@ Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
                           example to facilitate attacks on VMware machines or
                           to ease testing and signature generation efforts
     -h, --help:           Displays this message
-    -i, --interactive     Interactive mode. Use this to search for specific
-                          signatures at specific offsets
     -l, --list:           Lists available operating system targets
     -n, --no-write:       Dry run, do not write back to memory
     -o, --override:       Override access of upper memory area (0xa0000-
                           0xfffff). This area is accessed by default. Use this
                           if you are afraid of causing a system crash (usually
-                          not a problem these days)
+                          not a problem these days). Enabling this setting
+                          will prevent you from capturing BIOS residue passwords
     -t TARGET, --technique=TARGET:
                           Specify target operating system (use --list to list 
                           available targets)

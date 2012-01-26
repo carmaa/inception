@@ -7,7 +7,7 @@ Created on Jan 22, 2012
 from binascii import hexlify
 from ftwautopwn import settings
 from ftwautopwn.firewire import FireWire
-from ftwautopwn.util import msg, fail, MemoryFile, needtoavoid
+from ftwautopwn.util import msg, MemoryFile, needtoavoid
 import sys
 import time
 import os
@@ -58,7 +58,7 @@ def dump():
             dumped = (i - start) // settings.MiB
             sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far.'.format(dumped))
             if settings.verbose:
-                sys.stdout.write(' Data read: 0x' + hexlify(data).decode(settings.encoding))
+                sys.stdout.write(' Sample data read: 0x' + hexlify(data[0:8]).decode(settings.encoding))
             sys.stdout.write('\r')
             sys.stdout.flush()
         file.close()

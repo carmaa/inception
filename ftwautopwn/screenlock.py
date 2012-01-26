@@ -5,11 +5,12 @@ Created on Jun 23, 2011
 '''
 from binascii import hexlify
 from ftwautopwn.firewire import FireWire
-from ftwautopwn.util import msg, MemoryFile, fail, findmemsize, bytelen, \
+from ftwautopwn.util import msg, MemoryFile, fail, bytelen, \
     int2binhex, separator
 import ftwautopwn.settings as settings
 import sys
 import time
+import os
 
 
 def select_target(targets, selected=False):
@@ -225,28 +226,16 @@ def attack(targets):
     if settings.verbose:
         printdetails(target)
     
-    # Lower DMA shield or use a file as input
+    # Lower DMA shield or use a file as input, and set memsize
     device = None
+    memsize = None
     if settings.filemode:
         device = MemoryFile(settings.filename, settings.PAGESIZE)
+        memsize = os.path.getsize(settings.filename)
     else:
         elapsed = int(time.time() - start)
         device = fw.getdevice(device_index, elapsed)
-
-    # Determine memory size and set to default if not found
-    memsize = findmemsize(device)
-    if not memsize:
-        # TODO: Create a select() method that can cope with defaults
-        cont = input('''\
-[-] Could not determine memory size: DMA shield may still be up. Try increasing
-    the delay after enabling SBP2 (-d switch). Do you want to continue and use
-    the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
-        if cont in ['y', 'Y']:
-            memsize = settings.memsize
-        else:
-            fail()
-    else:
-        msg('*', 'Found memory size: {0:d} MiB. Shields down.'.format(memsize // settings.MiB))
+        memsize = settings.memsize
     
     # Perform parallel search for all signatures for each OS at the known offsets
     msg('*', 'Attacking...')

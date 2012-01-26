@@ -36,20 +36,22 @@ def all_equal(iterator):
     except StopIteration:
         return True
 
-def findmemsize(d):
-    '''
-    Iterate through possible memory sizes and check if we get data when reading.
-    Assuming minimum memory unit size is 128 MiB, this should be a reasonably
-    safe assumption nowadays
-    '''
-    # TODO: Fix this method
-    step = 128 * settings.MiB
-    chunk = settings.PAGESIZE # Read page sized chunks of data
-    for addr in range(settings.memsize, 0, -step):
-        buf = d.read(addr - chunk, chunk)
-        if buf:
-            return addr
-    return None
+#===============================================================================
+# def findmemsize(d):
+#    '''
+#    Iterate through possible memory sizes and check if we get data when reading.
+#    Assuming minimum memory unit size is 128 MiB, this should be a reasonably
+#    safe assumption nowadays
+#    '''
+#    # TODO: Fix this method
+#    step = 128 * settings.MiB
+#    chunk = settings.PAGESIZE # Read page sized chunks of data
+#    for addr in range(settings.memsize, 0, -step):
+#        buf = d.read(addr - chunk, chunk)
+#        if buf:
+#            return addr
+#    return None
+#===============================================================================
 
 def bytelen(s):
     '''

@@ -28,7 +28,7 @@ dry_run = False                 # No write-back into memory
 target = False                  # No target set
 filename = ''                   # No filename set per default
 buflen = 15                     # Buffer length for checking if we get data
-memsize = 4 * GiB               # 4 GiB, FW max
+memsize = 4 * GiB               # 4 GiB, theoretical FW max
 success = True                  # Optimistic-by-nature setting
 encoding = None                 # System encoding
 vectorsize = 128                # Read vector size
@@ -40,6 +40,11 @@ max_request_size = PAGESIZE//2  # By default the max request size is the PSZ/2
 avoid = [0xa0000, 0xfffff]      # Upper memory area (can cause BSOD if accessed)
 override = False                # By default, access the avoid area
 
+#===============================================================================
+# List of patterns that signify out of memory bounds reads
+#===============================================================================
+outofbounds = [0xff * max_request_size,
+               0x00 * max_request_size]
 
 #===============================================================================
 # Targets are collected in a list of dicts using the following syntax:

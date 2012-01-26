@@ -132,7 +132,7 @@ homepage at http://breaknenter.org/projects/ftwautopwn
         traceback.print_exc()
         separator()
     except KeyboardInterrupt:
-        fail('Aborted')
+        msg('!', 'Aborted')
         
 def usage(execname):
     print('''Usage: ''' + execname + ''' [OPTIONS]

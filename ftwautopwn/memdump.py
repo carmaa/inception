@@ -7,9 +7,10 @@ Created on Jan 22, 2012
 from binascii import hexlify
 from ftwautopwn import settings
 from ftwautopwn.firewire import FireWire
-from ftwautopwn.util import msg, fail, MemoryFile, findmemsize, needtoavoid
+from ftwautopwn.util import msg, fail, MemoryFile, needtoavoid
 import sys
 import time
+import os
 
 def dump():
     # Initialize and lower DMA shield
@@ -32,20 +33,10 @@ def dump():
     if settings.dumpsize: 
         size = settings.dumpsize
     else:
-        # Determine memory size and set to default if not found
-        size = findmemsize(device)
-        if not size:
-            # TODO: Create a select() method that can cope with defaults
-            cont = input('''\
-[-] Could not determine memory size: DMA shield may still be up. Try increasing
-the delay after enabling SBP2 (-d switch). Do you want to continue and use
-the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
-            if cont in ['y', 'Y']:
-                size = settings.memsize
-            else:
-                fail()
+        if settings.filemode:
+            size = os.path.getsize(settings.filename)
         else:
-            msg('*', 'Found memory size: {0:d} MiB. Shields down.'.format(size // settings.MiB))
+            size = settings.memsize
     
     end = start + size
     requestsize = settings.max_request_size
@@ -75,5 +66,7 @@ the FireWire maximum addressable limit (4 GiB) as memory size? [y/N]: ''')
         msg('*', 'Dumped memory to file ' + filename)
         device.close()
     except KeyboardInterrupt:
+        file.close()
         print()
+        msg('*', 'Dumped memory to file ' + filename)
         raise KeyboardInterrupt

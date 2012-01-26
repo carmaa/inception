@@ -16,7 +16,7 @@ INTRODUCTION
 ------------
 
 Name: FTWAutopwn
-Version: 0.0.2
+Version: 0.0.5
 License: GPL
 Author: Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
 Twitter: breaknenter
@@ -145,6 +145,7 @@ DEVELOPMENT HISTORY
  0.0.3 - Added some signatures (thanks Tekkenhead) and error handling
  0.0.4 - Added businfo to display connected FireWire devices as well as memory
          dumping capabilities
+ 0.0.5 - Enhanced memory dumping abilities and added samples catalog
  
  
 DISCLAIMER

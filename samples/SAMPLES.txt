@@ -1,0 +1,68 @@
+CONTENTS OF THIS FILE
+---------------------
+
+ * Sample definition
+ * File format and syntax
+ * Contribute
+ 
+ 
+SAMPLE DEFINITION
+-----------------
+
+This folder contains binary memory dump extracts in the form of files (samples)
+from live machines. These samples are known to contain the signatures at the
+right offsets compared to the signatures that are shipped with this tool.
+
+Each binary file can be used for testing purposes (and they are indeed used for
+that in the tool's unit tests). For the sake of distribution together with this
+tool, each file size is limited to 10 pages, or 40960 bytes / 40 KiB.
+
+You can use FTWA to create these samples using the -d option.
+
+
+FILE FORMAT AND SYNTAX
+----------------------
+
+ * The sample files themselves has filenames that follow the following syntax
+   (brackets means optional):
+ 
+   OS-Version-[Edition]-[Architecture]-[Service pack]-#.bin
+   
+   EXAMPLE:
+   A Windows 7 Enterprise edition x64 SP1 sample would have the following file
+   name:
+   
+   Windows-7-Enterprise-x64-SP1-1.bin
+   
+ * Each sample has an accompanying text file containing only the page offset
+   which the signature should match it.
+   
+   EXAMPLE:
+   The corresponding text file to the example above, named
+   'Windows-7-Enterprise-x64-SP1-1.txt', where the signature should be found at
+   page number 5 at the offset '0x2a8' must contain two lines with the
+   following data:
+   
+   5
+   0x2a8
+
+ 
+CONTRIBUTE
+----------
+
+If you are able to reverse engineer new signatures, please submit them to me at
+carsten@carmaa.com or n@tropy.org.
+
+The email should contain the following:
+
+ * A sample binary file as described above
+ * An accompanying sample text file as described above
+ * The signature (as defined in ftwautopwn/settings.py) used to match the sample
+ 
+Only when conforming to the above rules will new signatures be accepted for
+inclusion in the tool. Please respect that I have limited means to verify any
+signatures that are not submitted as described above. Please verify all
+signatures before submitting them to me. By submitting a sample to me, you are
+approving that I may distribute the sample as a part of this tool.
+
+All contributions are welcome, and credit will be given.

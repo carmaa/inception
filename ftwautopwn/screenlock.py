@@ -118,7 +118,7 @@ def searchanddestroy(device, target, memsize):
     Main search loop
     '''
     # TODO: Create support for other page sizes (2 GiB for Macs)
-    pageaddress = settings.MiB
+    pageaddress = 0x00000000
     signatures = target['signatures']
 
     # Add signature lengths in bytes to the dictionary, and replace integer
@@ -249,13 +249,13 @@ def attack(targets):
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / settings.PAGESIZE)
-    msg('+', 'Signature found at {0:#x} (@page # {1}).'.format(address, page))
+    msg('*', 'Signature found at {0:#x} (@page # {1}).'.format(address, page))
     if not settings.dry_run:
         success = patch(device, address, chunks)
         if success:
-            msg('+', 'Write-back verified; patching successful.')
+            msg('*', 'Write-back verified; patching successful.')
         else:
-            msg('-', 'Write-back could not be verified; patching unsuccessful.')
+            msg('!', 'Write-back could not be verified; patching unsuccessful.')
     
     #Clean up
     device.close()

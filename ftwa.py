@@ -26,7 +26,7 @@ def main(argv):
     
     # Print banner
     print('''
-Fire Through the Wire Autopwn (FTWA) v.0.0.4
+Fire Through the Wire Autopwn (FTWA) v.0.0.5
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 Twitter: @breaknenter Web: http://breaknenter.org
 
@@ -119,7 +119,6 @@ homepage at http://breaknenter.org/projects/ftwautopwn
     if not settings.filemode and not os.geteuid() == 0:
         fail("You must be root to run FTWA with FireWire input.")
 
-    # TODO: Detect devices
     try:
         if settings.memdump:
             memdump.dump()

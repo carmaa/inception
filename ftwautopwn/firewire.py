@@ -23,10 +23,7 @@ class FireWire:
         Initializes the bus and sets device, OUI variables
         '''
         self._bus = Bus()
-        # TODO: Check that we are connected and can see a FW unit directory
-        # TODO: Use businfo method here, start timing and reduce the delay below based
-        # on how long time the user use to select a device
-        # TODO: Drop enabling SBP-2 if target is OS X
+        
         # Enable SBP-2 support to ensure we get DMA
         self._bus.enable_sbp2()
         self._devices = self._bus.devices()

@@ -4,8 +4,8 @@ Created on Jan 23, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 import re
-from ftwautopwn.util import msg, separator, fail
-from ftwautopwn import settings
+from inception.util import msg, separator, fail
+from inception import settings
 import sys
 import time
 from forensic1394.bus import Bus

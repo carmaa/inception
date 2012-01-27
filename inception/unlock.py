@@ -5,10 +5,10 @@ Created on Jun 23, 2011
 '''
 from binascii import hexlify
 from forensic1394 import Bus
-from ftwautopwn.util import msg, clean_hex, all_equal
+from inception.util import msg, clean_hex, all_equal
 from time import sleep
 import collections
-import ftwautopwn.settings as settings
+import inception.settings as settings
 import math
 import sys
 

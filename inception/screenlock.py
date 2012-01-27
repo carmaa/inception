@@ -4,10 +4,10 @@ Created on Jun 23, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 from binascii import hexlify
-from ftwautopwn.firewire import FireWire
-from ftwautopwn.util import msg, MemoryFile, fail, bytelen, \
+from inception.firewire import FireWire
+from inception.util import msg, MemoryFile, fail, bytelen, \
     int2binhex, separator
-import ftwautopwn.settings as settings
+import inception.settings as settings
 import sys
 import time
 import os

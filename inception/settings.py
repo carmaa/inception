@@ -15,7 +15,7 @@ KiB = 1024                      # One KiloByte
 MiB = 1024 * KiB                # One MegaByte
 GiB = 1024 * MiB                # One GigaByte
 PAGESIZE = 4 * KiB              # For the sake of this tool, always the case
-OUICONF = 'ftwautopwn/oui.txt'  # FireWire OUI database
+OUICONF = 'inception/oui.txt'  # FireWire OUI database
 
     
 #===============================================================================

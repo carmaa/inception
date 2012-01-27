@@ -5,7 +5,7 @@ Created on Jun 19, 2011
 '''
 import sys
 import binascii
-from ftwautopwn import settings
+from inception import settings
 
 def msg(sign, message):
     # TODO: Add fancy print method that formats everything to 80 char wide string

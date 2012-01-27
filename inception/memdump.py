@@ -5,9 +5,9 @@ Created on Jan 22, 2012
 '''
 
 from binascii import hexlify
-from ftwautopwn import settings
-from ftwautopwn.firewire import FireWire
-from ftwautopwn.util import msg, MemoryFile, needtoavoid
+from inception import settings
+from inception.firewire import FireWire
+from inception.util import msg, MemoryFile, needtoavoid
 import sys
 import time
 import os

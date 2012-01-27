@@ -4,10 +4,10 @@ Created on Oct 15, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from ftwautopwn import screenlock, memdump
-from ftwautopwn.firewire import FireWire
-from ftwautopwn.util import msg, fail, separator
-import ftwautopwn.settings as settings
+from inception import screenlock, memdump
+from inception.firewire import FireWire
+from inception.util import msg, fail, separator
+import inception.settings as settings
 import getopt
 import os
 import sys
@@ -26,12 +26,12 @@ def main(argv):
     
     # Print banner
     print('''
-Fire Through the Wire Autopwn (FTWA) v.0.0.5
+Inception v.0.0.5
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 Twitter: @breaknenter Web: http://breaknenter.org
 
-For updates, visit/clone https://github.com/carmaa/FTWAutopwn or visit the FTWA
-homepage at http://breaknenter.org/projects/ftwautopwn
+For updates, visit/clone https://github.com/carmaa/inception or visit the
+Inception homepage at http://breaknenter.org/projects/inception
 ''')
     
     # Initialize

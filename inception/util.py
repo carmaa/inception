@@ -61,7 +61,7 @@ def select(text, options):
 
 def fail(err = None):
     '''
-    Called if FTWA fails. Optional parameter is an error message string.
+    Called if Inception fails. Optional parameter is an error message string.
     '''
     if err: msg('!', err)
     print('[!] Attack unsuccessful.')

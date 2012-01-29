@@ -4,8 +4,8 @@ Created on Jun 10, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 #!/usr/bin/env python3.2
-from ftwautopwn import unlock
-from ftwautopwn.util import Context
+from inception import unlock
+from inception.util import Context
 import configparser
 import getopt
 import sys
@@ -40,9 +40,8 @@ def main(argv):
     ctx.config = (config)
     
     # Print banner
-    print('Fire Through the Wire Autopwn v.0.0.2')
+    print('Fire Through the Wire Autopwn v.0.0.2 (legacy version)')
     print('by Carsten Maartmann-Moe <carsten@carmaa.com> 2011\n')
-    print('For updates, check out https://github.com/carmaa/FTWAutopwn')
     
     try:
         opts, args = getopt.getopt(argv, 'f:hlvt:d:n', ['file=', 'help', 'list'  'verbose', 'target=', 'delay=', 'no-write'])

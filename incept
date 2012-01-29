@@ -4,11 +4,13 @@ Created on Oct 15, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
+
+
 from inception import screenlock, memdump
 from inception.firewire import FireWire
 from inception.util import msg, fail, separator
-import inception.settings as settings
 import getopt
+import inception.settings as settings
 import os
 import sys
 import traceback
@@ -117,7 +119,7 @@ Inception homepage at http://breaknenter.org/projects/inception
         msg('!', 'Arguments {0} ignored.'.format(', '.join(args)))
     
     if not settings.filemode and not os.geteuid() == 0:
-        fail("You must be root to run FTWA with FireWire input.")
+        fail("You must be root to run Inception with FireWire input.")
 
     try:
         if settings.memdump:
@@ -140,9 +142,9 @@ Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
     -d, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
                           content from ADDR page. Memory content is dumped to 
                           files with the file name syntax:
-                          'ftwamemdump_START-END.bin'. ADDR can be a page
-                          number or a hexadecimal address within a page. PAGES
-                          can be a number of pages or a size of data using the
+                          'memdump_START-END.bin'. ADDR can be a page number or 
+                          a hexadecimal address within a page. PAGES can be a
+                          number of pages or a size of data using the
                           denomination KiB, MiB or GiB. Example: -d 0x00ff 5MiB
                           This command dumps the first 5 MiB of memory
     -D                    Same as above, but dumps all available memory

@@ -207,7 +207,10 @@ def attack(targets):
     '''
     # Initialize and lower DMA shield
     if not settings.filemode:
-        fw = FireWire()
+        try:
+            fw = FireWire()
+        except IOError:
+            fail('Could not initialize Firewire. Are the modules loaded into the kernel?')
         start = time.time()
         device_index = fw.select_device()
         # Print selection

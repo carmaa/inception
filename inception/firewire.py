@@ -9,7 +9,6 @@ from inception import settings
 import sys
 import time
 from forensic1394.bus import Bus
-import os
 
 OUI = {}
 

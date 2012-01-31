@@ -26,13 +26,13 @@ FILE FORMAT AND SYNTAX
  * The sample files themselves has filenames that follow the following syntax
    (brackets means optional):
  
-   OS-Version-[Edition]-[Architecture]-[Service pack]-#.bin
+   OS-Version-[Edition]-[Architecture]-[Service pack]-offset.bin
    
    EXAMPLE:
-   A Windows 7 Enterprise edition x64 SP1 sample would have the following file
-   name:
+   A Windows 7 Enterprise edition x64 SP1 sample where the signature hit is at
+   0x2a8 would have the following file name:
    
-   Windows-7-Enterprise-x64-SP1-1.bin
+   Windows-7-Enterprise-x64-SP1-0x2a8.bin
    
  * Each sample has an accompanying python file containing only the page number,
    offset which the signature should match it and the actual signature (as 

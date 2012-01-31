@@ -54,7 +54,7 @@ def printdetails(target):
         poffs = 0
         for chunk in signature['chunks']:
             diff = chunk['internaloffset'] - bytelen(chunk['chunk']) - 1 - ioffs
-            for i in range(diff): # TODO: Find a more pythonic way of doing this
+            for i in range(diff): # TODO: Find a more pythonic way of doing this @UnusedVariable
                 sig += '__'
             ioffs = chunk['internaloffset']
             sig += '{0:x}'.format(chunk['chunk'])

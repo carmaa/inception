@@ -54,7 +54,7 @@ def open_file(filename, mode):
     Opens a file that are a part of the package. The file must be in the folder
     tree beneath the main package
     '''
-    this_dir, this_filename = os.path.split(__file__)
+    this_dir, this_filename = os.path.split(__file__) #@UnusedVariable
     path = os.path.join(this_dir, filename)
     return open(path, mode)
     

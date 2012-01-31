@@ -164,7 +164,8 @@ Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
     -t TARGET, --technique=TARGET:
                           Specify target operating system (use --list to list 
                           available targets)
-    -v, --verbose:        Verbose mode
+    -v, --verbose:        Verbose mode - among other things, this prints read 
+                          data to stdout, useful for debugging
     -wait, --wait=TIME:   Delay attack by TIME seconds. This is useful in order
                           to guarantee that the target machine has successfully
                           granted the host DMA before attacking. If the

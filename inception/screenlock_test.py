@@ -21,7 +21,7 @@ class TestScreenlock(unittest.TestCase):
                 filepath = os.path.join(root, name)
                 mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])
                 if file_ext == '.py':
-                    util.msg('T', 'Added sample {0}'.format(mod_name))
+                    util.msg('*', 'Added sample {0}'.format(mod_name))
                     self.samples.append((mod_name, filepath))
 
 

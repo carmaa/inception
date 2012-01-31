@@ -250,7 +250,7 @@ def attack(targets):
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
         # TODO: Fall-back sequential search?
-        fail('Could not locate signature(s).')
+        return None, None
     
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number

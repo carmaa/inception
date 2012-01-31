@@ -125,7 +125,9 @@ Inception homepage at http://breaknenter.org/projects/inception
         if settings.memdump:
             memdump.dump()
         else:
-            screenlock.attack(targets)
+            address, page = screenlock.attack(targets)
+            if not address and page:
+                fail('Could not locate signature(s).')
     except Exception as exc:
         msg('!', 'Um, something went wrong: {0}'.format(exc))
         separator()

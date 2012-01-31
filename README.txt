@@ -15,34 +15,33 @@ CONTENTS OF THIS FILE
 INTRODUCTION
 ------------
 
-Name: FTWAutopwn
+Name: Inception
 Version: 0.0.5
 License: GPL
 Author: Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
 Twitter: breaknenter
-Site: http://www.breaknenter.org/projects/ftwautopwn
+Site: http://www.breaknenter.org/projects/inception
 
-Fire Through the Wire Autopwn (FTWAutopwn) was originally coded as a replacement
-for winlockpwn, the Windows FireWire unlock tool made available by Metlstorm. As
-winlockpwn was quite stable against Windows XP targets, but not so against
-Windows 7 and more modern operating systems, and the tool is not maintained
-anymore. As of Ubuntu 11.04 the shipped Linux uses the new FireWire stack, 
-making winlockpwn obsolete. Alas, FTWAutopwn was born.
+Inception is a FireWire physical memory manipulation and hacking tool exploiting
+IEEE 1394 SBP-2 DMA.
 
-FTWAutopwn aims to provide a stable and easy way of performing intrusive and
-non-intrusive memory analysis on live machines using FireWire SBP2 DMA.
+Inception aims to provide a stable and easy way of performing intrusive and 
+non-intrusive memory hacks in order to unlock live computers using FireWire 
+SBP-2 DMA. It it primarily attended to do its magic against computers that 
+utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or 
+Pointsec. There are plenty of other (and better) ways to hack a machine that 
+doesn’t pack encryption.
 
-As of version 0.0.1, it is able to unlock Windows 7 32 and 64-bit machines. More
-signatures will be added.
-
-The tool makes extensive use of the libforensic1394 library provided by Freddie
-Witherden on a LGPL license.
+As of version 0.0.5, it is able to unlock Windows XP SP2-3, Windows 7 x32 and 
+x64-bit machines. More signatures will be added. The tool makes extensive use 
+of the libforensic1394 library courtesy of Freddie Witherden under a LGPL 
+license.
 
 
 REQUIREMENTS
 ------------
 
-FTWAutopwn requires:
+Inception requires:
 
  * Python 3 (http://www.python.org)
  * libforensic1394 (https://freddie.witherden.org/tools/libforensic1394/)
@@ -69,9 +68,10 @@ make
 sudo make install
 cd ../python
 sudo python3 setup.py install
-git clone https://github.com/carmaa/FTWAutopwn.git
-cd FTWAutopwn
-python3 ftwautopwn.py
+
+git clone https://github.com/carmaa/inception.git
+cd inception
+python3 setup.py install
 
 On BackTrack and some other configurations, you may have to set LD_LIBRARY path
 to /usr/local/lib to make it find the libforensics1394 libs:
@@ -82,46 +82,28 @@ To permanently fix this, copy the libforensics1394 libs from /usr/local/lib to
 /usr/lib.
 
 
-INSTALLATION ON BACKTRACK 5.x
------------------------------
-
-Courtesy of Glenn P. Edwards Jr., I've bundled a nice shell script that should
-automagically take care of the above commands. Run ./bt5-setup.sh to set up and
-run FTWA on BT5.
-
-
 USAGE
 -----
 
 To run it, simply type (as root if required by your OS):
 
-python3 ftwautopwn.py
+incept
 
-The tool automatically uses config.cfg as a config file, but you can specify
-your own config file if you want to. The config file contains a simple, .ini-
-style syntax defining search signatures, patches and offsets.
+For a more complete and up-to-date descriptiton, please see the tool home page 
+at http://www.breaknenter.org/projects/inception
 
-The experimental version can be run by:
-
-./ftwa.py
 
 
 KNOWN BUGS / CAVEATS
 --------------------
 
- * For some reason, it is broken on Mac OS X Lion
- * x64 signatures are unstable, and currently the signature only matches a
-   single Patch version of the msv1_0.dll. You might be lucky and have the same
-   version on your target, so it's not entirely unuseful, though
- * Because of how physical memory is mapped at the hardware level, you may
-   experience trouble  memory over 2 GiB on machines with 4 GiB or more main
-   memory
+Please see the tool home page at http://www.breaknenter.org/projects/inception
    
 
 TROUBLESHOOTING
 ---------------
 
-Please see the tool home page at http://www.breaknenter.org/projects/ftwautopwn
+Please see the tool home page at http://www.breaknenter.org/projects/inception
 
 
 PLANNED FEATURES

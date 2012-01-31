@@ -34,17 +34,31 @@ FILE FORMAT AND SYNTAX
    
    Windows-7-Enterprise-x64-SP1-1.bin
    
- * Each sample has an accompanying text file containing only the page offset
-   which the signature should match it.
+ * Each sample has an accompanying python file containing only the page number,
+   offset which the signature should match it and the actual signature (as 
+   represented in inception/settings.py.
    
    EXAMPLE:
    The corresponding text file to the example above, named
-   'Windows-7-Enterprise-x64-SP1-1.txt', where the signature should be found at
-   page number 5 at the offset '0x2a8' must contain two lines with the
+   'Windows-7-Enterprise-x64-SP1-1.py', where the signature should be found at
+   page number 5 at the offset '0x2a8' must contain three lines with the
    following data:
    
-   5
-   0x2a8
+   page = 5
+   offset = 0x2a8
+   signature = \
+   [{'OS': 'Windows 7',
+     'versions': ['SP0', 'SP1'],
+     'architectures': ['x32', 'x64'],
+     'name': 'msv1_0.dll MsvpPasswordValidate technique',
+     'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password.',
+     'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], #x64
+                     'chunks': [{'chunk': 0xc60f85,
+                                 'internaloffset': 0x00,
+                                 'patch': 0x909090909090,
+                                 'patchoffset': 0x01},
+                                {'chunk': 0xb8,
+                                 'internaloffset': 0x07}]}]
 
  
 CONTRIBUTE

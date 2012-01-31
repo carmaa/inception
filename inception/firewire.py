@@ -58,7 +58,7 @@ class FireWire:
             msg('!', 'Vendor OUI lookups will not be performed: {0}'.format(filename))
         return OUI
             
-    def resolv_oui(self, vendor):
+    def resolve_oui(self, vendor):
         try:
             return self._oui[vendor]
         except KeyError:
@@ -78,7 +78,7 @@ class FireWire:
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
             vendorname = device.vendor_name.decode(settings.encoding)
-            if not vendorname: vendorname = self.resolv_oui(vid) # Resolve not found name
+            if not vendorname: vendorname = self.resolve_oui(vid) # Resolve not found name
             self._vendors.append(vendorname)
             pid = device.product_id
             productname = device.product_name.decode(settings.encoding)

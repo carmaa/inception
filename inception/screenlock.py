@@ -17,6 +17,9 @@ def select_target(targets, selected=False):
     '''
     Provides easy selection of targets. Input is a list of targets (dicts)
     '''
+    if len(targets) == 1:
+        msg('*', 'Only one target present, auto-selected')
+        return targets[0]
     if not selected: selected = input('Please select target (or enter \'q\' to quit): ')
     nof_targets = len(targets)
     try:
@@ -210,7 +213,7 @@ def attack(targets):
         try:
             fw = FireWire()
         except IOError:
-            fail('Could not initialize Firewire. Are the modules loaded into the kernel?')
+            fail('Could not initialize FireWire. Are the modules loaded into the kernel?')
         start = time.time()
         device_index = fw.select_device()
         # Print selection
@@ -262,4 +265,6 @@ def attack(targets):
     
     #Clean up
     device.close()
+    
+    return address, page
     

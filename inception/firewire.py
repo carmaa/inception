@@ -4,11 +4,12 @@ Created on Jan 23, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 import re
-from inception.util import msg, separator, fail
+from inception.util import msg, separator, fail, open_file
 from inception import settings
 import sys
 import time
 from forensic1394.bus import Bus
+import os
 
 OUI = {}
 
@@ -44,7 +45,7 @@ class FireWire:
         '''
         OUI = {}
         try:
-            f = open(filename, 'r')
+            f = open_file(filename, 'r')
             lines = f.readlines()
             f.close()
             regex = re.compile('(?P<id>([0-9a-fA-F]{2}-){2}[0-9a-fA-F]{2})\s+\(hex\)\s+(?P<name>.*)')

@@ -15,7 +15,7 @@ KiB = 1024                          # One KibiByte
 MiB = 1024 * KiB                    # One MebiByte
 GiB = 1024 * MiB                    # One GibiByte
 PAGESIZE = 4 * KiB                  # For the sake of this tool, always the case
-OUICONF = 'inception/data/oui.txt'  # FireWire OUI database
+OUICONF = 'data/oui.txt'            # FireWire OUI database relative to package
 
     
 #===============================================================================

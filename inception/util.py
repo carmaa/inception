@@ -6,6 +6,7 @@ Created on Jun 19, 2011
 import sys
 import binascii
 from inception import settings
+import os
 
 def msg(sign, message):
     # TODO: Add fancy print method that formats everything to 80 char wide string
@@ -48,6 +49,14 @@ def int2binhex(i):
     '''
     return clean_hex(hex(i))
 
+def open_file(filename, mode):
+    '''
+    Opens a file that are a part of the package. The file must be in the folder
+    tree beneath the main package
+    '''
+    this_dir, this_filename = os.path.split(__file__)
+    path = os.path.join(this_dir, filename)
+    return open(path, mode)
     
 def separator():
     '''

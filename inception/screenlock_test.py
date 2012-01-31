@@ -3,10 +3,11 @@ Created on Jan 30, 2012
 
 @author: root
 '''
-import unittest
-import os
-import imp
 from inception import screenlock, settings, util
+import inception.settings
+import imp
+import os
+import unittest
 
 
 class TestScreenlock(unittest.TestCase):
@@ -30,6 +31,7 @@ class TestScreenlock(unittest.TestCase):
 
     def test_screenlock(self):
         for sample in self.samples:
+            settings = imp.reload(inception.settings)
             mod_name = sample[0]
             filepath = sample[1]
             util.msg('T', 'Testing sample {0}'.format(mod_name))
@@ -39,7 +41,13 @@ class TestScreenlock(unittest.TestCase):
                 assert(module)
             settings.filemode = True
             settings.filename = '../samples/' + mod_name + '.bin'
-            address, page = screenlock.attack(module.signature)
+            foundtarget = False
+            for target in settings.targets:
+                if target['OS'] == module.OS:
+                    foundtarget = [target]
+            assert(foundtarget)
+            util.msg('T', 'Found target: {0}'.format(foundtarget[0]['OS']))
+            address, page = screenlock.attack(foundtarget)
             self.assertEqual(address & 0x00000fff, module.offset)
             self.assertEqual(page, module.page)
 

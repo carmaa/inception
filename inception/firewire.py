@@ -27,8 +27,8 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            load = input('[!] FireWire modules does not seam to be loaded. Load them? [y/n]: ')
-            if 'y' in load.lower():
+            load = input('[!] FireWire modules does not seam to be loaded. Load them? [Y/n]: ')
+            if 'y' or '' == load.lower():
                 status = os.system('modprobe firewire-ohci')
                 if status == 0:
                     time.sleep(1) # Make sure that the modules are loaded properly
@@ -37,7 +37,7 @@ class FireWire:
                     except IOError:
                         time.sleep(2) # Give some more time
                         self._bus.enable_sbp2() # If this fails, fail hard
-                        msg('*', 'FireWire modules loaded successfully.')
+                    msg('*', 'FireWire modules loaded successfully.')
                 else:
                     fail('Could not load FireWire modules.')
                 

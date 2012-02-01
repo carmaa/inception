@@ -37,8 +37,10 @@ dumpstart = 0x00000000          # Default memory dump start address
 dumpsize = False                # Not set by default
 interactive = False             # Interactive mode off
 max_request_size = PAGESIZE//2  # By default the max request size is the PSZ/2
-avoid = [0xa0000, 0xfffff]      # Upper memory area (can cause BSOD if accessed)
+avoid = [0xa0000, 0xfffff]      # Upper Win memory area (can cause BSOD if accessed)
 override = False                # By default, access the avoid area
+apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
+apple = False                   # Set to true if we are attacking a Mac
 
 #===============================================================================
 # List of patterns that signify out of memory bounds reads

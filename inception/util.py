@@ -77,7 +77,12 @@ def fail(err = None):
     sys.exit(1)
     
 def needtoavoid(address):
-    return settings.avoid[0] <= address <= settings.avoid[1] and not settings.filemode and settings.override
+    avoid = []
+    if settings.apple:
+        avoid = settings.apple_avoid
+    else:
+        avoid = settings.avoid
+    return avoid[0] <= address <= avoid[1] and not settings.filemode and settings.override
         
 class Context(object):
     '''

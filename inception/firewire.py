@@ -121,10 +121,11 @@ class FireWire:
                     return self.select_device()
         if selected <= nof_devices:
             i = selected - 1 
-#            vendor = self._vendors[i]
-#            if 'apple' in vendor.lower():
-#                msg('*', 'The target machine seems to be a Mac, forcing max request size to 2 KiB')
-#                settings.max_request_size = 2 * settings.KiB
+            vendor = self._vendors[i]
+            if 'apple' in vendor.lower() and settings.memdump:
+                msg('*', 'The target seems to be a Mac, forcing override (not dumping {0:#x}-{1:#x}).'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
+                settings.apple = True
+                settings.override = True
             return i
         else:
             msg('!', 'Please enter a selection between 1 and ' + str(nof_devices) + '. Type \'q\' to quit')

@@ -43,7 +43,7 @@ def dump():
 
     filename = 'memdump_' + hex(start) + '-' + hex(end) + '.bin'
     file = open(filename, 'wb')
-    
+
     msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2} MiB'.format(start, end, size/settings.MiB))
     
     try:

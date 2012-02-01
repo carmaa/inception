@@ -79,9 +79,9 @@ def fail(err = None):
 def needtoavoid(address):
     avoid = []
     if settings.apple:
-        avoid = settings.apple_avoid
+        avoid = settings.apple_avoid # Avoid this region if dumping memory from Macs
     else:
-        avoid = settings.avoid
+        avoid = settings.avoid # Avoid this region if dumping memory from PCs
     return avoid[0] <= address <= avoid[1] and not settings.filemode and settings.override
         
 class Context(object):

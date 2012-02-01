@@ -9,6 +9,7 @@ from inception import settings
 import sys
 import time
 from forensic1394.bus import Bus
+import os
 
 OUI = {}
 
@@ -23,9 +24,25 @@ class FireWire:
         Initializes the bus and sets device, OUI variables
         '''
         self._bus = Bus()
+        try:
+            self._bus.enable_sbp2()
+        except IOError:
+            load = input('[!] FireWire modules does not seam to be loaded. Load them? [y/n]: ')
+            if 'y' in load.lower():
+                status = os.system('modprobe firewire-ohci')
+                if status == 0:
+                    time.sleep(1) # Make sure that the modules are loaded properly
+                    try:
+                        self._bus.enable_sbp2()
+                    except IOError:
+                        time.sleep(2) # Give some more time
+                        self._bus.enable_sbp2() # If this fails, fail hard
+                        msg('*', 'FireWire modules loaded successfully.')
+                else:
+                    fail('Could not load FireWire modules.')
+                
         
         # Enable SBP-2 support to ensure we get DMA
-        self._bus.enable_sbp2()
         self._devices = self._bus.devices()
         self._oui = self.init_OUI()
         self._vendors = []

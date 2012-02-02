@@ -27,7 +27,7 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            load = input('[!] FireWire modules does not seam to be loaded. Load them? [Y/n]: ').lower()
+            load = input('[!] FireWire modules does not seem to be loaded. Load them? [Y/n]: ').lower()
             if 'y' == load or '' == load:
                 status = call('modprobe firewire-ohci', shell=True)
                 if status == 0:

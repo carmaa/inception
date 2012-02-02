@@ -184,7 +184,7 @@ def searchanddestroy(device, target, memsize):
                         mibaddr = pageaddress // settings.MiB
                         sys.stdout.write('[*] Searching, {0:>4d} MiB so far'.format(mibaddr))
                         if settings.verbose:
-                            sys.stdout.write(' Sample data read: 0x' + hexlify(cand[0:8]).decode(settings.encoding))
+                            sys.stdout.write('. Sample data read: 0x' + hexlify(cand[0:8]).decode(settings.encoding))
                         sys.stdout.write('\r')
                         sys.stdout.flush()
                          

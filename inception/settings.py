@@ -41,6 +41,8 @@ avoid = [0xa0000, 0xfffff]      # Upper Win memory area (can cause BSOD if acces
 override = False                # By default, access the avoid area
 apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple = False                   # Set to true if we are attacking a Mac
+pickpocket = False              # Pickpocket
+polldelay = 5                   # 5 seconds delay between FireWire delays
 
 #===============================================================================
 # List of patterns that signify out of memory bounds reads

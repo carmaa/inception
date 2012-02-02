@@ -1,7 +1,7 @@
 '''
 Created on Jan 30, 2012
 
-@author: root
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 from inception import screenlock, settings, util
 import inception.settings

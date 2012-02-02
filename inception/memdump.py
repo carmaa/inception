@@ -13,13 +13,16 @@ import time
 import os
 
 def dump():
+    # Make sure that the right mode is set
+    settings.memdump = True
+    
     # Initialize and lower DMA shield
     if not settings.filemode:
         fw = FireWire()
         starttime = time.time()
         device_index = fw.select_device()
         # Print selection
-        msg('*', 'Selected device: ' + fw.vendors[device_index])#b = Bus()
+        msg('*', 'Selected device: ' + fw.vendors[device_index])
 
     # Lower DMA shield or use a file as input
     device = None
@@ -58,7 +61,7 @@ def dump():
             dumped = (i - start) // settings.MiB
             sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far'.format(dumped))
             if settings.verbose:
-                sys.stdout.write(' Sample data read: 0x' + hexlify(data[0:8]).decode(settings.encoding))
+                sys.stdout.write('. Sample data read: 0x' + hexlify(data[0:8]).decode(settings.encoding))
             sys.stdout.write('\r')
             sys.stdout.flush()
         file.close()

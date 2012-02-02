@@ -6,7 +6,7 @@ Created on Oct 15, 2011
 '''
 
 
-from inception import screenlock, memdump
+from inception import screenlock, memdump, pickpocket
 from inception.firewire import FireWire
 from inception.util import msg, fail, separator
 import getopt
@@ -30,15 +30,15 @@ Inception homepage at http://breaknenter.org/projects/inception
 ''')
     
     # Initialize
-    #firewire.init_OUI(settings.OUICONF)
     targets = settings.targets
     
     # Parse args
     try:
         opts, args = getopt.getopt(argv, 
-                                   'bd:Df:hlvt:w:no', 
+                                   'bd:Df:hlvt:w:nop', 
                                    ['businfo', 'dump=', 'dump-all', 'file=', 'help', 'list'  'verbose', 
-                                    'technique=', 'wait=', 'no-write', 'override'])
+                                    'technique=', 'wait=', 'no-write', 'override',
+                                    'pickpocket'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -104,6 +104,8 @@ Inception homepage at http://breaknenter.org/projects/inception
             sys.exit()
         elif opt in ('-o', '--override'):
             settings.override = True
+        elif opt in ('-p' '--pickpocket'):
+            settings.pickpocket = True
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -117,17 +119,19 @@ Inception homepage at http://breaknenter.org/projects/inception
     try:
         if settings.memdump:
             memdump.dump()
+        if settings.pickpocket:
+            pickpocket.lurk()
         else:
             address, page = screenlock.attack(targets)
             if not address and page:
-                fail('Could not locate signature(s)')
+                fail('Could not locate signature(s).')
     except Exception as exc:
         msg('!', 'Um, something went wrong: {0}'.format(exc))
         separator()
         traceback.print_exc()
         separator()
     except KeyboardInterrupt:
-        msg('!', 'Aborted')
+        msg('!', 'Aborted.')
         
 def usage(execname):
     print('''Usage: ''' + execname + ''' [OPTIONS]

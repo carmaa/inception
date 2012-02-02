@@ -137,16 +137,19 @@ class FireWire:
         pass
         
     def getdevice(self, num, elapsed):
+        didwait = False
         try:
             for i in range(settings.fw_delay - elapsed, 0, -1):
                 sys.stdout.write('[*] Initializing bus and enabling SBP-2, please wait %2d seconds or press Ctrl+C\r' % i)
                 sys.stdout.flush()
+                didwait = True
                 time.sleep(1)
         except KeyboardInterrupt:
             pass
         d = self._bus.devices()[num]
         d.open()
-        print() # Create a newline so that next call to print() will start on a new line
+        if didwait: 
+            print() # Create a newline so that next call to print() will start on a new line
         return d
             
     @property
@@ -161,6 +164,7 @@ class FireWire:
         """
         The firewire devices connected to the bus; list of Device.
         """
+        self._devices = self._bus.devices()
         return self._devices
     
     @property

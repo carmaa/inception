@@ -27,8 +27,8 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            load = input('[!] FireWire modules does not seam to be loaded. Load them? [Y/n]: ')
-            if 'y' or '' == load.lower():
+            load = input('[!] FireWire modules does not seam to be loaded. Load them? [Y/n]: ').lower()
+            if 'y' == load or '' == load:
                 status = os.system('modprobe firewire-ohci')
                 if status == 0:
                     time.sleep(1) # Make sure that the modules are loaded properly
@@ -40,6 +40,8 @@ class FireWire:
                     msg('*', 'FireWire modules loaded successfully.')
                 else:
                     fail('Could not load FireWire modules.')
+            else:
+                fail('FireWire modules not loaded.')
                 
         
         # Enable SBP-2 support to ensure we get DMA

@@ -36,11 +36,11 @@ class FireWire:
                     except IOError:
                         time.sleep(2) # Give some more time
                         self._bus.enable_sbp2() # If this fails, fail hard
-                    msg('*', 'FireWire modules loaded successfully.')
+                    msg('*', 'FireWire modules loaded successfully')
                 else:
-                    fail('Could not load FireWire modules.')
+                    fail('Could not load FireWire modules')
             else:
-                fail('FireWire modules not loaded.')
+                fail('FireWire modules not loaded')
                 
         
         # Enable SBP-2 support to ensure we get DMA
@@ -124,7 +124,7 @@ class FireWire:
             i = selected - 1 
             vendor = self._vendors[i]
             if 'apple' in vendor.lower() and settings.memdump:
-                msg('*', 'The target seems to be a Mac, forcing override (not dumping {0:#x}-{1:#x}).'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
+                msg('*', 'The target seems to be a Mac, forcing override (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
                 settings.apple = True
                 settings.override = True
             return i

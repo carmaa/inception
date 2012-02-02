@@ -56,7 +56,7 @@ def dump():
             file.write(data)
             # Print status
             dumped = (i - start) // settings.MiB
-            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far.'.format(dumped))
+            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far'.format(dumped))
             if settings.verbose:
                 sys.stdout.write(' Sample data read: 0x' + hexlify(data[0:8]).decode(settings.encoding))
             sys.stdout.write('\r')

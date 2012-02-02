@@ -27,11 +27,11 @@ def select_target(targets, selected=False):
     except:
         if selected == 'q': sys.exit()
         else:
-            msg('!', 'Invalid selection, please try again. Type \'q\' to quit.')
+            msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
             return select_target(targets)
     if selected <= nof_targets: return targets[selected - 1]
     else:
-        msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit.')
+        msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
         return select_target(targets)
 
 def printdetails(target):
@@ -182,7 +182,7 @@ def searchanddestroy(device, target, memsize):
                         p = []
                         # Print status
                         mibaddr = pageaddress // settings.MiB
-                        sys.stdout.write('[*] Searching, {0:>4d} MiB so far.'.format(mibaddr))
+                        sys.stdout.write('[*] Searching, {0:>4d} MiB so far'.format(mibaddr))
                         if settings.verbose:
                             sys.stdout.write(' Sample data read: 0x' + hexlify(cand[0:8]).decode(settings.encoding))
                         sys.stdout.write('\r')
@@ -192,12 +192,11 @@ def searchanddestroy(device, target, memsize):
             
     except IOError:
         print()
-        fail('I/O Error, make sure FireWire interfaces are properly '\
-                 'connected.')
+        fail('I/O Error, make sure FireWire interfaces are properly connected')
     except KeyboardInterrupt:
         print()
         msg('!', 'Aborted.')
-        fail('Could not locate signature(s).')
+        fail('Could not locate signature(s)')
         raise KeyboardInterrupt
     
     # If we get here, we haven't found anything :-/
@@ -255,13 +254,13 @@ def attack(targets):
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / settings.PAGESIZE)
-    msg('*', 'Signature found at {0:#x} (@page # {1}).'.format(address, page))
+    msg('*', 'Signature found at {0:#x} (@page # {1})'.format(address, page))
     if not settings.dry_run:
         success = patch(device, address, chunks)
         if success:
-            msg('*', 'Write-back verified; patching successful.')
+            msg('*', 'Write-back verified; patching successful')
         else:
-            msg('!', 'Write-back could not be verified; patching unsuccessful.')
+            msg('!', 'Write-back could not be verified; patching unsuccessful')
     
     #Clean up
     device.close()

@@ -19,14 +19,14 @@ def clean_hex(s):
         if len(s) % 2 == 1: s = '0' + s # Pad with zero if odd-length string
         return binascii.unhexlify(bytes(s, sys.getdefaultencoding()))
     else:
-        raise BytesWarning('Not a string starting with \'0x\'.')
+        raise BytesWarning('Not a string starting with \'0x\'')
     
 
 def dirty_hex(b):
     if isinstance(b, bytes):
         return '0x' + bytes.decode(binascii.hexlify(b))
     else:
-        raise BytesWarning('Not a byte string.')
+        raise BytesWarning('Not a byte string')
         
 
 def all_equal(iterator):
@@ -73,7 +73,7 @@ def fail(err = None):
     Called if Inception fails. Optional parameter is an error message string.
     '''
     if err: msg('!', err)
-    print('[!] Attack unsuccessful.')
+    print('[!] Attack unsuccessful')
     sys.exit(1)
     
 def needtoavoid(address):
@@ -143,7 +143,7 @@ class MemoryFile:
         '''
         For now, dummy method in order to simulate a write
         '''
-        msg('!', 'Write to file not supported at the moment.')
+        msg('!', 'Write to file not supported at the moment')
         pass
     
     def close(self):

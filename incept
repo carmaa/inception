@@ -19,16 +19,9 @@ import traceback
 def main(argv):
     settings.encoding = sys.getdefaultencoding()
     
-    # Load available JSON targets - not in use per today
-    #===========================================================================
-    # configuration = open(settings.configfile, 'r')
-    # targets = json.load(configuration)
-    # configuration.close()
-    #===========================================================================
-    
     # Print banner
     print('''
-Inception v.0.0.5
+Inception v.0.0.6
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 Twitter: @breaknenter Web: http://breaknenter.org
 
@@ -69,7 +62,7 @@ Inception homepage at http://breaknenter.org/projects/inception
         elif opt in ('-target', '--technique'):
             # TODO
             # settings.target = unlock.select_target(ctx.config, int(arg))
-            fail("Option not implemented yet, sorry.")
+            fail("Option not implemented yet, sorry")
         elif opt in ('-w', '--wait'):
             settings.fw_delay = int(arg)
         elif opt in ('-n', '--no-write'):
@@ -104,7 +97,7 @@ Inception homepage at http://breaknenter.org/projects/inception
         elif opt in ('-i', '--interactive'):
             settings.interactive = True
             # TODO: Implement interactive mode
-            fail("Option not implemented yet, sorry.")
+            fail("Option not implemented yet, sorry")
         elif opt in ('-b', '--businfo'):
             fw = FireWire()
             fw.businfo()
@@ -116,10 +109,10 @@ Inception homepage at http://breaknenter.org/projects/inception
     
     # We don't accept any args
     if args:
-        msg('!', 'Arguments {0} ignored.'.format(', '.join(args)))
+        msg('!', 'Arguments {0} ignored'.format(', '.join(args)))
     
     if not settings.filemode and not os.geteuid() == 0:
-        fail("You must be root to run Inception with FireWire input.")
+        fail("You must be root to run Inception with FireWire input")
 
     try:
         if settings.memdump:
@@ -127,14 +120,14 @@ Inception homepage at http://breaknenter.org/projects/inception
         else:
             address, page = screenlock.attack(targets)
             if not address and page:
-                fail('Could not locate signature(s).')
+                fail('Could not locate signature(s)')
     except Exception as exc:
         msg('!', 'Um, something went wrong: {0}'.format(exc))
         separator()
         traceback.print_exc()
         separator()
     except KeyboardInterrupt:
-        msg('!', 'Aborted.')
+        msg('!', 'Aborted')
         
 def usage(execname):
     print('''Usage: ''' + execname + ''' [OPTIONS]

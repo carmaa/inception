@@ -16,7 +16,7 @@ def dump():
     # Initialize and lower DMA shield
     if not settings.filemode:
         fw = FireWire()
-        start = time.time()
+        starttime = time.time()
         device_index = fw.select_device()
         # Print selection
         msg('*', 'Selected device: ' + fw.vendors[device_index])#b = Bus()
@@ -26,7 +26,7 @@ def dump():
     if settings.filemode:
         device = MemoryFile(settings.filename, settings.PAGESIZE)
     else:
-        elapsed = int(time.time() - start)
+        elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
     
     start = settings.dumpstart    
@@ -43,7 +43,7 @@ def dump():
 
     filename = 'memdump_' + hex(start) + '-' + hex(end) + '.bin'
     file = open(filename, 'wb')
-
+    
     msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2} MiB'.format(start, end, size/settings.MiB))
     
     try:

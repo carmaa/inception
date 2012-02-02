@@ -9,7 +9,7 @@ from inception import settings
 import sys
 import time
 from forensic1394.bus import Bus
-import os
+from subprocess import call
 
 OUI = {}
 
@@ -29,9 +29,8 @@ class FireWire:
         except IOError:
             load = input('[!] FireWire modules does not seam to be loaded. Load them? [Y/n]: ').lower()
             if 'y' == load or '' == load:
-                status = os.system('modprobe firewire-ohci')
+                status = call('modprobe firewire-ohci', shell=True)
                 if status == 0:
-                    time.sleep(1) # Make sure that the modules are loaded properly
                     try:
                         self._bus.enable_sbp2()
                     except IOError:

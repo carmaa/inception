@@ -18,7 +18,7 @@ Name: Inception
 Version: 0.0.6
 License: GPL
 Author: Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
-Twitter: breaknenter Hashtag: #inceptiontool
+Twitter: @breaknenter Hashtag: #inceptiontool
 Site: http://www.breaknenter.org/projects/inception
 Source: https://github.com/carmaa/inception
 

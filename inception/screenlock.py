@@ -111,10 +111,9 @@ def patch(device, address, chunks):
         realaddress = address + ioffset + poffset
         if patch:
             device.write(realaddress, patch)
-            if settings.verbose:
-                msg('*', 'Data written: 0x' + dirty_hex(patch))
             read = device.read(realaddress, len(patch))
             if settings.verbose:
+                msg('*', 'Data written: 0x' + dirty_hex(patch))
                 msg('*', 'Data read:    0x' + dirty_hex(read))
             if  read != patch:
                 success = False

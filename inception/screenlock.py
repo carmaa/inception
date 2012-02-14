@@ -124,7 +124,6 @@ def searchanddestroy(device, target, memsize):
     '''
     Main search loop
     '''
-    # TODO: Create support for other page sizes (2 GiB for Macs)
     pageaddress = 0x00000000
     signatures = target['signatures']
 

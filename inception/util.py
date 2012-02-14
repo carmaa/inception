@@ -29,14 +29,6 @@ def dirty_hex(b):
         raise BytesWarning('Not a byte string')
         
 
-def all_equal(iterator):
-    try:
-        iterator = iter(iterator)
-        first = next(iterator)
-        return all(first == rest for rest in iterator)
-    except StopIteration:
-        return True
-
 def bytelen(s):
     '''
     Returns the byte length of an integer
@@ -58,15 +50,13 @@ def open_file(filename, mode):
     path = os.path.join(this_dir, filename)
     return open(path, mode)
     
+    
 def separator():
     '''
     Prints a separator line
     '''
     print('-' * 80)
-    
-    
-def select(text, options):
-    return input(text + '[' + str(o) +']:' for o in options)
+
 
 def fail(err = None):
     '''
@@ -75,7 +65,8 @@ def fail(err = None):
     if err: msg('!', err)
     print('[!] Attack unsuccessful')
     sys.exit(1)
-    
+
+
 def needtoavoid(address):
     avoid = []
     if settings.apple:
@@ -84,39 +75,6 @@ def needtoavoid(address):
         avoid = settings.avoid # Avoid this region if dumping memory from PCs
     return avoid[0] <= address <= avoid[1] and not settings.filemode and settings.override
         
-class Context(object):
-    '''
-    classdocs
-    '''
-    # Constants
-    PAGESIZE = 4096
-    
-    # Global variables/defaults
-    verbose = False         # Not verbose
-    fw_delay = 15           # 15 sec delay before attacking
-    file_mode = False       # Search in file instead of FW DMA
-    dry_run = False         # No write-back into memory
-    target = False          # No target set
-    file_name = ''          # No filename set
-    buflen = 15             # Buffer length for checking if we get data
-    memsize = 4294967296    # 4GB
-
-    def __init__(self):
-        '''
-        Constructor
-        '''
-        
-    def set_verbose(self, verbose):
-        self.verbose = verbose 
-    
-    def set_encoding(self, encoding):
-        self.encoding = encoding
-    
-    def set_config(self, config):
-        self.config = config
-    
-    def set_fw_delay(self, fw_delay):
-        self.fw_delay = fw_delay
 
 class MemoryFile:
     '''

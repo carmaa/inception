@@ -128,6 +128,9 @@ DEVELOPMENT HISTORY
  0.0.4 - Added businfo to display connected FireWire devices as well as memory
          dumping capabilities
  0.0.5 - Enhanced memory dumping abilities and added samples catalog
+ 0.0.6 - Added unit testing
+ 0.0.7 - Updated Ubuntu signatures and priv. escalation - thanks Adel KHALDI
+         from Algeria
  
  
 DISCLAIMER

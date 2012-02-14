@@ -21,7 +21,7 @@ def main(argv):
     
     # Print banner
     print('''
-Inception v.0.0.6
+Inception v.0.0.7
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 Twitter: @breaknenter Web: http://breaknenter.org
 

@@ -6,7 +6,7 @@ Created on Jun 23, 2011
 from binascii import hexlify
 from inception.firewire import FireWire
 from inception.util import msg, MemoryFile, fail, bytelen, \
-    int2binhex, separator
+    int2binhex, separator, dirty_hex
 import inception.settings as settings
 import sys
 import time
@@ -111,7 +111,12 @@ def patch(device, address, chunks):
         realaddress = address + ioffset + poffset
         if patch:
             device.write(realaddress, patch)
-            if device.read(realaddress, len(patch)) != patch:
+            if settings.verbose:
+                msg('*', 'Data written: 0x' + dirty_hex(patch))
+            read = device.read(realaddress, len(patch))
+            if settings.verbose:
+                msg('*', 'Data read:    0x' + dirty_hex(read))
+            if  read != patch:
                 success = False
     return success
         

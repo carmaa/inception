@@ -119,7 +119,7 @@ Inception homepage at http://breaknenter.org/projects/inception
     try:
         if settings.memdump:
             memdump.dump()
-        if settings.pickpocket:
+        elif settings.pickpocket:
             pickpocket.lurk()
         else:
             address, page = screenlock.attack(targets)

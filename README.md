@@ -20,10 +20,10 @@ Key data
 --------
 
  * Name: 	Inception
- * Version: 	0.0.7
- * License: 	GPL
- * Author: 	Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
- * Twitter: 	@breaknenter Hashtag: #inceptiontool
+ * Version: 0.0.7
+ * License: GPL
+ * Author: 	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
+ * Twitter: @breaknenter Hashtag: #inceptiontool
  * Site: 	http://www.breaknenter.org/projects/inception
  * Source: 	https://github.com/carmaa/inception
 
@@ -33,8 +33,10 @@ Requirements
 
 Inception requires:
 
+ * Linux or Mac OS X
  * Python 3 (http://www.python.org)
  * libforensic1394 (https://freddie.witherden.org/tools/libforensic1394/)
+ * A FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port
 
 
 Installation

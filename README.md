@@ -1,26 +1,6 @@
 Inception
 =========
 
-* Introduction
-* Requirements
-* Installation
-* Usage
-* Known bugs
-* Troubleshooting
-* Planned features
-* Disclaimer
-
-Introduction
-------------
-
-* Name: 	Inception
-* Version: 	0.0.7
-* License: 	GPL
-* Author: 	Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
-* Twitter: 	@breaknenter Hashtag: #inceptiontool
-* Site: 	http://www.breaknenter.org/projects/inception
-* Source: 	https://github.com/carmaa/inception
-
 Inception is a FireWire physical memory manipulation and hacking tool exploiting
 IEEE 1394 SBP-2 DMA.
 
@@ -34,6 +14,18 @@ doesn’t pack encryption.
 As of version 0.0.7, it is able to unlock Windows XP SP2-3, Windows 7 x86 and 
 x64-bit machines and escalate privileges via the `runas` command. More signatures will be added. The tool makes extensive use of the `libforensic1394`
 library courtesy of Freddie Witherden under a LGPL license.
+
+
+Key data
+--------
+
+* Name: 	Inception
+* Version: 	0.0.7
+* License: 	GPL
+* Author: 	Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
+* Twitter: 	@breaknenter Hashtag: #inceptiontool
+* Site: 	http://www.breaknenter.org/projects/inception
+* Source: 	https://github.com/carmaa/inception
 
 
 Requirements
@@ -121,16 +113,16 @@ Planned features
 Development history
 -------------------
  
- 0.0.1 - First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and
-         Ubuntu Gnome unlocking  
- 0.0.2 - Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1  
- 0.0.3 - Added some signatures (thanks Tekkenhead) and error handling  
- 0.0.4 - Added businfo to display connected FireWire devices as well as memory
-         dumping capabilities  
- 0.0.5 - Enhanced memory dumping abilities and added samples catalog  
- 0.0.6 - Added unit testing  
- 0.0.7 - Updated Ubuntu signatures and priv. escalation - thanks Adel Khaldi
-         from Algeria  
+0.0.1 First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and
+      Ubuntu Gnome unlocking  
+0.0.2 Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1  
+0.0.3 Added some signatures (thanks Tekkenhead) and error handling  
+0.0.4 Added businfo to display connected FireWire devices as well as memory
+      dumping capabilities  
+0.0.5 Enhanced memory dumping abilities and added samples catalog  
+0.0.6 Added unit testing  
+0.0.7 Updated Ubuntu signatures and priv. escalation - thanks Adel Khaldi
+      from Algeria  
  
  
 Disclaimer

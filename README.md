@@ -1,36 +1,30 @@
-CONTENTS OF THIS FILE
----------------------
+Inception - README
+==================
 
- * Introduction
- * Requirements
- * Installation
- * Usage
- * Known bugs
- * Troubleshooting
- * Planned features
- * Disclaimer
+* Introduction
+* Requirements
+* Installation
+* Usage
+* Known bugs
+* Troubleshooting
+* Planned features
+* Disclaimer
 
 
-INTRODUCTION
-------------
+Introduction
+============
 
-Name: Inception
-Version: 0.0.7
-License: GPL
-Author: Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
-Twitter: @breaknenter Hashtag: #inceptiontool
-Site: http://www.breaknenter.org/projects/inception
-Source: https://github.com/carmaa/inception
+* Name: 	Inception
+* Version: 	0.0.7
+* License: 	GPL
+* Author: 	Carsten Maartmann-Moe <carsten@carmaa.com> AKA ntropy <n@tropy.org>
+* Twitter: 	@breaknenter Hashtag: #inceptiontool
+* Site: 	http://www.breaknenter.org/projects/inception
+* Source: 	https://github.com/carmaa/inception
 
-Inception is a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+Inception is a FireWire physical memory manipulation and hacking tool exploiting IEEE 1394 SBP-2 DMA.
 
-Inception aims to provide a stable and easy way of performing intrusive and 
-non-intrusive memory hacks in order to unlock live computers using FireWire 
-SBP-2 DMA. It it primarily attended to do its magic against computers that 
-utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or 
-Pointsec. There are plenty of other (and better) ways to hack a machine that 
-doesn’t pack encryption.
+Inception aims to provide a stable and easy way of performing intrusive and non-intrusive memory hacks in order to unlock live computers using FireWire SBP-2 DMA. It it primarily attended to do its magic against computers that utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or Pointsec. There are plenty of other (and better) ways to hack a machine that doesn’t pack encryption.
 
 As of version 0.0.5, it is able to unlock Windows XP SP2-3, Windows 7 x32 and 
 x64-bit machines. More signatures will be added. The tool makes extensive use 

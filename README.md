@@ -31,10 +31,9 @@ utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or
 Pointsec. There are plenty of other (and better) ways to hack a machine that 
 doesn’t pack encryption.
 
-As of version 0.0.5, it is able to unlock Windows XP SP2-3, Windows 7 x32 and 
-x64-bit machines. More signatures will be added. The tool makes extensive use 
-of the libforensic1394 library courtesy of Freddie Witherden under a LGPL 
-license.
+As of version 0.0.7, it is able to unlock Windows XP SP2-3, Windows 7 x86 and 
+x64-bit machines and escalate privileges via the `runas` command. More signatures will be added. The tool makes extensive use of the `libforensic1394`
+library courtesy of Freddie Witherden under a LGPL license.
 
 
 Requirements
@@ -51,12 +50,13 @@ Installation
 
 For now you should be able to run the tool without any installation except
 dependencies on Mac OS X and Linux distros. Check out the README file in 
-libforensic1394 for installation and FireWire pro-tips. I'll add the setup.py
-packaging at a later stage.
+`libforensic1394` for installation and FireWire pro-tips.
 
-On Debian-based distros the installation command lines can be summarized as:
+On Debian-based distributions the installation command lines can be summarized
+as:
 
 ### Download and install dependencies
+
 	sudo apt-get install git cmake python3
 	wget http://bit.ly/xxSRPA
 	tar xvf libforensic1394-0.2.tar.gz
@@ -69,21 +69,22 @@ On Debian-based distros the installation command lines can be summarized as:
 	cd ../python
 	sudo python3 setup.py install
 
-### Download and install Inception:
-git clone https://github.com/carmaa/inception.git
-cd inception
-sudo python3 setup.py install
+### Download and install Inception
+
+	git clone https://github.com/carmaa/inception.git
+	cd inception
+	sudo python3 setup.py install
 
 On BackTrack and some other configurations, you may have to set LD_LIBRARY path
-to /usr/local/lib to make it find the libforensics1394 libs:
+to `/usr/local/lib` to make it find the `libforensics1394` libraries:
 
 	export LD_LIBRARY_PATH=/usr/local/lib
 
-To permanently fix this, copy the libforensics1394 libs from `/usr/local/lib` to 
-`/usr/lib`.
+To permanently fix this, copy the `libforensics1394` libraries from
+`/usr/local/lib` to `/usr/lib`.
 
 
-USAGE
+Usage
 -----
 
 To run it, simply type (as root if required by your OS):
@@ -91,22 +92,22 @@ To run it, simply type (as root if required by your OS):
 	incept
 
 For a more complete and up-to-date description, please see the tool home page 
-at http://www.breaknenter.org/projects/inception
+at http://www.breaknenter.org/projects/inception.
 
 
-KNOWN BUGS / CAVEATS
+Known bugs / caveats
 --------------------
 
-Please see the tool home page at http://www.breaknenter.org/projects/inception
+Please see the tool home page at http://www.breaknenter.org/projects/inception.
    
 
-TROUBLESHOOTING
+Troubleshooting
 ---------------
 
-Please see the tool home page at http://www.breaknenter.org/projects/inception
+Please see the tool home page at http://www.breaknenter.org/projects/inception.
 
 
-PLANNED FEATURES
+Planned features
 ----------------
 
  * Patch signatures for Mac OS X and Linux
@@ -117,7 +118,7 @@ PLANNED FEATURES
  * Extraction of passwords
  
  
-DEVELOPMENT HISTORY
+Development history
 -------------------
  
  0.0.1 - First version, supports basic Windows XP SP3, Vista and 7, Mac OS X and
@@ -128,11 +129,11 @@ DEVELOPMENT HISTORY
          dumping capabilities  
  0.0.5 - Enhanced memory dumping abilities and added samples catalog  
  0.0.6 - Added unit testing  
- 0.0.7 - Updated Ubuntu signatures and priv. escalation - thanks Adel KHALDI
+ 0.0.7 - Updated Ubuntu signatures and priv. escalation - thanks Adel Khaldi
          from Algeria  
  
  
-DISCLAIMER
+Disclaimer
 ----------
 Do no evil with this tool. Also, I am a pentester, not a developer. So if you
 see weird code that bugs your pythonesque purity senses, drop me a note on how

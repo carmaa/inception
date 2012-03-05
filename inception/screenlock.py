@@ -124,7 +124,7 @@ def searchanddestroy(device, target, memsize):
     '''
     Main search loop
     '''
-    pageaddress = 0x00000000
+    pageaddress = settings.startaddress
     signatures = target['signatures']
 
     # Add signature lengths in bytes to the dictionary, and replace integer
@@ -198,8 +198,7 @@ def searchanddestroy(device, target, memsize):
         fail('I/O Error, make sure FireWire interfaces are properly connected')
     except KeyboardInterrupt:
         print()
-        msg('!', 'Aborted.')
-        fail('Could not locate signature(s)')
+        fail('Aborted')
         raise KeyboardInterrupt
     
     # If we get here, we haven't found anything :-/

@@ -23,4 +23,5 @@ def lurk():
             print() # Newline
             memdump.dump()
     except KeyboardInterrupt:
-        msg('*', 'Interrupted.')  
+        print()
+        msg('*', 'Interrupted')

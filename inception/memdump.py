@@ -32,7 +32,7 @@ def dump():
         elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
     
-    start = settings.dumpstart    
+    start = settings.startaddress    
     if settings.dumpsize: 
         size = settings.dumpsize
     else:

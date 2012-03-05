@@ -261,8 +261,9 @@ def attack(targets):
         success = patch(device, address, chunks)
         if success:
             msg('*', 'Write-back verified; patching successful')
+            msg('*', 'BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
-            msg('!', 'Write-back could not be verified; patching unsuccessful')
+            msg('!', 'Write-back could not be verified; patching unsuccessful.')
     
     #Clean up
     device.close()

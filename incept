@@ -34,11 +34,8 @@ Inception homepage at http://breaknenter.org/projects/inception
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv, 
-                                   'bd:Df:hlvt:w:nop', 
-                                   ['businfo', 'dump=', 'dump-all', 'file=', 'help', 'list', 'verbose', 
-                                    'technique=', 'wait=', 'no-write', 'override',
-                                    'pickpocket'])
+        opts, args = getopt.getopt(argv, 'bd:Df:hlvw:nop', 
+                                   ['businfo', 'dump=', 'dump-all', 'file=', 'help', 'list', 'verbose', 'wait=', 'no-write', 'override', 'pickpocket'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -59,10 +56,6 @@ Inception homepage at http://breaknenter.org/projects/inception
             sys.exit()
         elif opt in ('-v', '--verbose'):
             settings.verbose = True
-        elif opt in ('-target', '--technique'):
-            # TODO
-            # settings.target = unlock.select_target(ctx.config, int(arg))
-            fail("Option not implemented yet, sorry")
         elif opt in ('-w', '--wait'):
             settings.fw_delay = int(arg)
         elif opt in ('-n', '--no-write'):
@@ -109,17 +102,20 @@ Inception homepage at http://breaknenter.org/projects/inception
         else:
             assert False, 'Option not handled: ' + opt
     
-    # We don't accept any args
+    # We don't accept any other arguments
     if args:
         msg('!', 'Arguments {0} ignored'.format(', '.join(args)))
     
     if not settings.filemode and not os.geteuid() == 0:
         fail("You must be root to run Inception with FireWire input")
 
+    # Here we go
     try:
         if settings.memdump:
             memdump.dump()
         elif settings.pickpocket:
+            if settings.filemode:
+                fail("Pickpocket mode is not compatible with file mode")
             pickpocket.lurk()
         else:
             address, page = screenlock.attack(targets)
@@ -132,11 +128,13 @@ Inception homepage at http://breaknenter.org/projects/inception
         separator()
     except KeyboardInterrupt:
         msg('!', 'Aborted.')
-        
+
+
 def usage(execname):
     print('''Usage: ''' + execname + ''' [OPTIONS]
 
-Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
+Inception is a FireWire physical memory manipulation and hacking tool exploiting
+IEEE 1394 SBP-2 DMA.
 
     -d, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
                           content from ADDR page. Memory content is dumped to 
@@ -154,10 +152,12 @@ Attack machines over the IEEE1394 interface by exploiting SBP-2 DMA.
     -l, --list:           Lists available operating system targets
     -n, --no-write:       Dry run, do not write back to memory
     -o, --override:       Override access of upper memory area (0xa0000-
-                          0xfffff). This area is accessed by default. Use this
-                          if you are afraid of causing a system crash (usually
-                          not a problem these days). Enabling this setting
-                          will prevent you from capturing BIOS residue passwords
+                          0xfffff). This area is not accessed by default. Use
+                          this if you want to force the tool to access this
+                          memory area (Warning: can cause target kernel panics)
+    -p, --pickpocket:     Dump the physical memory of any device that connects
+                          to the FireWire bus. This may be useful when
+                          exploiting a Daisy chain
     -t TARGET, --technique=TARGET:
                           Specify target operating system (use --list to list 
                           available targets)

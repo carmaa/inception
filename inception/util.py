@@ -14,6 +14,10 @@ def msg(sign, message):
         
     
 def clean_hex(s):
+    '''
+    Takes a string of hexadecimal characters preceded by '0x' and returns the
+    corresponding byte string. That is, '0x41' becomes b'A'
+    '''
     if isinstance(s, str) and s.startswith('0x'):
         s = s.replace('0x', '') # Remove '0x' strings from hex string
         if len(s) % 2 == 1: s = '0' + s # Pad with zero if odd-length string
@@ -23,6 +27,10 @@ def clean_hex(s):
     
 
 def dirty_hex(b):
+    '''
+    Takes a string of bytes and returns a string with the corresponding
+    hexadecimal representation. Example: b'A' becomes '0x41'
+    '''
     if isinstance(b, bytes):
         return '0x' + bytes.decode(binascii.hexlify(b))
     else:
@@ -68,6 +76,11 @@ def fail(err = None):
 
 
 def needtoavoid(address):
+    '''
+    Checks if the address given as parameter is within the memory regions that
+    the tool should avoid to make sure no kernel panics are induced at the
+    target
+    '''
     if settings.override:
         return False
     avoid = []

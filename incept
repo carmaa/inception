@@ -118,8 +118,9 @@ Inception homepage at http://breaknenter.org/projects/inception
                 fail("Pickpocket mode is not compatible with file mode")
             pickpocket.lurk()
         else:
+            settings.startaddress = settings.MiB # We can safely skip the first MiB
             address, page = screenlock.attack(targets)
-            if not address and page:
+            if not address or not page:
                 fail('Could not locate signature(s).')
     except Exception as exc:
         msg('!', 'Um, something went wrong: {0}'.format(exc))
@@ -149,7 +150,7 @@ IEEE 1394 SBP-2 DMA.
                           example to facilitate attacks on VMware machines or
                           to ease testing and signature generation efforts
     -h, --help:           Displays this message
-    -l, --list:           Lists available operating system targets
+    -l, --list:           Lists configured operating system targets
     -n, --no-write:       Dry run, do not write back to memory
     -o, --override:       Override access of upper memory area (0xa0000-
                           0xfffff). This area is not accessed by default. Use

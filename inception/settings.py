@@ -16,6 +16,9 @@ MiB = 1024 * KiB                    # One MebiByte
 GiB = 1024 * MiB                    # One GibiByte
 PAGESIZE = 4 * KiB                  # For the sake of this tool, always the case
 OUICONF = 'data/oui.txt'            # FireWire OUI database relative to package
+WINDOWS = 1
+LINUX = 2
+OSX = 3
 
     
 #===============================================================================
@@ -37,8 +40,8 @@ startaddress = 0x00000000       # Default memory start address
 dumpsize = False                # Not set by default
 interactive = False             # Interactive mode off
 max_request_size = PAGESIZE//2  # By default the max request size is the PSZ/2
+override = False                # By default, avoid access Upper Memory
 avoid = [0xa0000, 0xfffff]      # Upper Win memory area (can cause BSOD if accessed)
-override = False                # By default, access the avoid area
 apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple = False                   # Set to true if we are attacking a Mac
 pickpocket = False              # Pickpocket

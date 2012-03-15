@@ -74,7 +74,7 @@ Inception homepage at http://breaknenter.org/projects/inception
                     start = int(start, 0) & 0xfffff000 # Address
                 else:
                     start = int(start) * settings.PAGESIZE # Page number
-                settings.dumpstart = start
+                settings.startaddress = start
                 # Fix size
                 size = size.lower()
                 if size.find('kib') != -1 or size.find('kb') != -1:
@@ -133,7 +133,6 @@ Inception homepage at http://breaknenter.org/projects/inception
                 fail("Pickpocket mode is not compatible with file mode")
             pickpocket.lurk()
         else:
-            settings.startaddress = settings.MiB # We can safely skip the first MiB
             address, page = screenlock.attack(targets)
             if not address or not page:
                 fail('Could not locate signature(s).')

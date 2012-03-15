@@ -125,6 +125,7 @@ def searchanddestroy(device, target, memsize):
     Main search loop
     '''
     pageaddress = settings.startaddress
+    print(settings.startaddress)
     signatures = target['signatures']
 
     # Add signature lengths in bytes to the dictionary, and replace integer

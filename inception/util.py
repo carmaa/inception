@@ -94,14 +94,21 @@ def needtoavoid(address):
 
 
 def detectos():
+    '''
+    Detects host operating system
+    '''
     return platform.system()
 
 def unloadIOFireWireIP():
-    unload = input('[!] IOFireWireIP loaded on OS X may cause kernel panics. Unload? [Y/n]: ').lower()
+    '''
+    Unloads IP over FireWire modules if present on OS X
+    '''
+    unload = input('[!] IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ').lower()
     if 'y' == unload or '' == unload:
         status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext', shell=True)
         if status == 0:
             msg('*', 'IOFireWireIP.kext unloaded')
+            msg('*', 'To reload: sudo kextload /System/Library/Extensions/IOFireWireIP.kext')
         else:
             fail('Could not unload IOFireWireIP.kext')
 

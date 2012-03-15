@@ -4,11 +4,11 @@
 # Setup script for BackTrackv5 by Glenn P. Edwards Jr.
 # For use on other distros, some modifications to the script may be required.
 # Other files referenced can be found at the following:
-# FTWAutopwn : https://github.com/carmaa/FTWAutopwn
+# inception : https://github.com/carmaa/inception
 # libforensic1394 : https://freddie.witherden.org/tools/libforensic1394/
 #----------------------------------------------------------------------------------------------------
 IR_DIR="/pentest/forensics/IR"
-FTWAutopwn_DIR="/pentest/forensics/IR/FTWAutopwn"
+inception_DIR="/pentest/forensics/IR/inception"
 lib_version="libforensic1394-0.2"
 
 echo -e "\n[+] Setting up the environment"
@@ -70,21 +70,21 @@ cd $IR_DIR/$lib_version/python/
 sudo python3 setup.py install &>/dev/null
 
 
-if [ -d $FTWAutopwn_DIR ]; then
-FTWAutopwn=$(ls -l $FTWAutopwn_DIR/ 2>/dev/null)
-	if [ -n "$FTWAutopwn" ]; then
-		echo "[-] Directory 'FTWAutopwn' already exists - skipping"
+if [ -d $inception_DIR ]; then
+inception=$(ls -l $inception_DIR/ 2>/dev/null)
+	if [ -n "$inception" ]; then
+		echo "[-] Directory 'inception' already exists - skipping"
 	else
-		echo "[-] Downloading 'FTWAutownpwn'"
-		git clone https://github.com/carmaa/FTWAutopwn.git $FTWAutopwn_DIR
+		echo "[-] Downloading 'inception'"
+		git clone https://github.com/carmaa/inception.git $inception_DIR
 	fi
 
 else 
-	echo "[-] Downloading 'FTWAutopwn'"
-	git clone https://github.com/carmaa/FTWAutopwn.git $FTWAutopwn_DIR
+	echo "[-] Downloading 'inception'"
+	git clone https://github.com/carmaa/inception.git $inception_DIR
 fi
 
 
-echo "[+] Launching FTWAutopwn"
-cd $FTWAutopwn_DIR/
-python3 ftwautopwn.py
+echo "[+] Launching inception"
+cd $inception_DIR/
+python3 incept

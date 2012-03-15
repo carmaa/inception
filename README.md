@@ -125,6 +125,8 @@ Development history
  * 0.0.6 - Added unit testing  
  * 0.0.7 - Updated Ubuntu signatures and priv. escalation - thanks Adel Khaldi
            from Algeria  
+ * 0.0.8 - Fixed Ubuntu unlock and privilege escalation patches - single patch
+           for double the action
  
  
 Disclaimer

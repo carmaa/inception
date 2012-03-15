@@ -9,9 +9,13 @@ non-intrusive memory hacks in order to unlock live computers using FireWire
 SBP-2 DMA. It it primarily attended to do its magic against computers that 
 utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or 
 Pointsec. There are plenty of other (and better) ways to hack a machine that 
-doesn’t pack encryption.
+doesn't pack encryption.
 
-As of version 0.0.8, it is able to unlock Windows XP SP2-3, Windows 7, Ubuntu 11.04 and 11.10 x86 and x64-bit machines and escalate privileges via the `runas` command. More signatures will be added. The tool makes extensive use of the `libforensic1394`library courtesy of Freddie Witherden under a LGPL license.
+As of version 0.0.8, it is able to unlock Windows XP SP2-3, Windows 7, 
+Ubuntu 11.04 and 11.10 x86 and x64-bit machines and escalate privileges via the
+`runas` or `sudo -s` commands, respectively. More signatures will be added. The
+tool makes extensive use of the `libforensic1394`library courtesy of Freddie
+Witherden under a LGPL license.
 
 
 Key data

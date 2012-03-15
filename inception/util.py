@@ -7,6 +7,8 @@ import sys
 import binascii
 from inception import settings
 import os
+import platform
+from subprocess import call
 
 def msg(sign, message):
     # TODO: Add fancy print method that formats everything to 80 char wide string
@@ -88,8 +90,21 @@ def needtoavoid(address):
         avoid = settings.apple_avoid # Avoid this region if dumping memory from Macs
     else:
         avoid = settings.avoid # Avoid this region if dumping memory from PCs
-    return avoid[0] <= address <= avoid[1] and not settings.filemode 
-        
+    return avoid[0] <= address <= avoid[1] and not settings.filemode
+
+
+def detectos():
+    return platform.system()
+
+def unloadIOFireWireIP():
+    unload = input('[!] IOFireWireIP loaded on OS X may cause kernel panics. Unload? [Y/n]: ').lower()
+    if 'y' == unload or '' == unload:
+        status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext', shell=True)
+        if status == 0:
+            msg('*', 'IOFireWireIP.kext unloaded')
+        else:
+            fail('Could not unload IOFireWireIP.kext')
+
 
 class MemoryFile:
     '''

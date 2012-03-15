@@ -123,7 +123,7 @@ class FireWire:
         if selected <= nof_devices:
             i = selected - 1 
             vendor = self._vendors[i]
-            if 'apple' in vendor.lower() and settings.memdump:
+            if 'apple' in vendor.lower() and settings.memdump and settings.startaddress == 0x00:
                 msg('*', 'The target seems to be a Mac, forcing override (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
                 settings.apple = True
                 settings.override = True

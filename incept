@@ -8,7 +8,7 @@ Created on Oct 15, 2011
 
 from inception import screenlock, memdump, pickpocket
 from inception.firewire import FireWire
-from inception.util import msg, fail, separator
+from inception.util import msg, fail, separator, detectos, unloadIOFireWireIP
 import getopt
 import inception.settings as settings
 import os
@@ -34,8 +34,8 @@ Inception homepage at http://breaknenter.org/projects/inception
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv, 'bd:Df:hlvw:nop', 
-                                   ['businfo', 'dump=', 'dump-all', 'file=', 'help', 'list', 'verbose', 'wait=', 'no-write', 'override', 'pickpocket'])
+        opts, args = getopt.getopt(argv, 'bd:Df:hlvw:nopu', 
+                                   ['businfo', 'dump=', 'dump-all', 'file=', 'help', 'list', 'verbose', 'wait=', 'no-write', 'override', 'pickpocket', 'unload'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -99,6 +99,9 @@ Inception homepage at http://breaknenter.org/projects/inception
             settings.override = True
         elif opt in ('-p' '--pickpocket'):
             settings.pickpocket = True
+        elif opt in ('-u' '--unload'):
+            unloadIOFireWireIP()
+            sys.exit()
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -108,6 +111,13 @@ Inception homepage at http://breaknenter.org/projects/inception
     
     if not settings.filemode and not os.geteuid() == 0:
         fail("You must be root to run Inception with FireWire input")
+        
+    # Detect OS and set start address to 1 MiB if host is OS X
+    settings.os = detectos()
+    if settings.os == settings.OSX and not settings.filemode:
+        msg('!', 'Host is OS X, forcing starting address above 1 MiB to avoid kernel panics')
+        settings.startaddress = settings.MiB
+        
 
     # Here we go
     try:

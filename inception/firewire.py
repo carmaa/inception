@@ -4,11 +4,22 @@ Created on Jan 23, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 import re
-from inception.util import msg, separator, fail, open_file
+from inception.util import msg, separator, fail, open_file, restart, detectos
 from inception import settings
 import sys
 import time
-from forensic1394.bus import Bus
+
+try:
+    from forensic1394.bus import Bus
+except OSError:
+    os = detectos()
+    # If the host OS is Linux, we may need to set LD_LIBRARY_PATH to make python find the libs
+    if os is settings.LINUX and '/usr/local/lib' not in os.environ['LD_LIBRARY_PATH']:
+        os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
+        restart()
+    else:
+        fail('Could not load libforensic1394')
+        
 from subprocess import call
 
 OUI = {}

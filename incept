@@ -5,12 +5,11 @@ Created on Oct 15, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-
 from inception import screenlock, memdump, pickpocket
 from inception.firewire import FireWire
 from inception.util import msg, fail, separator, detectos, unloadIOFireWireIP
-import getopt
 import inception.settings as settings
+import getopt
 import os
 import sys
 import traceback
@@ -32,7 +31,7 @@ Inception homepage at http://breaknenter.org/projects/inception
     # Initialize
     targets = settings.targets
     
-    # Detect host OS
+    # Detect host OS, and
     settings.os = detectos()
     
     # Parse args
@@ -182,7 +181,7 @@ IEEE 1394 SBP-2 DMA.
                           granted the host DMA before attacking. If the
                           attack fails, try to increase this value. Default
                           delay is 15 seconds.''')
-    
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])

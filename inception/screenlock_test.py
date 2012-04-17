@@ -32,6 +32,7 @@ class TestScreenlock(unittest.TestCase):
     def test_screenlock(self):
         for sample in self.samples:
             settings = imp.reload(inception.settings)
+            settings.startaddress = 0x00000000
             mod_name = sample[0]
             filepath = sample[1]
             util.msg('T', 'Testing sample {0}'.format(mod_name))

@@ -7,14 +7,19 @@ import re
 from inception.util import msg, separator, fail, open_file, restart, detectos
 from inception import settings
 import sys
+import os
 import time
 
 try:
     from forensic1394.bus import Bus
 except OSError:
-    os = detectos()
+    host_os = detectos()
+    try:
+        path = os.environ['LD_LIBRARY_PATH']
+    except KeyError:
+        path = ''
     # If the host OS is Linux, we may need to set LD_LIBRARY_PATH to make python find the libs
-    if os is settings.LINUX and '/usr/local/lib' not in os.environ['LD_LIBRARY_PATH']:
+    if host_os is settings.LINUX and '/usr/local/lib' not in path:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
         restart()
     else:

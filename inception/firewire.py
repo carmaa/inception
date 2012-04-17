@@ -19,7 +19,7 @@ except OSError:
     except KeyError:
         path = ''
     # If the host OS is Linux, we may need to set LD_LIBRARY_PATH to make python find the libs
-    if host_os is settings.LINUX and '/usr/local/lib' not in path:
+    if host_os == settings.LINUX and '/usr/local/lib' not in path:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
         restart()
     else:

@@ -34,7 +34,7 @@ def select_target(targets, selected=False):
         msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
         return select_target(targets)
 
-def printdetails(target):
+def printdetails(target): # TODO: Fix this method
     '''
     Prints details about a target
     '''
@@ -54,8 +54,7 @@ def printdetails(target):
         poffs = 0
         for chunk in signature['chunks']:
             diff = chunk['internaloffset'] - bytelen(chunk['chunk']) - 1 - ioffs
-            for i in range(diff): # TODO: Find a more pythonic way of doing this @UnusedVariable
-                sig += '__'
+            sig += '__' * diff
             ioffs = chunk['internaloffset']
             sig += '{0:x}'.format(chunk['chunk'])
             try:

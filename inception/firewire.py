@@ -128,7 +128,7 @@ class FireWire:
             msg('*', 'Only one device present, device auto-selected as target')
             selected = 0
         else:
-            selected = input('Please select a device to attack (or enter \'q\' to quit): ')
+            selected = input('[!] Please select a device to attack (or enter \'q\' to quit): ')
             try:
                 selected = int(selected)
             except:

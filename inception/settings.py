@@ -46,6 +46,7 @@ apple = False                   # Set to true if we are attacking a Mac
 pickpocket = False              # Pickpocket
 polldelay = 5                   # 5 seconds delay between FireWire delays
 os = None                       # Detected OS is None by default
+forcewrite = False              # Do not write back to file in file mode
 
 #===============================================================================
 # List of patterns that signify out of memory bounds reads

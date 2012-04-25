@@ -37,7 +37,7 @@ Inception homepage at http://breaknenter.org/projects/inception
     # Parse args
     try:
         opts, args = getopt.getopt(argv, 'bd:Df:hlvw:nopu', 
-                                   ['businfo', 'dump=', 'dump-all', 'file=', 'help', 'list', 'verbose', 'wait=', 'no-write', 'override', 'pickpocket', 'unload'])
+                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'override', 'pickpocket', 'unload'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -49,6 +49,8 @@ Inception homepage at http://breaknenter.org/projects/inception
         elif opt in ('-f', '--file'):
             settings.filemode = True
             settings.filename = str(arg)
+        elif opt in ('--force-write'):
+            settings.forcewrite = True
         elif opt in ('-l', '--list'):
             msg('*', 'Available targets (from settings.py):')
             separator()

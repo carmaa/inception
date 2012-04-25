@@ -19,8 +19,8 @@ def select_target(targets, selected=False):
     '''
     if len(targets) == 1:
         msg('*', 'Only one target present, auto-selected')
-        return targets[0], 1
-    if not selected: selected = input('Please select target (or enter \'q\' to quit): ')
+        return targets[0]
+    if not selected: selected = input('[!] Please select target (or enter \'q\' to quit): ')
     nof_targets = len(targets)
     try:
         selected = int(selected)
@@ -30,7 +30,7 @@ def select_target(targets, selected=False):
             msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
             return select_target(targets)
     if selected <= nof_targets:
-        return targets[selected - 1], selected
+        return targets[selected - 1]
     else:
         msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
         return select_target(targets)
@@ -221,18 +221,17 @@ def attack(targets):
         msg('*', 'Selected device: ' + fw.vendors[device_index])
 
     # List targets
-    msg('*', 'Available targets:')
+    print('Available targets:')
     separator()
     for number, target in enumerate(targets, 1):
                 msg(number, target['OS'] + ': ' + target['name'])
     separator()
        
     # Select target
-    target, num = select_target(targets)
+    target = select_target(targets)
     
     # Print selection. If verbose, print selection with signatures
-    msg('*', 'Selected target:')
-    msg(num, target['OS'] + ': ' + target['name'])
+    msg('*', 'Selected target: ' + target['OS'] + ': ' + target['name'])
     if settings.verbose:
         printdetails(target)
     

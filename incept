@@ -42,7 +42,7 @@ Inception homepage at http://breaknenter.org/projects/inception
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv, 'bd:Df:hlvw:nopu', 
+        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:nopu', 
                                    ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'override', 'pickpocket', 'unload'])
     except getopt.GetoptError as err:
         msg('!', err)
@@ -194,4 +194,4 @@ IEEE 1394 SBP-2 DMA.
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main(sys.argv)

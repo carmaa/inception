@@ -19,7 +19,7 @@ def select_target(targets, selected=False):
     '''
     if len(targets) == 1:
         msg('*', 'Only one target present, auto-selected')
-        return targets[0]
+        return targets[0], 1
     if not selected: selected = input('Please select target (or enter \'q\' to quit): ')
     nof_targets = len(targets)
     try:
@@ -29,7 +29,8 @@ def select_target(targets, selected=False):
         else:
             msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
             return select_target(targets)
-    if selected <= nof_targets: return targets[selected - 1]
+    if selected <= nof_targets:
+        return targets[selected - 1], selected
     else:
         msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
         return select_target(targets)
@@ -38,7 +39,7 @@ def printdetails(target): # TODO: Fix this method
     '''
     Prints details about a target
     '''
-    msg('*', 'The attack contains the following signatures:')
+    msg('*', 'The target module contains the following signatures:')
     separator()
     print('\tVersions:\t' + ', '.join(target['versions']).rstrip(', '))
     print('\tArchitectures:\t' + ', '.join(target['architectures']).rstrip(', '))
@@ -220,17 +221,18 @@ def attack(targets):
         msg('*', 'Selected device: ' + fw.vendors[device_index])
 
     # List targets
-    msg('*', 'Available targets (from settings.py):')
+    msg('*', 'Available targets:')
     separator()
     for number, target in enumerate(targets, 1):
                 msg(number, target['OS'] + ': ' + target['name'])
     separator()
        
     # Select target
-    target = select_target(targets)
+    target, num = select_target(targets)
     
     # Print selection. If verbose, print selection with signatures
-    msg('*', 'Selected target: ' + target['OS'] + ': ' + target['name'])
+    msg('*', 'Selected target:')
+    msg(num, target['OS'] + ': ' + target['name'])
     if settings.verbose:
         printdetails(target)
     
@@ -262,7 +264,7 @@ def attack(targets):
             msg('*', 'Write-back verified; patching successful')
             msg('*', 'BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
-            msg('!', 'Write-back could not be verified; patching unsuccessful.')
+            msg('!', 'Write-back could not be verified; patching may have been unsuccessful.')
     
     #Clean up
     device.close()

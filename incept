@@ -20,7 +20,13 @@ def main(argv):
     
     # Print banner
     print('''
-Inception v.0.0.8
+ _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
+ _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
+ _|  _|  _|  _|  _|        _|_|_|    _|_|_|      _|    _|  _|    _|  _|  _|  _|
+ _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
+ _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
+
+v.0.0.8
 by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
 Twitter: @breaknenter Web: http://breaknenter.org
 

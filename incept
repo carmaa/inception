@@ -164,6 +164,8 @@ IEEE 1394 SBP-2 DMA.
     -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machines or
                           to ease testing and signature generation efforts
+    --force-write         Forces patching when using files as input (see -f). By
+                          default, Inception does not write back to data files
     -h, --help:           Displays this message
     -l, --list:           Lists configured operating system targets
     -n, --no-write:       Dry run, do not write back to memory

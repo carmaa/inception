@@ -11,18 +11,18 @@ utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or
 Pointsec. There are plenty of other (and better) ways to hack a machine that 
 doesn't pack encryption.
 
-As of version 0.0.8, it is able to unlock Windows XP SP2-3, Windows 7, 
-Ubuntu 11.04 and 11.10 x86 and x64-bit machines and escalate privileges via the
-`runas` or `sudo -s` commands, respectively. More signatures will be added. The
-tool makes extensive use of the `libforensic1394`library courtesy of Freddie
-Witherden under a LGPL license.
+As of version 0.1.0, it is able to unlock Windows XP SP2-3, Windows 7 SP0-1,
+Vista SP0 and SP2, Mac OS X Snow Leopard and Lion, Ubuntu 11.04 and 11.10 x86
+and x64-bit machines and escalate privileges via the `runas` or `sudo -s`
+commands, respectively. More signatures will be added. The tool makes extensive
+use of the `libforensic1394`library courtesy of Freddie Witherden under a LGPL
+license.
 
 
 Key data
 --------
 
- * Name: 	Inception
- * Version: 0.0.8
+ * Version: 0.1.0
  * License: GPL
  * Author: 	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter: @breaknenter Hashtag: #inceptiontool
@@ -71,14 +71,6 @@ as:
 	cd inception
 	sudo python3 setup.py install
 
-On BackTrack and some other configurations, you may have to set LD_LIBRARY path
-to `/usr/local/lib` to make it find the `libforensics1394` libraries:
-
-	export LD_LIBRARY_PATH=/usr/local/lib
-
-To permanently fix this, copy the `libforensics1394` libraries from
-`/usr/local/lib` to `/usr/lib`.
-
 
 Usage
 -----
@@ -106,8 +98,6 @@ Please see the tool home page at http://www.breaknenter.org/projects/inception.
 Planned features
 ----------------
 
- * Patch signatures for Mac OS X and Linux
- * Increased signature stability
  * Other winlockpwn techniques
  * Extraction of AES (and perhaps Serpent and Twofish) encryption keys
  * Extraction of NTLM/LM hashes
@@ -129,6 +119,8 @@ Development history
            from Algeria  
  * 0.0.8 - Fixed Ubuntu unlock and privilege escalation patches - single patch
            for double the action
+ * 0.1.0 - First minor version! Added signatures for OS X and Vista, plus quite
+           a few bug fixes
  
  
 Disclaimer

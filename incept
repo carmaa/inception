@@ -26,8 +26,8 @@ def main(argv):
  _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
  _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
-v.0.0.8
-by Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org> 2012
+v.0.1.0  © Carsten Maartmann-Moe 2012
+Email:   Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 Twitter: @breaknenter Web: http://breaknenter.org
 
 For updates, visit/clone https://github.com/carmaa/inception or visit the

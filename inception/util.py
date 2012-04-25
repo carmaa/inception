@@ -33,7 +33,7 @@ def msg(sign, message):
     print('[' + str(sign) + '] ' + str(message))
         
     
-def clean_hex(s):
+def hexstr2bytes(s):
     '''
     Takes a string of hexadecimal characters preceded by '0x' and returns the
     corresponding byte string. That is, '0x41' becomes b'A'
@@ -43,10 +43,10 @@ def clean_hex(s):
         if len(s) % 2 == 1: s = '0' + s # Pad with zero if odd-length string
         return binascii.unhexlify(bytes(s, sys.getdefaultencoding()))
     else:
-        raise BytesWarning('Not a string starting with \'0x\'')
+        raise BytesWarning('Not a string starting with \'0x\': {0}'.format(s))
     
 
-def dirty_hex(b):
+def bytes2hexstr(b):
     '''
     Takes a string of bytes and returns a string with the corresponding
     hexadecimal representation. Example: b'A' becomes '0x41'
@@ -63,11 +63,15 @@ def bytelen(s):
     '''
     return (len(hex(s))) // 2
 
+
 def int2binhex(i):
     '''
-    Converts an integer to its binary hexadecimal representation
+    Converts positive integer to its binary hexadecimal representation
     '''
-    return clean_hex(hex(i))
+    if i < 0:
+        raise TypeError('Not a positive integer: {0}'.format(i))
+    return hexstr2bytes(hex(i))
+
 
 def open_file(filename, mode):
     '''
@@ -105,7 +109,7 @@ def needtoavoid(address):
         return False
     avoid = []
     if settings.apple:
-        avoid = settings.apple_avoid # Avoid this region if dumping memory from Macs
+        avoid = settings.apple_avoid # Avoid this region if dumping from Macs
     else:
         avoid = settings.avoid # Avoid this region if dumping memory from PCs
     return avoid[0] <= address <= avoid[1] and not settings.filemode
@@ -116,6 +120,7 @@ def detectos():
     Detects host operating system
     '''
     return platform.system()
+
 
 def unloadIOFireWireIP():
     '''
@@ -130,6 +135,7 @@ def unloadIOFireWireIP():
         else:
             fail('Could not unload IOFireWireIP.kext')
 
+
 def restart():
     '''
     Restarts the current program.
@@ -138,6 +144,7 @@ def restart():
     '''
     python = sys.executable
     os.execl(python, python, * sys.argv)
+
 
 class MemoryFile:
     '''

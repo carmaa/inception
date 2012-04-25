@@ -24,7 +24,7 @@ Created on Jun 23, 2011
 from binascii import hexlify
 from inception.firewire import FireWire
 from inception.util import msg, MemoryFile, fail, bytelen, \
-    int2binhex, separator, dirty_hex
+    int2binhex, separator, bytes2hexstr
 import inception.settings as settings
 import sys
 import time
@@ -131,8 +131,8 @@ def patch(device, address, chunks):
             device.write(realaddress, patch)
             read = device.read(realaddress, len(patch))
             if settings.verbose:
-                msg('*', 'Data written: 0x' + dirty_hex(patch))
-                msg('*', 'Data read:    0x' + dirty_hex(read))
+                msg('*', 'Data written: 0x' + bytes2hexstr(patch))
+                msg('*', 'Data read:    0x' + bytes2hexstr(read))
             if  read != patch:
                 success = False
     return success
@@ -196,16 +196,18 @@ def searchanddestroy(device, target, memsize):
                         pageaddress = address & mask
                         if sig_len == i and offset_len == n:
                             pageaddress = pageaddress + settings.PAGESIZE
+                            
                         # Zero out counters and vectors
                         j = 0
                         count = 0
                         r = []
                         p = []
+                        
                         # Print status
                         mibaddr = pageaddress // settings.MiB
                         sys.stdout.write('[*] Searching, {0:>4d} MiB so far'.format(mibaddr))
                         if settings.verbose:
-                            sys.stdout.write('. Sample data read: 0x' + hexlify(cand[0:8]).decode(settings.encoding))
+                            sys.stdout.write('. Sample data read: {0}'.format(bytes2hexstr(cand)))
                         sys.stdout.write('\r')
                         sys.stdout.flush()
                          

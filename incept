@@ -55,7 +55,7 @@ Inception homepage at http://breaknenter.org/projects/inception
     # Initialize
     targets = settings.targets
     
-    # Detect host OS, and
+    # Detect host OS
     settings.os = detectos()
     
     # Parse args

@@ -169,7 +169,7 @@ class FireWire:
                 msg('*', 'The target seems to be a Mac, forcing avoidance (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
             return i
         else:
-            msg('!', 'Please enter a selection between 1 and {0:s}' + str(nof_devices) + '. Type \'q\' to quit')
+            msg('!', 'Please enter a selection between 1 and ' + str(nof_devices) + '. Type \'q\' to quit')
             return self.select_device()
         
         

@@ -75,5 +75,4 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(int2binhex(test4), test4_res)
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.test_screenlock']
     unittest.main()

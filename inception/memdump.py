@@ -22,10 +22,9 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from binascii import hexlify
 from inception import settings
 from inception.firewire import FireWire
-from inception.util import msg, MemoryFile, needtoavoid
+from inception.util import msg, MemoryFile, needtoavoid, bytes2hexstr
 import sys
 import time
 
@@ -39,7 +38,7 @@ def dump(start, end):
         starttime = time.time()
         device_index = fw.select_device()
         # Print selection
-        msg('*', 'Selected device: ' + fw.vendors[device_index])
+        msg('*', 'Selected device: {0}'.format(fw.vendors[device_index]))
 
     # Lower DMA shield or use a file as input
     device = None
@@ -52,7 +51,7 @@ def dump(start, end):
     requestsize = settings.max_request_size
     size = end - start
 
-    filename = 'memdump_' + hex(start) + '-' + hex(end) + '.bin'
+    filename = 'memdump_{0}-{1}.bin'.format(hex(start), hex(end))
     file = open(filename, 'wb')
     
     msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2} MiB'.format(start, end, size/settings.MiB))
@@ -69,15 +68,15 @@ def dump(start, end):
             dumped = (i - start) // settings.MiB
             sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far'.format(dumped))
             if settings.verbose:
-                sys.stdout.write('. Sample data read: 0x' + hexlify(data[0:8]).decode(settings.encoding))
+                sys.stdout.write('. Sample data read: {0}'.format(bytes2hexstr(data)))
             sys.stdout.write('\r')
             sys.stdout.flush()
         file.close()
-        print()
-        msg('*', 'Dumped memory to file ' + filename)
+        print() # Filler
+        msg('*', 'Dumped memory to file {0}'.format(filename))
         device.close()
     except KeyboardInterrupt:
         file.close()
         print()
-        msg('*', 'Dumped memory to file ' + filename)
+        msg('*', 'Dumped memory to file {0}'.format(filename))
         raise KeyboardInterrupt

@@ -108,7 +108,7 @@ def needtoavoid(address):
     if settings.override:
         return False
     avoid = []
-    if settings.apple:
+    if settings.apple_target:
         avoid = settings.apple_avoid # Avoid this region if dumping from Macs
     else:
         avoid = settings.avoid # Avoid this region if dumping memory from PCs

@@ -30,7 +30,7 @@ import sys
 import time
 import os
 
-def dump():
+def dump(start, end):
     # Make sure that the right mode is set
     settings.memdump = True
     
@@ -49,26 +49,9 @@ def dump():
     else:
         elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
-    
-    if settings.override:
-        start = 0x0
-    else:
-        start = settings.startaddress
-    
-    if settings.dumpsize: 
-        size = settings.dumpsize
-    else:
-        if settings.filemode:
-            size = os.path.getsize(settings.filename)
-        else:
-            size = settings.memsize
-    
-    if settings.override:
-        end = size
-    else:
-        end = start + size
         
     requestsize = settings.max_request_size
+    size = end - start
 
     filename = 'memdump_' + hex(start) + '-' + hex(end) + '.bin'
     file = open(filename, 'wb')

@@ -61,7 +61,6 @@ def dump(start, end):
         for i in range(start, end, requestsize):
             # Avoid accessing upper memory area if we are using FireWire
             if needtoavoid(i):
-                print('Avoid')
                 data = b'\x00' * requestsize
             else: 
                 data = device.read(i, requestsize)

@@ -237,7 +237,7 @@ def attack(targets):
         start = time.time()
         device_index = fw.select_device()
         # Print selection
-        msg('*', 'Selected device: {0}'.format(fw.vendors[device_index]))
+        msg('*', 'Selected device: {0}\n'.format(fw.vendors[device_index]))
 
     # List targets
     print('Available targets:')

@@ -162,9 +162,11 @@ class FireWire:
         if selected <= nof_devices:
             i = selected - 1 
             vendor = self._vendors[i]
+            # If the target is a Mac, and we are in memdump mode with the
+            # --override switch set, make sure we don't touch OS X's g-spot
             if 'apple' in vendor.lower() and settings.memdump and settings.override:
-                msg('*', 'The target seems to be a Mac, forcing override (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
                 settings.apple_target = True
+                msg('*', 'The target seems to be a Mac, forcing avoidance (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
             return i
         else:
             msg('!', 'Please enter a selection between 1 and {0:s}' + str(nof_devices) + '. Type \'q\' to quit')

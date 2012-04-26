@@ -63,7 +63,11 @@ def dump():
         else:
             size = settings.memsize
     
-    end = start + size
+    if settings.override:
+        end = size
+    else:
+        end = start + size
+        
     requestsize = settings.max_request_size
 
     filename = 'memdump_' + hex(start) + '-' + hex(end) + '.bin'

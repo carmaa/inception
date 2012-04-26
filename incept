@@ -191,7 +191,8 @@ IEEE 1394 SBP-2 DMA.
     -o, --override:       Override access of upper memory area (0xa0000-
                           0xfffff). This area is not accessed by default. Use
                           this if you want to force the tool to access this
-                          memory area (Warning: can cause target kernel panics)
+                          memory area (Warning: can cause target kernel panics).
+                          Only compatible with memdump and pickpocket modes
     -p, --pickpocket:     Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain

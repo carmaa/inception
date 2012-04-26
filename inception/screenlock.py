@@ -240,7 +240,7 @@ def attack(targets):
         msg('*', 'Selected device: {0}\n'.format(fw.vendors[device_index]))
 
     # List targets
-    print('Available targets:')
+    msg('*', 'Available targets:')
     separator()
     for number, target in enumerate(targets, 1):
                 msg(number, target['OS'] + ': ' + target['name'])

@@ -27,7 +27,9 @@ from inception import settings
 import sys
 import os
 import time
+from subprocess import call
 
+# Error handling for cases where libforensic1394 is not installed in /usr/lib
 try:
     from forensic1394.bus import Bus
 except OSError:
@@ -42,9 +44,8 @@ except OSError:
         restart()
     else:
         fail('Could not load libforensic1394')
-        
-from subprocess import call
 
+# List of FireWire OUIs
 OUI = {}
 
 class FireWire:
@@ -61,8 +62,8 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            load = input('[!] FireWire modules do not seem to be loaded. Load them? [Y/n]: ').lower()
-            if 'y' == load or '' == load:
+            answer = input('[!] FireWire modules do not seem to be loaded. Load them? [Y/n]: ').lower()
+            if answer in ['y', '']:
                 status = call('modprobe firewire-ohci', shell=True)
                 if status == 0:
                     try:
@@ -76,12 +77,12 @@ class FireWire:
             else:
                 fail('FireWire modules not loaded')
                 
-        
         # Enable SBP-2 support to ensure we get DMA
         self._devices = self._bus.devices()
         self._oui = self.init_OUI()
         self._vendors = []
         self._max_request_size = settings.PAGESIZE
+        
         
     def init_OUI(self, filename = settings.OUICONF):
         '''Populates the global OUI dictionary with mappings between 24 bit vendor
@@ -109,18 +110,20 @@ class FireWire:
         except IOError:
             msg('!', 'Vendor OUI lookups will not be performed: {0}'.format(filename))
         return OUI
+    
             
     def resolve_oui(self, vendor):
         try:
             return self._oui[vendor]
         except KeyError:
             return ''
+        
             
     def businfo(self):
         '''
         Prints all available information of the devices connected to the FireWire
-        bus and looks up missing vendor names & populates the internal vendor
-        list. Must be called before attempting to autodetect type of operating 
+        bus, looks up missing vendor names & populates the internal vendor
+        list. Must be called before attempting to auto detect type of operating 
         system connected to the bus
         '''
         if not self._devices:
@@ -130,13 +133,15 @@ class FireWire:
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
             vendorname = device.vendor_name.decode(settings.encoding)
-            if not vendorname: vendorname = self.resolve_oui(vid) # Resolve not found name
+            # Resolve if name not given by device vendor ID
+            if not vendorname:
+                vendorname = self.resolve_oui(vid) 
             self._vendors.append(vendorname)
             pid = device.product_id
             productname = device.product_name.decode(settings.encoding)
-            msg(n, 'Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'.format(vendorname, 
-                                                                                   vid, productname, pid))
+            msg(n, 'Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'.format(vendorname, vid, productname, pid))
         separator()
+        
     
     def select_device(self):
         if not self._vendors:
@@ -146,7 +151,7 @@ class FireWire:
             msg('*', 'Only one device present, device auto-selected as target')
             selected = 0
         else:
-            selected = input('[!] Please select a device to attack (or enter \'q\' to quit): ')
+            selected = input('[!] Please select a device to attack (or type \'q\' to quit): ')
             try:
                 selected = int(selected)
             except:
@@ -158,17 +163,15 @@ class FireWire:
             i = selected - 1 
             vendor = self._vendors[i]
             if 'apple' in vendor.lower() and settings.memdump and settings.startaddress == 0x00:
-                msg('*', 'The target seems to be a Mac, forcing override (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
+                msg('*', 'The target seems to be a Mac, forcing override \
+                          (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
                 settings.apple = True
                 settings.override = True
             return i
         else:
-            msg('!', 'Please enter a selection between 1 and ' + str(nof_devices) + '. Type \'q\' to quit')
+            msg('!', 'Please enter a selection between 1 and {0:s}' + str(nof_devices) + '. Type \'q\' to quit')
             return self.select_device()
-    
-    def detect_targets(self, targets, vendor_index):
-        #vendors = self.businfo()
-        pass
+        
         
     def getdevice(self, num, elapsed):
         didwait = False
@@ -186,12 +189,14 @@ class FireWire:
             print() # Create a newline so that next call to print() will start on a new line
         return d
             
+            
     @property
     def bus(self):
         """
         The firewire bus; Bus.
         """
         return self._bus
+    
     
     @property
     def devices(self):
@@ -201,12 +206,14 @@ class FireWire:
         self._devices = self._bus.devices()
         return self._devices
     
+    
     @property
     def oui(self):
         """
         The OUI dict
         """
         return self._oui
+    
     
     @property
     def vendors(self):

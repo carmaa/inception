@@ -21,7 +21,6 @@ Created on Jun 23, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from binascii import hexlify
 from inception.firewire import FireWire
 from inception.util import msg, MemoryFile, fail, bytelen, \
     int2binhex, separator, bytes2hexstr

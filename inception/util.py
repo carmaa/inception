@@ -105,8 +105,6 @@ def needtoavoid(address):
     the tool should avoid to make sure no kernel panics are induced at the
     target
     '''
-    if settings.override:
-        return False
     avoid = []
     if settings.apple_target:
         avoid = settings.apple_avoid # Avoid this region if dumping from Macs

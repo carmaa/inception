@@ -91,7 +91,7 @@ Inception homepage at http://breaknenter.org/projects/inception
         elif opt in ('-D', '--dump-all'):
             settings.memdump = True
             start = settings.startaddress
-            end = settings.memsize - start
+            end = settings.memsize
         elif opt in ('-d', '--dump'):
             settings.memdump = True
             try:
@@ -101,6 +101,11 @@ Inception homepage at http://breaknenter.org/projects/inception
                     start = int(start, 0) & 0xfffff000 # Address
                 else:
                     start = int(start) * settings.PAGESIZE # Page number
+                # If the start address is below 1 MiB, the user is overriding
+                # default behavior (avoiding memory below 1 MiB)
+                if start < settings.startaddress:
+                    settings.override = True
+                    msg('*', 'Overriding default behavior, accessing memory below 1 MiB')
                 # Fix size
                 size = size.lower()
                 if size.find('kib') != -1 or size.find('kb') != -1:
@@ -190,11 +195,6 @@ IEEE 1394 SBP-2 DMA.
     -h, --help:           Displays this message
     -l, --list:           Lists configured operating system targets
     -n, --no-write:       Dry run, do not write back to memory
-    -o, --override:       Override access of upper memory area (0xa0000-
-                          0xfffff). This area is not accessed by default. Use
-                          this if you want to force the tool to access this
-                          memory area (Warning: can cause target kernel panics).
-                          Only compatible with memdump and pickpocket modes
     -p, --pickpocket:     Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain

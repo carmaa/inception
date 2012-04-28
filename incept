@@ -176,12 +176,13 @@ IEEE 1394 SBP-2 DMA.
                           'memdump_START-END.bin'. ADDR can be a page number or 
                           a hexadecimal address within a page. PAGES can be a
                           number of pages or a size of data using the
-                          denomination KiB, MiB or GiB. Example: -d 0x00ff 5MiB
+                          denomination KiB, MiB or GiB. Example: -d 0x00ff,5MiB
                           This command dumps the first 5 MiB of memory
     -D                    Same as above, but dumps all available memory
     -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
-                          example to facilitate attacks on VMware machines or
-                          to ease testing and signature generation efforts
+                          example to facilitate attacks on VMware machine memory
+                          files (.vmem) and to ease testing and signature 
+                          creation efforts
     --force-write         Forces patching when using files as input (see -f). By
                           default, Inception does not write back to data files
     -h, --help:           Displays this message
@@ -194,9 +195,6 @@ IEEE 1394 SBP-2 DMA.
     -p, --pickpocket:     Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain
-    -t TARGET, --technique=TARGET:
-                          Specify target operating system (use --list to list 
-                          available targets)
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over
                           FireWire module) which are known to cause kernel
                           panics when the host (attacking system) is OS X. Must

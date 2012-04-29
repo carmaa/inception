@@ -17,30 +17,33 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Created on Feb 1, 2012
+Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
+import unittest
+from inception.firewire import FireWire
 
-from inception import firewire, memdump, settings
-from inception.util import msg
-import time
-import sys
 
-def lurk():
-    print('[*] Lurking in the shrubbery waiting for a device to connect. Ctrl-C to abort', end = '')
-    sys.stdout.flush()
-    try:
-        # Initiate FireWire
-        fw = firewire.FireWire()
-        while True: # Loop until aborted
-            while len(fw.devices) == 0:
-                print('.', end = '')
-                sys.stdout.flush()
-                time.sleep(settings.polldelay)
-                pass # Do nothing until a device connects
-            print() # Newline
-            memdump.dump()
-    except KeyboardInterrupt:
-        print()
-        msg('*', 'Interrupted')
+class TestUtil(unittest.TestCase):
+
+
+    def setUp(self):
+        self.fw = FireWire()
+
+
+    def tearDown(self):
+        pass
+
+
+    def test_init_OUI(self):
+        self.assertIsInstance(self.fw.oui, dict)
+        # Test a couple of OUIs
+        self.assertEqual(self.fw.resolve_oui(0x03), 'XEROX CORPORATION')
+        self.assertEqual(self.fw.resolve_oui(0xE0C1), 'MEMOREX TELEX JAPAN, LTD.')
+        self.assertEqual(self.fw.resolve_oui(0xFCFBFB), 'Cisco Systems')
+    
+
+
+if __name__ == "__main__":
+    unittest.main()

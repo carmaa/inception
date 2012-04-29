@@ -123,8 +123,7 @@ class FireWire:
         '''
         Prints all available information of the devices connected to the FireWire
         bus, looks up missing vendor names & populates the internal vendor
-        list. Must be called before attempting to auto detect type of operating 
-        system connected to the bus
+        list
         '''
         if not self._devices:
             fail('No FireWire devices detected on the bus')
@@ -144,6 +143,10 @@ class FireWire:
         
     
     def select_device(self):
+        '''
+        Present the user of the option to select what device (connected to the
+        bus) to attack
+        '''
         if not self._vendors:
             self.businfo()
         nof_devices = len(self._vendors)

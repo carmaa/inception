@@ -28,9 +28,10 @@ import time
 import sys
 
 def lurk():
-    print('[*] Lurking in the shrubbery waiting for a device to connect', end = '')
+    print('[*] Lurking in the shrubbery waiting for a device to connect. Ctrl-C to abort', end = '')
     sys.stdout.flush()
     try:
+        # Initiate FireWire
         fw = firewire.FireWire()
         while True: # Loop until aborted
             while len(fw.devices) == 0:

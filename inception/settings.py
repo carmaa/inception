@@ -63,7 +63,7 @@ apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple_target = False            # Set to true if we are attacking a Mac
 pickpocket = False              # Pickpocket
 polldelay = 5                   # 5 seconds delay between FireWire delays
-os = None                       # Detected OS is None by default
+os = None                       # Detected host OS is None by default
 forcewrite = False              # Do not write back to file in file mode
 
 #===============================================================================

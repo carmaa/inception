@@ -51,6 +51,7 @@ def select_target(targets, selected=False):
     else:
         msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
         return select_target(targets)
+    
 
 def printdetails(target): # TODO: Fix this method
     '''
@@ -223,6 +224,7 @@ def searchanddestroy(device, target, memsize):
     # If we get here, we haven't found anything :-/
     print()    
     return (None, None)
+
 
 def attack(targets):
     '''

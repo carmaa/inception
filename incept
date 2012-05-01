@@ -44,12 +44,9 @@ def main(argv):
  _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
  _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
-v.0.1.0  (C) Carsten Maartmann-Moe 2012
+v.0.1.1  (C) Carsten Maartmann-Moe 2012
 Email:   Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
-Twitter: @breaknenter Web: http://breaknenter.org
-
-For updates, visit/clone https://github.com/carmaa/inception or visit the
-Inception homepage at http://breaknenter.org/projects/inception
+Twitter: @breaknenter Web: http://breaknenter.org/projects/inception
 ''')
     
     # Initialize
@@ -61,7 +58,7 @@ Inception homepage at http://breaknenter.org/projects/inception
     # Parse args
     try:
         opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:nopu', 
-                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'override', 'pickpocket', 'unload'])
+                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -118,7 +115,7 @@ Inception homepage at http://breaknenter.org/projects/inception
                     size = int(size) * settings.PAGESIZE
                 if size < settings.PAGESIZE:
                     msg('!', 'Minimum dump size is a page, {0} KiB'.format(settings.PAGESIZE // settings.KiB))
-                end = size - start
+                end = start + size
             except:
                 fail('Could not parse argument to {0}'.format(opt))
         elif opt in ('-i', '--interactive'):
@@ -129,9 +126,6 @@ Inception homepage at http://breaknenter.org/projects/inception
             fw = FireWire()
             fw.businfo()
             sys.exit()
-        elif opt in ('-o', '--override'):
-            #settings.override = True
-            pass
         elif opt in ('-p' '--pickpocket'):
             settings.pickpocket = True
         elif opt in ('-u' '--unload'):

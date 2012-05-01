@@ -26,6 +26,9 @@ import inception.settings
 import imp
 import os
 import unittest
+import sys
+from _pyio import StringIO
+from os import path
 
 
 class TestScreenlock(unittest.TestCase):
@@ -34,12 +37,12 @@ class TestScreenlock(unittest.TestCase):
     def setUp(self):
         self.samples = []
         self.tests = None
-        for root, dirs, files in os.walk('../samples'): #@UnusedVariable
+        for root, dirs, files in os.walk(path.join(path.dirname(__file__), '../samples/')): #@UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
                 mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])
                 if file_ext == '.py':
-                    util.msg('*', 'Added sample {0}'.format(mod_name))
+                    #util.msg('*', 'Added sample {0}'.format(mod_name))
                     self.samples.append((mod_name, filepath))
 
 
@@ -53,20 +56,22 @@ class TestScreenlock(unittest.TestCase):
             settings.startaddress = 0x00000000
             mod_name = sample[0]
             filepath = sample[1]
-            util.msg('T', 'Testing sample {0}'.format(mod_name))
+            #util.msg('T', 'Testing sample {0}'.format(mod_name))
             try:
                 module = imp.load_source(mod_name, filepath)
             except ImportError:
                 assert(module)
             settings.filemode = True
-            settings.filename = '../samples/' + mod_name + '.bin'
+            settings.filename = path.join(path.dirname(__file__), '../samples/') + mod_name + '.bin'
             foundtarget = False
             for target in settings.targets:
                 if target['OS'] == module.OS:
                     foundtarget = [target]
-            assert(foundtarget)
-            util.msg('T', 'Found target: {0}'.format(foundtarget[0]['OS']))
+            self.assertTrue(foundtarget)
+            #util.msg('T', 'Found target: {0}'.format(foundtarget[0]['OS']))
+            sys.stdout = StringIO() # Supress output
             address, page = screenlock.attack(foundtarget)
+            sys.stdout = sys.__stdout__ # Restore output
             self.assertEqual(address & 0x00000fff, module.offset)
             self.assertEqual(page, module.page)
 

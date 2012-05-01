@@ -73,7 +73,7 @@ Twitter: @breaknenter Web: http://breaknenter.org/projects/inception
         elif opt in ('--force-write'):
             settings.forcewrite = True
         elif opt in ('-l', '--list'):
-            msg('*', 'Available targets (from settings.py):')
+            msg('*', 'Available targets:')
             separator()
             for n, target in enumerate(targets, 1):
                 msg(n, target['OS'] + ': ' + target['name'])

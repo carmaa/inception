@@ -13,9 +13,9 @@ utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or
 Pointsec. There are plenty of other (and better) ways to hack a machine that 
 doesn't pack encryption.
 
-As of version 0.1.0, it is able to unlock Windows XP SP2-3, Windows 7 SP0-1,
-Vista SP0 and SP2, Mac OS X Snow Leopard and Lion, Ubuntu 11.04 and 11.10 x86
-and x64-bit machines and escalate privileges via the `runas` or `sudo -s`
+As of version 0.1.1, it is able to unlock Windows XP SP2-3, Windows 7 SP0-1,
+Vista SP0 and SP2, Mac OS X Snow Leopard and Lion, Ubuntu 11.04, 11.10 and 12.04
+x86 and x64-bit machines and escalate privileges via the `runas` or `sudo -s`
 commands, respectively. More signatures will be added. The tool makes extensive
 use of the `libforensic1394`library courtesy of Freddie Witherden under a LGPL
 license.
@@ -24,7 +24,7 @@ license.
 Key data
 --------
 
- * Version: 0.1.0
+ * Version: 0.1.1
  * License: GPL
  * Author: 	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter: @breaknenter Hashtag: #inceptiontool
@@ -123,6 +123,7 @@ Development history
            for double the action
  * 0.1.0 - First minor version! Added signatures for OS X and Vista, plus quite
            a few bug fixes
+ * 0.1.1 - Added signatures for Ubuntu 12.04 LTS
  
  
 Disclaimer

@@ -57,7 +57,7 @@ Twitter: @breaknenter Web: http://breaknenter.org/projects/inception
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:nopu', 
+        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:npu', 
                                    ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload'])
     except getopt.GetoptError as err:
         msg('!', err)

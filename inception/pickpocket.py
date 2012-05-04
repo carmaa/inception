@@ -45,6 +45,6 @@ def lurk():
             print() # Newline
             memdump.dump(start, end)
     except KeyboardInterrupt:
-        print() # TODO: Fix keyboard handling
+        print() # TODO: Fix keyboard handling (interrupt handling)
         raise KeyboardInterrupt
         

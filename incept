@@ -44,7 +44,7 @@ def main(argv):
  _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
  _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
-v.0.1.1  (C) Carsten Maartmann-Moe 2012
+v.0.1.2  (C) Carsten Maartmann-Moe 2012
 Email:   Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 Twitter: @breaknenter Web: http://breaknenter.org/projects/inception
 ''')
@@ -162,7 +162,7 @@ Twitter: @breaknenter Web: http://breaknenter.org/projects/inception
         traceback.print_exc()
         separator()
     except KeyboardInterrupt:
-        msg('!', 'Aborted.')
+        msg('!', 'Aborted')
 
 
 def usage(execname):

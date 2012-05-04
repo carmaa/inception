@@ -23,14 +23,17 @@ Created on Feb 1, 2012
 '''
 
 from inception import firewire, memdump, settings
-from inception.util import msg
 import time
 import sys
+from inception.util import fail
 
 def lurk():
-    print('[*] Lurking in the shrubbery waiting for a device to connect. Ctrl-C to abort', end = '')
-    sys.stdout.flush()
+    start = settings.startaddress
+    end = settings.memsize
+    
     try:
+        print('[*] Lurking in the shrubbery waiting for a device to connect. Ctrl-C to abort', end = '')
+        sys.stdout.flush()
         # Initiate FireWire
         fw = firewire.FireWire()
         while True: # Loop until aborted
@@ -40,7 +43,8 @@ def lurk():
                 time.sleep(settings.polldelay)
                 pass # Do nothing until a device connects
             print() # Newline
-            memdump.dump()
+            memdump.dump(start, end)
     except KeyboardInterrupt:
-        print()
-        msg('*', 'Interrupted')
+        print() # TODO: Fix keyboard handling
+        raise KeyboardInterrupt
+        

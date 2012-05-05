@@ -198,7 +198,7 @@ targets=[{'OS': 'Windows 7',
                                       'patch': 0x41bf0000000048c78588,
                                       'patchoffset': 0x00}]},
                          {'offsets': [0xbff], # 10.6.8 x64
-                          'chunks': [{'chunk': 0x41bf60c8ffff,
+                          'chunks': [{'chunk': 0x41bff6c8ffff,
                                       'internaloffset': 0x00,
                                       'patch': 0x41bf00000000,
                                       'patchoffset': 0x00}]},

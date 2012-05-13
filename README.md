@@ -88,18 +88,19 @@ at http://www.breaknenter.org/projects/inception.
 Known bugs / caveats
 --------------------
 
-Please see the tool home page at http://www.breaknenter.org/projects/inception.
+Please see the tool home page at http://www.breaknenter.org/projects/inception/#Known_bugs.
    
 
 Troubleshooting
 ---------------
 
-Please see the tool home page at http://www.breaknenter.org/projects/inception.
+Please see the tool home page at http://www.breaknenter.org/projects/inception/#Troubleshooting.
 
 
 Planned features
 ----------------
 
+ * Insert and execute memory-only rootkit
  * Other winlockpwn techniques
  * Extraction of AES (and perhaps Serpent and Twofish) encryption keys
  * Extraction of NTLM/LM hashes

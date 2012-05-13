@@ -46,7 +46,7 @@ def select_target(targets, selected=False):
         else:
             msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
             return select_target(targets)
-    if selected <= nof_targets:
+    if 0 < selected <= nof_targets:
         return targets[selected - 1]
     else:
         msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')

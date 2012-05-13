@@ -162,7 +162,7 @@ class FireWire:
                 else:
                     msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
                     return self.select_device()
-        if selected <= nof_devices:
+        if 0 < selected <= nof_devices:
             i = selected - 1 
             vendor = self._vendors[i]
             # If the target is a Mac, and we are in memdump mode with the

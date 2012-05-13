@@ -31,12 +31,13 @@ import getopt
 import os
 import sys
 import traceback
+from datetime import time, date
 
 
 def main(argv):
     settings.encoding = sys.getdefaultencoding()
     
-    # Print banner
+    # Print obligatory awesome ASCII banner
     print('''
  _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
  _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
@@ -44,10 +45,9 @@ def main(argv):
  _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
  _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
-v.0.1.3  (C) Carsten Maartmann-Moe 2012
-Email:   Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
-Twitter: @breaknenter Web: http://breaknenter.org/projects/inception
-''')
+v.{0} (C) Carsten Maartmann-Moe {1}
+Download: {2} | Twitter: @breaknenter
+'''.format(settings.version, date.today().strftime("%Y"), settings.url))
     
     # Initialize
     targets = settings.targets

@@ -166,11 +166,12 @@ Download: {2} | Twitter: @breaknenter
 
 
 def usage(execname):
-    print('''Usage: ''' + execname + ''' [OPTIONS]
-
-Inception is a FireWire physical memory manipulation and hacking tool exploiting
+    print('''Inception is a FireWire physical memory manipulation and hacking tool exploiting
 IEEE 1394 SBP-2 DMA.
 
+Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
+
+Options:
     -d, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
                           content from ADDR page. Memory content is dumped to 
                           files with the file name syntax:
@@ -178,28 +179,29 @@ IEEE 1394 SBP-2 DMA.
                           a hexadecimal address within a page. PAGES can be a
                           number of pages or a size of data using the
                           denomination KiB, MiB or GiB. Example: -d 0x00ff,5MiB
-                          This command dumps the first 5 MiB of memory
+                          This command dumps the first 5 MiB of memory after 
+                          0x00ff.
     -D                    Same as above, but dumps all available memory
     -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machine memory
                           files (.vmem) and to ease testing and signature 
-                          creation efforts
+                          creation efforts.
     --force-write         Forces patching when using files as input (see -f). By
-                          default, Inception does not write back to data files
-    -h, --help:           Displays this message
-    -l, --list:           Lists configured operating system targets
-    -n, --no-write:       Dry run, do not write back to memory
+                          default, Inception does not write back to data files.
+    -h, --help:           Displays this message.
+    -l, --list:           Lists configured operating system targets.
+    -n, --no-write:       Dry run, do not write back to memory.
     -p, --pickpocket:     Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
-                          exploiting a Daisy chain
+                          exploiting a Daisy chain.
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over
                           FireWire module) which are known to cause kernel
                           panics when the host (attacking system) is OS X. Must
                           be executed BEFORE any FireWire devices are connected
-                          to the host
+                          to the host.
     -v, --verbose:        Verbose mode - among other things, this prints read 
-                          data to stdout, useful for debugging
-    -wait, --wait=TIME:   Delay attack by TIME seconds. This is useful in order
+                          data to stdout, useful for debugging.
+    -w,    --wait=TIME:   Delay attack by TIME seconds. This is useful in order
                           to guarantee that the target machine has successfully
                           granted the host DMA before attacking. If the
                           attack fails, try to increase this value. Default

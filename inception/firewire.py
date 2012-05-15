@@ -152,7 +152,7 @@ class FireWire:
         nof_devices = len(self._vendors)
         if nof_devices == 1:
             msg('*', 'Only one device present, device auto-selected as target')
-            selected = 0
+            return 0
         else:
             selected = input('[!] Please select a device to attack (or type \'q\' to quit): ')
             try:

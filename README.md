@@ -24,7 +24,7 @@ license.
 Key data
 --------
 
- * Version: 0.1.3
+ * Version: 0.1.4
  * License: GPL
  * Author: 	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter: @breaknenter Hashtag: #inceptiontool
@@ -127,6 +127,7 @@ Development history
  * 0.1.1 - Added signatures for Ubuntu 12.04 LTS
  * 0.1.2 - Patched several bugs
  * 0.1.3 - Patched OS X 10.6.8 x64 signature bug
+ * 0.1.4 - Added manual mode easing testing of new signatures
  
  
 Disclaimer

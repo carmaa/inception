@@ -32,6 +32,7 @@ import os
 import sys
 import traceback
 from datetime import time, date
+import pprint
 
 
 def main(argv):
@@ -57,8 +58,8 @@ Download: {2} | Twitter: @breaknenter
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:npu', 
-                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload'])
+        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:npum:', 
+                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload', 'manual='])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -126,14 +127,32 @@ Download: {2} | Twitter: @breaknenter
             fw = FireWire()
             fw.businfo()
             sys.exit()
-        elif opt in ('-p' '--pickpocket'):
+        elif opt in ('-p', '--pickpocket'):
             settings.pickpocket = True
-        elif opt in ('-u' '--unload'):
+        elif opt in ('-u', '--unload'):
             if settings.os == settings.OSX:
                 unloadIOFireWireIP()
             else:
                 fail('Host system is not OS X, aborting')
             sys.exit()
+        elif opt in ('-m', '--manual'):
+            try:
+                offset, signature, patch = str(arg).split(',')
+                offset = int(offset, 0)
+                signature = int(signature, 0)
+                patch = int(patch, 0)
+            except ValueError:
+                fail('You must provide a valid offset, signature and patch in manual mode')
+            targets = [{'OS': 'Non-specified OS',
+                        'versions': ['N/A'],
+                        'architectures': ['N/A'],
+                        'name': 'Manual patch',
+                        'notes': 'N/A',
+                        'signatures': [{'offsets': [offset],
+                                        'chunks': [{'chunk': signature,
+                                                    'internaloffset': 0x00,
+                                                    'patch': patch,
+                                                    'patchoffset': 0x00}]}]}]
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -172,8 +191,9 @@ IEEE 1394 SBP-2 DMA.
 Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
 
 Options:
-    -d, --dump=ADDR,PAGES Non-intrusive memory dump. Dumps PAGES of memory
-                          content from ADDR page. Memory content is dumped to 
+    -d, --dump=ADDRESS,PAGES:
+                          Non-intrusive memory dump. Dumps PAGES of memory
+                          content from ADDRESS page. Memory content is dumped to 
                           files with the file name syntax:
                           'memdump_START-END.bin'. ADDR can be a page number or 
                           a hexadecimal address within a page. PAGES can be a
@@ -190,6 +210,11 @@ Options:
                           default, Inception does not write back to data files.
     -h, --help:           Displays this message.
     -l, --list:           Lists configured operating system targets.
+    -m, --manual=OFFSET,SIGNATURE,PATCH:
+                          Specify a patch manually. Enables easy testing of new
+                          signatures; to use provide a comma-separated list of
+                          an offset, a signature and a patch as integers or
+                          in a hexadecimal format (prepended by '0x').
     -n, --no-write:       Dry run, do not write back to memory.
     -p, --pickpocket:     Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when

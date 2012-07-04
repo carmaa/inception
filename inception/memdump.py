@@ -68,7 +68,7 @@ def dump(start, end):
             dumped = (i - start) // settings.MiB
             sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far'.format(dumped))
             if settings.verbose:
-                sys.stdout.write('. Sample data read: {0}'.format(bytes2hexstr(data)[0:30]))
+                sys.stdout.write('. Sample data read: {0}'.format(bytes2hexstr(data)[0:24]))
             sys.stdout.write('\r')
             sys.stdout.flush()
         file.close()

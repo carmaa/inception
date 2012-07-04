@@ -201,7 +201,11 @@ Options:
                           denomination KiB, MiB or GiB. Example: -d 0x00ff,5MiB
                           This command dumps the first 5 MiB of memory after 
                           0x00ff.
-    -D                    Same as above, but dumps all available memory
+    -D                    Same as -d, but dumps all available memory. Note that
+                          due to unreliable behavior on some targets when
+                          accessing data below 1 MiB, this command will start
+                          dumping at the 1 MiB physical address (0x100000). To 
+                          override, use the -d switch (e.g., -d 0x00,256MiB).
     -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machine memory
                           files (.vmem) and to ease testing and signature 
@@ -226,7 +230,7 @@ Options:
                           to the host.
     -v, --verbose:        Verbose mode - among other things, this prints read 
                           data to stdout, useful for debugging.
-    -w,    --wait=TIME:   Delay attack by TIME seconds. This is useful in order
+    -w, --wait=TIME:      Delay attack by TIME seconds. This is useful in order
                           to guarantee that the target machine has successfully
                           granted the host DMA before attacking. If the
                           attack fails, try to increase this value. Default

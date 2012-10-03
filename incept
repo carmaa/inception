@@ -118,10 +118,6 @@ Download: {2} | Twitter: @breaknenter
                 end = start + size
             except:
                 fail('Could not parse argument to {0}'.format(opt))
-        elif opt in ('-i', '--interactive'):
-            settings.interactive = True
-            # TODO: Implement interactive mode
-            fail("Option not implemented yet, sorry")
         elif opt in ('-b', '--businfo'):
             if os.geteuid() == 0:
                 fw = FireWire()

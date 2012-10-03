@@ -31,8 +31,7 @@ import getopt
 import os
 import sys
 import traceback
-from datetime import time, date
-import pprint
+from datetime import date
 
 
 def main(argv):
@@ -191,7 +190,9 @@ IEEE 1394 SBP-2 DMA.
 Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
 
 Options:
-    -d, --dump=ADDRESS,PAGES:
+    -b, --businfo         Prints information about the devices that is connected
+                          to the FireWire bus.
+    -d, --dump=ADDRESS,PAGES
                           Non-intrusive memory dump. Dumps PAGES of memory
                           content from ADDRESS page. Memory content is dumped to 
                           files with the file name syntax:
@@ -206,7 +207,7 @@ Options:
                           accessing data below 1 MiB, this command will start
                           dumping at the 1 MiB physical address (0x100000). To 
                           override, use the -d switch (e.g., -d 0x00,256MiB).
-    -f, --file=FILE:      Use a file instead of FireWire bus data as input; for
+    -f, --file=FILE       Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machine memory
                           files (.vmem) and to ease testing and signature 
                           creation efforts.
@@ -214,13 +215,13 @@ Options:
                           default, Inception does not write back to data files.
     -h, --help:           Displays this message.
     -l, --list:           Lists configured operating system targets.
-    -m, --manual=OFFSET,SIGNATURE,PATCH:
+    -m, --manual=OFFSET,SIGNATURE,PATCH
                           Specify a patch manually. Enables easy testing of new
                           signatures; to use provide a comma-separated list of
                           an offset, a signature and a patch as integers or
                           in a hexadecimal format (prepended by '0x').
-    -n, --no-write:       Dry run, do not write back to memory.
-    -p, --pickpocket:     Dump the physical memory of any device that connects
+    -n, --no-write        Dry run, do not write back to memory.
+    -p, --pickpocket      Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain.
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over
@@ -228,9 +229,9 @@ Options:
                           panics when the host (attacking system) is OS X. Must
                           be executed BEFORE any FireWire devices are connected
                           to the host.
-    -v, --verbose:        Verbose mode - among other things, this prints read 
+    -v, --verbose         Verbose mode - among other things, this prints read 
                           data to stdout, useful for debugging.
-    -w, --wait=TIME:      Delay attack by TIME seconds. This is useful in order
+    -w, --wait=TIME       Delay attack by TIME seconds. This is useful in order
                           to guarantee that the target machine has successfully
                           granted the host DMA before attacking. If the
                           attack fails, try to increase this value. Default

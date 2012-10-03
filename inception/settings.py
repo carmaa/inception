@@ -66,6 +66,7 @@ pickpocket = False              # Pickpocket mode off by default
 polldelay = 5                   # 5 seconds delay between FireWire polls
 os = None                       # Detected host OS is None by default
 forcewrite = False              # Do not write back to file in file mode
+list_signatures = False         # Don't list all signatures at startup
 
 #===============================================================================
 # List of patterns that signify out of memory bounds reads

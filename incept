@@ -156,14 +156,17 @@ Download: {2} | Twitter: @breaknenter
                                                     'patch': patch,
                                                     'patchoffset': 0x00}]}]}]
         elif opt in ('-s', '--signatures'):
-            screenlock.list_targets(targets, details=True)
-            sys.exit()
+            settings.list_signatures = True
         else:
             assert False, 'Option not handled: ' + opt
     
     # We don't accept any other arguments
     if args:
         msg('!', 'Arguments {0} ignored'.format(', '.join(args)))
+    
+    if settings.list_signatures:
+        screenlock.list_targets(targets, details=True)
+        sys.exit()
     
     if not settings.filemode and not os.geteuid() == 0:
         fail("You must be root to run Inception with FireWire input")

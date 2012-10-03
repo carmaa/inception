@@ -25,7 +25,7 @@ Created on Oct 15, 2011
 
 from inception import screenlock, memdump, pickpocket
 from inception.firewire import FireWire
-from inception.util import msg, fail, separator, detectos, unloadIOFireWireIP
+from inception.util import msg, fail, separator, detectos, unload_fw_ip
 import inception.settings as settings
 import getopt
 import os
@@ -133,7 +133,7 @@ Download: {2} | Twitter: @breaknenter
             settings.pickpocket = True
         elif opt in ('-u', '--unload'):
             if settings.os == settings.OSX:
-                unloadIOFireWireIP()
+                unload_fw_ip()
             else:
                 fail('Host system is not OS X, aborting')
             sys.exit()

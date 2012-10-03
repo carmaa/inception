@@ -120,7 +120,7 @@ def detectos():
     return platform.system()
 
 
-def unloadIOFireWireIP():
+def unload_fw_ip():
     '''
     Unloads IP over FireWire modules if present on OS X
     '''

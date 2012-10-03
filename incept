@@ -123,9 +123,12 @@ Download: {2} | Twitter: @breaknenter
             # TODO: Implement interactive mode
             fail("Option not implemented yet, sorry")
         elif opt in ('-b', '--businfo'):
-            fw = FireWire()
-            fw.businfo()
-            sys.exit()
+            if os.geteuid() == 0:
+                fw = FireWire()
+                fw.businfo()
+                sys.exit()
+            else:
+                fail("You must be root to run Inception with FireWire input")
         elif opt in ('-p', '--pickpocket'):
             settings.pickpocket = True
         elif opt in ('-u', '--unload'):

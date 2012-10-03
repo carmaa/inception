@@ -57,8 +57,8 @@ Download: {2} | Twitter: @breaknenter
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:npum:', 
-                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload', 'manual='])
+        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:npum:s', 
+                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload', 'manual=', 'signatures'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -155,6 +155,9 @@ Download: {2} | Twitter: @breaknenter
                                                     'internaloffset': 0x00,
                                                     'patch': patch,
                                                     'patchoffset': 0x00}]}]}]
+        elif opt in ('-s', '--signatures'):
+            screenlock.list_targets(targets, details=True)
+            sys.exit()
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -227,6 +230,8 @@ Options:
     -p, --pickpocket      Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain.
+    -s, --signatures      Parses and prints the signatures from settings.py. May
+                          be used together with -m/--manual.
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over
                           FireWire module) which are known to cause kernel
                           panics when the host (attacking system) is OS X. Must

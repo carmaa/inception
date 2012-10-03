@@ -86,6 +86,17 @@ def printdetails(target): # TODO: Fix this method
         
     separator()
     
+    
+def list_targets(targets, details=False):
+    msg('*', 'Available targets:')
+    separator()
+    for number, target in enumerate(targets, 1):
+                msg(number, target['OS'] + ': ' + target['name'])
+                if details:
+                    printdetails(target)
+    if not details: # Avoid duplicate separator
+        separator()
+    
 
 def siglen(l):
     '''
@@ -242,11 +253,7 @@ def attack(targets):
         msg('*', 'Selected device: {0}'.format(fw.vendors[device_index]))
 
     # List targets
-    msg('*', 'Available targets:')
-    separator()
-    for number, target in enumerate(targets, 1):
-                msg(number, target['OS'] + ': ' + target['name'])
-    separator()
+    list_targets(targets)
        
     # Select target
     target = select_target(targets)
@@ -268,7 +275,7 @@ def attack(targets):
         memsize = settings.memsize
     
     # Perform parallel search for all signatures for each OS at the known offsets
-    msg('*', 'DMA shields should be down. Attacking...')
+    msg('*', 'DMA shields should be down by now. Attacking...')
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
         # TODO: Fall-back sequential search?
@@ -284,7 +291,7 @@ def attack(targets):
             msg('*', 'Write-back verified; patching successful')
             msg('*', 'BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
-            msg('!', 'Write-back could not be verified; patching may have been unsuccessful.')
+            msg('!', 'Write-back could not be verified; patching *may* have been unsuccessful')
     
     #Clean up
     device.close()

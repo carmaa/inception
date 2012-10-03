@@ -22,15 +22,10 @@ Created on Sep 6, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 #===============================================================================
-# Configuration file with signatures - not in use at the moment
+# General information
 #===============================================================================
 version = '0.2.0'
 url = 'http://breaknenter.org/projects/inception'
-
-#===============================================================================
-# Configuration file with signatures - not in use at the moment
-#===============================================================================
-configfile = 'config.json'
 
 #===============================================================================
 # Constants
@@ -45,7 +40,7 @@ OSX = 'Darwin'
 WINDOWS = 'Windows'
     
 #===============================================================================
-# Global variables/defaults/settings
+# Global variables/default settings
 #===============================================================================
 verbose = False                 # Not verbose
 fw_delay = 15                   # 15 seconds delay before attacking
@@ -67,8 +62,8 @@ override = False                # By default, avoid access Upper Memory
 avoid = [0xa0000, 0xfffff]      # Upper Win memory area (can cause BSOD if accessed)
 apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple_target = False            # Set to true if we are attacking a Mac
-pickpocket = False              # Pickpocket
-polldelay = 5                   # 5 seconds delay between FireWire delays
+pickpocket = False              # Pickpocket mode off by default
+polldelay = 5                   # 5 seconds delay between FireWire polls
 os = None                       # Detected host OS is None by default
 forcewrite = False              # Do not write back to file in file mode
 

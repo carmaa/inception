@@ -69,12 +69,6 @@ forcewrite = False              # Do not write back to file in file mode
 list_signatures = False         # Don't list all signatures at startup
 
 #===============================================================================
-# List of patterns that signify out of memory bounds reads
-#===============================================================================
-outofbounds = [0xff * max_request_size,
-               0x00 * max_request_size]
-
-#===============================================================================
 # Targets are collected in a list of dicts using the following syntax:
 # [{'OS': 'OS 1 name' # Used for matching and OS guessing
 #  'versions': ['SP0', 'SP2'],

@@ -142,8 +142,8 @@ def patch(device, address, chunks):
             device.write(realaddress, patch)
             read = device.read(realaddress, len(patch))
             if settings.verbose:
-                msg('*', 'Data written: ' + bytes2hexstr(patch))
-                msg('*', 'Data read:    ' + bytes2hexstr(read))
+                msg('*', 'Patch:        ' + bytes2hexstr(patch))
+                msg('*', 'Data read back: ' + bytes2hexstr(read))
             if  read != patch:
                 success = False
     return success

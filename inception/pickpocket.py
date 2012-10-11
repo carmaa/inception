@@ -25,7 +25,6 @@ Created on Feb 1, 2012
 from inception import firewire, memdump, settings
 import time
 import sys
-from inception.util import fail
 
 def lurk():
     start = settings.startaddress

@@ -77,7 +77,7 @@ as:
 
 ### Download and install dependencies
 
-	sudo apt-get install git cmake python3
+	sudo apt-get install build-essential git cmake python3
 	wget http://freddie.witherden.org/tools/libforensic1394/releases/libforensic1394-0.2.tar.gz
 	tar xvf libforensic1394-0.2.tar.gz
 	cd libforensic1394-0.2

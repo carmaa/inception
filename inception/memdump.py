@@ -32,6 +32,23 @@ def dump(start, end):
     # Make sure that the right mode is set
     settings.memdump = True
     
+    requestsize = settings.max_request_size
+    size = end - start
+    
+    # Open file for writing
+    filename = 'memdump_{0}-{1}.bin'.format(hex(start), hex(end))
+    file = open(filename, 'wb')
+    
+    # Ensure correct denomination
+    if size % settings.GiB == 0:
+        s = '{0} GiB'.format(size//settings.GiB)
+    elif size % settings.MiB == 0:
+        s = '{0} MiB'.format(size//settings.MiB)
+    else:
+        s = '{0} KiB'.format(size//settings.KiB)
+        
+    msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2}'.format(start, end, s))
+    
     # Initialize and lower DMA shield
     if not settings.filemode:
         fw = FireWire()
@@ -47,14 +64,6 @@ def dump(start, end):
     else:
         elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
-        
-    requestsize = settings.max_request_size
-    size = end - start
-
-    filename = 'memdump_{0}-{1}.bin'.format(hex(start), hex(end))
-    file = open(filename, 'wb')
-    
-    msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2} MiB'.format(start, end, size/settings.MiB))
     
     try:
         for i in range(start, end, requestsize):

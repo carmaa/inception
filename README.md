@@ -60,8 +60,6 @@ Requirements
 Inception requires:
 
  * Linux or Mac OS X
- * Python 3 (http://www.python.org)
- * libforensic1394 (https://freddie.witherden.org/tools/libforensic1394/)
  * A FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port
 
 
@@ -129,9 +127,6 @@ Planned features
 
  * Insert and execute memory-only rootkit
  * Other winlockpwn techniques
- * Extraction of AES (and perhaps Serpent and Twofish) encryption keys
- * Extraction of NTLM/LM hashes
- * Extraction of passwords
  
  
 Development history

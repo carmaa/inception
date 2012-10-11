@@ -72,12 +72,20 @@ For now you should be able to run the tool without any installation except
 dependencies on Mac OS X and Linux distros. Check out the README file in 
 `libforensic1394` for installation and FireWire pro-tips.
 
+### Dependencies
+
+ * Python 3			(http://www.python.org)
+ * git				(http://git-scm.com)
+ * gcc (incl. g++)	(http://gcc.gnu.org)
+ * cmake			(http://www.cmake.org)
+ * libforensic1394	(http://freddie.witherden.org/tools/libforensic1394/)
+
 On Debian-based distributions the installation command lines can be summarized
 as:
 
 ### Download and install dependencies
 
-	sudo apt-get install build-essential git cmake python3
+	sudo apt-get install git cmake python3 g++
 	wget http://freddie.witherden.org/tools/libforensic1394/releases/libforensic1394-0.2.tar.gz
 	tar xvf libforensic1394-0.2.tar.gz
 	cd libforensic1394-0.2

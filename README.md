@@ -78,13 +78,10 @@ as:
 ### Download and install dependencies
 
 	sudo apt-get install git cmake python3
-	wget https://freddie.witherden.org/tools/libforensic1394/releases/libforensic1394-0.2.tar.gz
+	wget http://freddie.witherden.org/tools/libforensic1394/releases/libforensic1394-0.2.tar.gz
 	tar xvf libforensic1394-0.2.tar.gz
 	cd libforensic1394-0.2
-	mkdir build
-	cd build
-	cmake -G"Unix Makefiles" ../
-	make
+	cmake CMakeLists.txt
 	sudo make install
 	cd ../python
 	sudo python3 setup.py install

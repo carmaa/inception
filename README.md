@@ -89,7 +89,7 @@ as:
 	cd libforensic1394-0.2
 	cmake CMakeLists.txt
 	sudo make install
-	cd ../python
+	cd python
 	sudo python3 setup.py install
 
 ### Download and install Inception

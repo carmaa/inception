@@ -102,8 +102,8 @@ as:
 Usage
 -----
 
- 1.  Connect the attacker machine (host) and the victim (target) with a FireWire cable
- 2.  Run Inception; simply type (as root if required by your OS):
+1. Connect the attacker machine (host) and the victim (target) with a FireWire cable
+2. Run Inception; simply type (as root if required by your OS):
 
 	incept
 

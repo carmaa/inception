@@ -153,7 +153,7 @@ Download: {2} | Twitter: @breaknenter
                                                     'patchoffset': 0x00}]}]}]
         elif opt in ('-s', '--signatures'):
             settings.list_signatures = True
-        elif opt in ('-s', '--egg'):
+        elif opt in ('-e', '--egg'):
             settings.egg = True
         else:
             assert False, 'Option not handled: ' + opt

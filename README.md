@@ -96,14 +96,16 @@ as:
 
 	git clone https://github.com/carmaa/inception.git
 	cd inception
-	sudo python3 setup.py install
+	sudo setup.py install
 
 
 Usage
 -----
 
-1. Connect the attacker machine (host) and the victim (target) with a FireWire cable
-2. Run Inception; simply type (as root if required by your OS):
+ 1. Connect the attacker machine (host) and the victim (target) with a FireWire cable
+ 2. Run Inception
+
+Simply type (as root if required by your OS):
 
 	incept
 

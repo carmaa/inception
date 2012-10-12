@@ -57,8 +57,8 @@ Download: {2} | Twitter: @breaknenter
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Df:hlvw:npum:s', 
-                                   ['businfo', 'dump=', 'dump-all', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload', 'manual=', 'signatures'])
+        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:s', 
+                                   ['businfo', 'dump=', 'dump-all', 'egg', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload', 'manual=', 'signatures'])
     except getopt.GetoptError as err:
         msg('!', err)
         usage(argv[0])
@@ -153,6 +153,8 @@ Download: {2} | Twitter: @breaknenter
                                                     'patchoffset': 0x00}]}]}]
         elif opt in ('-s', '--signatures'):
             settings.list_signatures = True
+        elif opt in ('-s', '--egg'):
+            settings.egg = True
         else:
             assert False, 'Option not handled: ' + opt
     

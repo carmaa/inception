@@ -13,7 +13,7 @@ setup(
     name = 'inception',
     packages = ['inception'],
     scripts = ['incept'],
-    package_data= {'inception': ['data/oui.txt']},
+    package_data= {'inception': ['data/oui.txt', 'data/inception.wav']},
     version = settings.version,
     description = 'Memory manipulation tool exploiting FireWire SBP2 DMA.',
     author = 'Carsten Maartmann-Moe',

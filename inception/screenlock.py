@@ -28,6 +28,7 @@ import inception.settings as settings
 import sys
 import time
 import os
+from inception import sound
 
 
 def select_target(targets, selected=False):
@@ -288,6 +289,8 @@ def attack(targets):
         success = patch(device, address, chunks)
         if success:
             msg('*', 'Write-back verified; patching successful')
+            if settings.egg:
+                sound.play('data/inception.wav')
             msg('*', 'BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
             msg('!', 'Write-back could not be verified; patching *may* have been unsuccessful')

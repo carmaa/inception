@@ -247,3 +247,5 @@ targets=[{'OS': 'Windows 8',
                                       'internaloffset': 0x00,
                                       'patch': 0xbd00000000eb,
                                       'patchoffset': 0x00}]}]}]
+
+egg = False

@@ -16,30 +16,30 @@ doesn't pack encryption.
 As of version 0.2.0, it is able to unlock the following x86 and x64 operating
 systems:
 
- * Windows XP
-  * SP2
-  * SP3
- * Windows Vista
-  * SP0
-  * SP1
-  * SP2
- * Windows 7
-  * SP0
-  * SP1
  * Windows 8
   * SP0
+ * Windows 7
+  * SP1
+  * SP0
+ * Windows Vista
+  * SP2
+  * SP1
+  * SP0
+ * Windows XP
+  * SP3
+  * SP2
  * Mac OS X
-  * Snow Leopard (10.6)
-  * Lion (10.7)
   * Mountain Lion (10.8)
+  * Lion (10.7)
+  * Snow Leopard (10.6)
  * Ubuntu
-  * 11.04
-  * 11.10
   * 12.04
+  * 11.10
+  * 11.04
   
 The tool also effectively enables escalation of privileges via the `runas` or 
 `sudo -s` commands, respectively. More signatures will be added. The tool makes
-use of the `libforensic1394`library courtesy of Freddie Witherden under a LGPL
+use of the `libforensic1394` library courtesy of Freddie Witherden under a LGPL
 license.
 
 

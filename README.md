@@ -109,8 +109,11 @@ Simply type (as root if required by your OS):
 
 	incept
 
-For a more complete and up-to-date description, please see the tool home page 
-at http://www.breaknenter.org/projects/inception.
+For a more complete and up-to-date description, please run:
+
+	incept -h
+
+or see the tool home page at http://www.breaknenter.org/projects/inception.
 
 
 Known bugs / caveats

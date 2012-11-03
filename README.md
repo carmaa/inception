@@ -13,7 +13,10 @@ utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or
 Pointsec. There are plenty of other (and better) ways to hack a machine that 
 doesn't pack encryption.
 
-As of version 0.2.0, it is able to unlock the following x86 and x64 operating
+The tool works over any interface that expands and can master the PCIe bus. This
+includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
+
+As of version 0.2.1, it is able to unlock the following x86 and x64 operating
 systems:
 
  * Windows 8
@@ -33,6 +36,7 @@ systems:
   * Lion (10.7)
   * Snow Leopard (10.6)
  * Ubuntu
+  * 12.10
   * 12.04
   * 11.10
   * 11.04
@@ -46,7 +50,7 @@ license.
 Key data
 --------
 
- * Version: 0.2.0
+ * Version: 0.2.1
  * License: GPL
  * Author: 	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter: @breaknenter Hashtag: #inceptiontool
@@ -154,6 +158,7 @@ Development history
  * 0.1.3 - Patched OS X 10.6.8 x64 signature bug
  * 0.1.4 - Added manual mode easing testing of new signatures
  * 0.2.0 - Added signatures for OS X Mountain Lion (10.8) and Windows 8
+ * 0.2.1 - Added signatures for Ubuntu 12.10
  
  
 Disclaimer

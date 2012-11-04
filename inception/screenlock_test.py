@@ -21,7 +21,7 @@ Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from inception import screenlock, settings, util
+from inception import screenlock, settings
 import inception.settings
 import imp
 import os
@@ -37,7 +37,7 @@ class TestScreenlock(unittest.TestCase):
     def setUp(self):
         self.samples = []
         self.tests = None
-        for root, dirs, files in os.walk(path.join(path.dirname(__file__), '../samples/')): #@UnusedVariable
+        for root, dirs, files in os.walk(path.join(os.path.dirname(__file__), '../samples/')): #@UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
                 mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])
@@ -69,7 +69,7 @@ class TestScreenlock(unittest.TestCase):
                     foundtarget = [target]
             self.assertTrue(foundtarget)
             #util.msg('T', 'Found target: {0}'.format(foundtarget[0]['OS']))
-            sys.stdout = StringIO() # Supress output
+            sys.stdout = StringIO() # Suppress output
             address, page = screenlock.attack(foundtarget)
             sys.stdout = sys.__stdout__ # Restore output
             self.assertEqual(address & 0x00000fff, module.offset)

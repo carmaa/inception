@@ -36,7 +36,7 @@ def dump(start, end):
     size = end - start
     
     # Open file for writing
-    filename = 'memdump_{0}-{1}.bin'.format(hex(start), hex(end))
+    filename = '{0}_{1}-{2}.bin'.format(settings.memdump_prefix, hex(start), hex(end))
     file = open(filename, 'wb')
     
     # Ensure correct denomination
@@ -67,6 +67,9 @@ def dump(start, end):
     
     try:
         for i in range(start, end, requestsize):
+            # Edge case, make sure that we don't read beyond the end
+            if  i + requestsize > end:
+                requestsize = end - i
             # Avoid accessing upper memory area if we are using FireWire
             if needtoavoid(i):
                 data = b'\x00' * requestsize

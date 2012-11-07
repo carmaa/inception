@@ -43,7 +43,7 @@ WINDOWS = 'Windows'
 # Global variables/default settings
 #===============================================================================
 verbose = False                 # Not verbose
-fw_delay = 5                    # 5 seconds delay before attacking
+fw_delay = 10                   # 5 seconds delay before attacking
 filemode = False                # Search in file instead of FW DMA
 dry_run = False                 # No write-back into memory
 target = False                  # No target set

@@ -34,7 +34,7 @@ systems:
 | Mac OS X         | Mountain Lion (10.8)     |        Yes        |         Yes         |     Yes     |
 | Mac OS X         | Lion (10.7)              |        Yes        |         Yes         |     Yes     |
 | Mac OS X         | Snow Leopard (10.6)      |        Yes        |         Yes         |     Yes     |
-| Mac OS X         | Leopard (10.6)           |                   |                     |     Yes     |
+| Mac OS X         | Leopard (10.5)           |                   |                     |     Yes     |
 | Ubuntu           | Quantal Quetzal (12.10)  |        Yes        |         Yes         |     Yes     |
 | Ubuntu           | Precise Pangolin (12.04) |        Yes        |         Yes         |     Yes     |
 | Ubuntu           | Oneiric Ocelot (11.10)   |        Yes        |         Yes         |     Yes     |

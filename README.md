@@ -19,32 +19,30 @@ includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 As of version 0.2.2, it is able to unlock the following x86 and x64 operating
 systems:
 
- * Windows 8
-  * SP0
- * Windows 7
-  * SP1
-  * SP0
- * Windows Vista
-  * SP2
-  * SP1
-  * SP0
- * Windows XP
-  * SP3
-  * SP2
- * Mac OS X
-  * Mountain Lion (10.8)
-  * Lion (10.7)
-  * Snow Leopard (10.6)
- * Ubuntu
-  * 12.10
-  * 12.04
-  * 11.10
-  * 11.04
- * Linux Mint
-  * 11
-  * 12
-  * 13
-  
+| Operating system | Version                  | Unlock lockscreen | Escalate privileges | Dump memory |
+|:-----------------|:-------------------------|:-----------------:|:-------------------:|:-----------:|
+| Windows 8        | SP0                      |        Yes        |         Yes         |     Yes     |
+| Windows 7        | SP1                      |        Yes        |         Yes         |     Yes     |
+| Windows 7        | SP0                      |        Yes        |         Yes         |     Yes     |
+| Windows Vista    | SP2                      |        Yes        |         Yes         |     Yes     |
+| Windows Vista    | SP1                      |        Yes        |         Yes         |     Yes     |
+| Windows Vista    | SP0                      |        Yes        |         Yes         |     Yes     |
+| Windows XP       | SP3                      |        Yes        |         Yes         |     Yes     |
+| Windows XP       | SP2                      |        Yes        |         Yes         |     Yes     |
+| Windows XP       | SP1                      |                   |                     |     Yes     |
+| Windows XP       | SP0                      |                   |                     |     Yes     |
+| Mac OS X         | Mountain Lion (10.8)     |        Yes        |         Yes         |     Yes     |
+| Mac OS X         | Lion (10.7)              |        Yes        |         Yes         |     Yes     |
+| Mac OS X         | Snow Leopard (10.6)      |        Yes        |         Yes         |     Yes     |
+| Mac OS X         | Leopard (10.6)           |                   |                     |     Yes     |
+| Ubuntu           | Quantal Quetzal (12.10)  |        Yes        |         Yes         |     Yes     |
+| Ubuntu           | Precise Pangolin (12.04) |        Yes        |         Yes         |     Yes     |
+| Ubuntu           | Oneiric Ocelot (11.10)   |        Yes        |         Yes         |     Yes     |
+| Ubuntu           | Natty Narwhal (11.04)    |        Yes        |         Yes         |     Yes     |
+| Linux Mint       | 13                       |        Yes        |         Yes         |     Yes     |
+| Linux Mint       | 12                       |        Yes        |         Yes         |     Yes     |
+| Linux Mint       | 12                       |        Yes        |         Yes         |     Yes     |
+
 The tool also effectively enables escalation of privileges via the `runas` or 
 `sudo -s` commands, respectively. More signatures will be added. The tool makes
 use of the `libforensic1394` library courtesy of Freddie Witherden under a LGPL
@@ -54,12 +52,12 @@ license.
 Key data
 --------
 
- * Version: 0.2.1
- * License: GPL
- * Author: 	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
- * Twitter: @breaknenter Hashtag: #inceptiontool
- * Site: 	http://www.breaknenter.org/projects/inception
- * Source: 	https://github.com/carmaa/inception
+ * Version:	0.2.2
+ * License:	GPL
+ * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
+ * Twitter:	@breaknenter Hashtag: #inceptiontool
+ * Site:	http://www.breaknenter.org/projects/inception
+ * Source:	https://github.com/carmaa/inception
 
 
 Requirements
@@ -67,7 +65,7 @@ Requirements
 
 Inception requires:
 
- * Linux or Mac OS X
+ * Linux or Mac OS X (host / attacker machine)
  * A FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port
 
 
@@ -80,10 +78,10 @@ dependencies on Mac OS X and Linux distros. Check out the README file in
 
 ### Dependencies
 
- * Python 3			(http://www.python.org)
- * git				(http://git-scm.com)
+ * Python 3		(http://www.python.org)
+ * git			(http://git-scm.com)
  * gcc (incl. g++)	(http://gcc.gnu.org)
- * cmake			(http://www.cmake.org)
+ * cmake		(http://www.cmake.org)
  * libforensic1394	(http://freddie.witherden.org/tools/libforensic1394/)
 
 On Debian-based distributions the installation command lines can be summarized
@@ -166,6 +164,7 @@ Development history
  * 0.1.4 - Added manual mode easing testing of new signatures
  * 0.2.0 - Added signatures for OS X Mountain Lion (10.8) and Windows 8
  * 0.2.1 - Added signatures for Ubuntu 12.10
+ * 0.2.2 - Added signatures for Linux Mint
  
  
 Disclaimer

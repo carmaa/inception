@@ -19,29 +19,34 @@ includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 As of version 0.2.2, it is able to unlock the following x86 and x64 operating
 systems:
 
-| Operating system | Version                  | Unlock lockscreen | Escalate privileges | Dump memory |
-|:-----------------|:-------------------------|:-----------------:|:-------------------:|:-----------:|
-| Windows 8        | SP0                      |        Yes        |         Yes         |     Yes     |
-| Windows 7        | SP1                      |        Yes        |         Yes         |     Yes     |
-| Windows 7        | SP0                      |        Yes        |         Yes         |     Yes     |
-| Windows Vista    | SP2                      |        Yes        |         Yes         |     Yes     |
-| Windows Vista    | SP1                      |        Yes        |         Yes         |     Yes     |
-| Windows Vista    | SP0                      |        Yes        |         Yes         |     Yes     |
-| Windows XP       | SP3                      |        Yes        |         Yes         |     Yes     |
-| Windows XP       | SP2                      |        Yes        |         Yes         |     Yes     |
-| Windows XP       | SP1                      |                   |                     |     Yes     |
-| Windows XP       | SP0                      |                   |                     |     Yes     |
-| Mac OS X         | Mountain Lion (10.8)     |        Yes        |         Yes         |     Yes     |
-| Mac OS X         | Lion (10.7)              |        Yes        |         Yes         |     Yes     |
-| Mac OS X         | Snow Leopard (10.6)      |        Yes        |         Yes         |     Yes     |
-| Mac OS X         | Leopard (10.5)           |                   |                     |     Yes     |
-| Ubuntu           | Quantal Quetzal (12.10)  |        Yes        |         Yes         |     Yes     |
-| Ubuntu           | Precise Pangolin (12.04) |        Yes        |         Yes         |     Yes     |
-| Ubuntu           | Oneiric Ocelot (11.10)   |        Yes        |         Yes         |     Yes     |
-| Ubuntu           | Natty Narwhal (11.04)    |        Yes        |         Yes         |     Yes     |
-| Linux Mint       | 13                       |        Yes        |         Yes         |     Yes     |
-| Linux Mint       | 12                       |        Yes        |         Yes         |     Yes     |
-| Linux Mint       | 12                       |        Yes        |         Yes         |     Yes     |
+| Operating system | Version                  | Unlock lock screen | Escalate privileges | Dump memory < 4 GiB |
+|:-----------------|:-------------------------|:------------------:|:-------------------:|:-------------------:|
+| Windows 8        | SP0                      |         Yes        |         Yes         |         Yes         |
+| Windows 7        | SP1                      |         Yes        |         Yes         |         Yes         |
+| Windows 7        | SP0                      |         Yes        |         Yes         |         Yes         |
+| Windows Vista    | SP2                      |         Yes        |         Yes         |         Yes         |
+| Windows Vista    | SP1                      |         Yes        |         Yes         |         Yes         |
+| Windows Vista    | SP0                      |         Yes        |         Yes         |         Yes         |
+| Windows XP       | SP3                      |         Yes        |         Yes         |         Yes         |
+| Windows XP       | SP2                      |         Yes        |         Yes         |         Yes         |
+| Windows XP       | SP1                      |                    |                     |         Yes         |
+| Windows XP       | SP0                      |                    |                     |         Yes         |
+| Mac OS X         | Mountain Lion (10.8)     |        Yes (1)     |        Yes (1)      |        Yes (1)      |
+| Mac OS X         | Lion (10.7)              |        Yes (1)     |        Yes (1)      |        Yes (1)      |
+| Mac OS X         | Snow Leopard (10.6)      |         Yes        |         Yes         |         Yes         |
+| Mac OS X         | Leopard (10.5)           |                    |                     |         Yes         |
+| Ubuntu (2)       | Quantal Quetzal (12.10)  |         Yes        |         Yes         |         Yes         |
+| Ubuntu           | Precise Pangolin (12.04) |         Yes        |         Yes         |         Yes         |
+| Ubuntu           | Oneiric Ocelot (11.10)   |         Yes        |         Yes         |         Yes         |
+| Ubuntu           | Natty Narwhal (11.04)    |         Yes        |         Yes         |         Yes         |
+| Linux Mint       | 13                       |         Yes        |         Yes         |         Yes         |
+| Linux Mint       | 12                       |         Yes        |         Yes         |         Yes         |
+| Linux Mint       | 12                       |         Yes        |         Yes         |         Yes         |
+
+(1) If FileVault 2 is enabled, the tool will only work when the operating
+    system is unlocked.
+(2) Other Linux distributions that use PAM-based authentication may also work 
+    using the Ubuntu signatures.
 
 The tool also effectively enables escalation of privileges via the `runas` or 
 `sudo -s` commands, respectively. More signatures will be added. The tool makes

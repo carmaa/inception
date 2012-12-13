@@ -25,7 +25,8 @@ Created on Oct 15, 2011
 
 from inception import screenlock, memdump, pickpocket
 from inception.firewire import FireWire
-from inception.util import msg, fail, separator, detectos, unload_fw_ip
+from inception.util import msg, fail, separator, detectos, unload_fw_ip,\
+    get_termsize, warn
 import inception.settings as settings
 import getopt
 import os
@@ -36,6 +37,9 @@ from datetime import date
 
 def main(argv):
     settings.encoding = sys.getdefaultencoding()
+    
+    # Get and set terminal width
+    settings.termwidth = get_termsize()
     
     # Print obligatory awesome ASCII banner
     print('''
@@ -60,7 +64,7 @@ Download: {2} | Twitter: @breaknenter
         opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:s', 
                                    ['businfo', 'dump=', 'dump-all', 'egg', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload', 'manual=', 'signatures'])
     except getopt.GetoptError as err:
-        msg('!', err)
+        warn(err)
         usage(argv[0])
         sys.exit(2)
     for opt, arg in opts:
@@ -73,10 +77,10 @@ Download: {2} | Twitter: @breaknenter
         elif opt in ('--force-write'):
             settings.forcewrite = True
         elif opt in ('-l', '--list'):
-            msg('*', 'Available targets:')
+            msg('Available targets:')
             separator()
             for n, target in enumerate(targets, 1):
-                msg(n, target['OS'] + ': ' + target['name'])
+                msg(target['OS'] + ': ' + target['name'], n)
             separator()
             sys.exit()
         elif opt in ('-v', '--verbose'):
@@ -102,7 +106,7 @@ Download: {2} | Twitter: @breaknenter
                 # default behavior (avoiding memory below 1 MiB)
                 if start < settings.startaddress:
                     settings.override = True
-                    msg('*', 'Overriding default behavior, accessing memory below 1 MiB')
+                    msg('Overriding default behavior, accessing memory below 1 MiB')
                 # Fix size
                 size = size.lower()
                 if size.find('kib') != -1 or size.find('kb') != -1:
@@ -114,7 +118,7 @@ Download: {2} | Twitter: @breaknenter
                 else:
                     size = int(size) * settings.PAGESIZE
                 if size < settings.PAGESIZE:
-                    msg('!', 'Minimum dump size is a page, {0} KiB'.format(settings.PAGESIZE // settings.KiB))
+                    warn('Minimum dump size is a page, {0} KiB'.format(settings.PAGESIZE // settings.KiB))
                 end = start + size
             except:
                 fail('Could not parse argument to {0}'.format(opt))
@@ -160,7 +164,7 @@ Download: {2} | Twitter: @breaknenter
     
     # We don't accept any other arguments
     if args:
-        msg('!', 'Arguments {0} ignored'.format(', '.join(args)))
+        warn('Arguments {0} ignored'.format(', '.join(args)))
     
     if settings.list_signatures:
         screenlock.list_targets(targets, details=True)
@@ -182,12 +186,12 @@ Download: {2} | Twitter: @breaknenter
             if not address or not page:
                 fail('Could not locate signature(s).')
     except Exception as exc:
-        msg('!', 'Um, something went wrong: {0}'.format(exc))
+        warn('Um, something went wrong: {0}'.format(exc))
         separator()
         traceback.print_exc()
         separator()
     except KeyboardInterrupt:
-        msg('!', 'Aborted')
+        warn('Aborted')
 
 
 def usage(execname):

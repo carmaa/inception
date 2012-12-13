@@ -47,7 +47,7 @@ def dump(start, end):
     else:
         s = '{0} KiB'.format(size//settings.KiB)
         
-    msg('*', 'Dumping from {0:#x} to {1:#x}, a total of {2}'.format(start, end, s))
+    msg('Dumping from {0:#x} to {1:#x}, a total of {2}'.format(start, end, s))
     
     # Initialize and lower DMA shield
     if not settings.filemode:
@@ -55,7 +55,7 @@ def dump(start, end):
         starttime = time.time()
         device_index = fw.select_device()
         # Print selection
-        msg('*', 'Selected device: {0}'.format(fw.vendors[device_index]))
+        msg('Selected device: {0}'.format(fw.vendors[device_index]))
 
     # Lower DMA shield or use a file as input
     device = None
@@ -85,10 +85,10 @@ def dump(start, end):
             sys.stdout.flush()
         file.close()
         print() # Filler
-        msg('*', 'Dumped memory to file {0}'.format(filename))
+        msg('Dumped memory to file {0}'.format(filename))
         device.close()
     except KeyboardInterrupt:
         file.close()
         print()
-        msg('*', 'Dumped memory to file {0}'.format(filename))
+        msg('Dumped memory to file {0}'.format(filename))
         raise KeyboardInterrupt

@@ -22,7 +22,9 @@ Created on Jan 30, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 import unittest
-from inception.util import hexstr2bytes, bytes2hexstr, bytelen, int2binhex
+from inception.util import hexstr2bytes, bytes2hexstr, bytelen, int2binhex, prnt
+import sys
+from _pyio import StringIO
 
 
 class TestUtil(unittest.TestCase):
@@ -73,6 +75,15 @@ class TestUtil(unittest.TestCase):
         test4 = 256
         test4_res = b'\x01\x00'
         self.assertEqual(int2binhex(test4), test4_res)
+        
+    def test_prnt(self):
+        s = 'A ' * 42
+        sys.stdout = StringIO()
+        prnt(s)
+        out = sys.stdout.getvalue()
+        sys.stdout = sys.__stdout__ # Restore output
+        self.assertEqual(out, 'A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A\nA A\n')
+
 
 if __name__ == "__main__":
     unittest.main()

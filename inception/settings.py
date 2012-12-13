@@ -68,6 +68,7 @@ os = None                       # Detected host OS is None by default
 forcewrite = False              # Do not write back to file in file mode
 list_signatures = False         # Don't list all signatures at startup
 memdump_prefix = 'memdump'      # Prefix for memory dump file
+termwidth = 80                  # Default terminal size is 80 chars wide
 
 #===============================================================================
 # Targets are collected in a list of dicts using the following syntax:

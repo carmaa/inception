@@ -27,12 +27,9 @@ from inception import settings
 import os
 import platform
 from subprocess import call
+from textwrap import wrap
 
-def msg(sign, message):
-    # TODO: Add fancy print method that formats everything to 80 char wide string
-    print('[' + str(sign) + '] ' + str(message))
-        
-    
+
 def hexstr2bytes(s):
     '''
     Takes a string of hexadecimal characters preceded by '0x' and returns the
@@ -82,20 +79,50 @@ def open_file(filename, mode):
     path = os.path.join(this_dir, filename)
     return open(path, mode)
     
+
+def get_termsize():
+    rows, columns = os.popen('stty size', 'r').read().split()
+    if columns:
+        return int(columns)
+    else:
+        warn('Cannot detect terminal column width')
+        return settings.termwidth
+    
+
+def prnt(s):
+    '''
+    Prints a line and wraps each line at terminal width
+    '''
+    print('\n'.join(wrap(str(s), settings.termwidth)))
+
+
+def msg(s, sign = '*'):
+    '''
+    Print an informational message with '*' as a sign
+    '''
+    prnt('[{0}] {1}'.format(sign, s))
+        
+    
+def warn(s):
+    '''
+    Prints a warning message with '!' as a sign
+    '''
+    msg(s, sign = '!')
+    
     
 def separator():
     '''
-    Prints a separator line
+    Prints a separator line with the width of the terminal
     '''
-    print('-' * 80)
+    print('-' * settings.termwidth)
 
 
 def fail(err = None):
     '''
     Called if Inception fails. Optional parameter is an error message string.
     '''
-    if err: msg('!', err)
-    print('[!] Attack unsuccessful')
+    if err: warn(err)
+    warn('Attack unsuccessful')
     sys.exit(1)
 
 
@@ -128,8 +155,8 @@ def unload_fw_ip():
     if 'y' == unload or '' == unload:
         status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext', shell=True)
         if status == 0:
-            msg('*', 'IOFireWireIP.kext unloaded')
-            msg('*', 'To reload: sudo kextload /System/Library/Extensions/IOFireWireIP.kext')
+            msg('IOFireWireIP.kext unloaded')
+            msg('To reload: sudo kextload /System/Library/Extensions/IOFireWireIP.kext')
         else:
             fail('Could not unload IOFireWireIP.kext')
 
@@ -172,7 +199,7 @@ class MemoryFile:
                 self.file.seek(addr)
                 self.file.write(buf)
         else:
-            msg('!', 'File not patched. To enable file writing, use the --force-write switch')
+            warn('File not patched. To enable file writing, use the --force-write switch')
     
     def close(self):
         self.file.close()

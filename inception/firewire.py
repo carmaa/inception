@@ -22,7 +22,8 @@ Created on Jan 23, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 import re
-from inception.util import msg, separator, fail, open_file, restart, detectos
+from inception.util import msg, separator, fail, open_file, restart, detectos,\
+    warn
 from inception import settings
 import sys
 import os
@@ -71,7 +72,7 @@ class FireWire:
                     except IOError:
                         time.sleep(2) # Give some more time
                         self._bus.enable_sbp2() # If this fails, fail hard
-                    msg('*', 'FireWire modules loaded successfully')
+                    msg('FireWire modules loaded successfully')
                 else:
                     fail('Could not load FireWire modules')
             else:
@@ -108,7 +109,7 @@ class FireWire:
                     ouiid = int('0x%s%s%s' % (textid[0:2], textid[3:5], textid[6:8]), 16)
                     OUI[ouiid] = rm.groupdict()['name']
         except IOError:
-            msg('!', 'Vendor OUI lookups will not be performed: {0}'.format(filename))
+            warn('Vendor OUI lookups will not be performed: {0}'.format(filename))
         return OUI
     
             
@@ -127,7 +128,7 @@ class FireWire:
         '''
         if not self._devices:
             fail('No FireWire devices detected on the bus')
-        msg('*', 'FireWire devices on the bus (names may appear blank):')
+        msg('FireWire devices on the bus (names may appear blank):')
         separator()
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
@@ -138,7 +139,7 @@ class FireWire:
             self._vendors.append(vendorname)
             pid = device.product_id
             productname = device.product_name.decode(settings.encoding)
-            msg(n, 'Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'.format(vendorname, vid, productname, pid))
+            msg('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'.format(vendorname, vid, productname, pid), sign = n)
         separator()
         
     
@@ -151,7 +152,7 @@ class FireWire:
             self.businfo()
         nof_devices = len(self._vendors)
         if nof_devices == 1:
-            msg('*', 'Only one device present, device auto-selected as target')
+            msg('Only one device present, device auto-selected as target')
             return 0
         else:
             selected = input('[!] Please select a device to attack (or type \'q\' to quit): ')
@@ -160,7 +161,7 @@ class FireWire:
             except:
                 if selected == 'q': sys.exit()
                 else:
-                    msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
+                    warn('Invalid selection, please try again. Type \'q\' to quit')
                     return self.select_device()
         if 0 < selected <= nof_devices:
             i = selected - 1 
@@ -169,10 +170,10 @@ class FireWire:
             # --override switch set, make sure we don't touch OS X's g-spot
             if 'apple' in vendor.lower() and settings.memdump and settings.override:
                 settings.apple_target = True
-                msg('*', 'The target seems to be a Mac, forcing avoidance (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
+                msg('The target seems to be a Mac, forcing avoidance (not dumping {0:#x}-{1:#x})'.format(settings.apple_avoid[0], settings.apple_avoid[1]))
             return i
         else:
-            msg('!', 'Please enter a selection between 1 and ' + str(nof_devices) + '. Type \'q\' to quit')
+            warn('Please enter a selection between 1 and ' + str(nof_devices) + '. Type \'q\' to quit')
             return self.select_device()
         
         

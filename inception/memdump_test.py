@@ -57,7 +57,6 @@ class MemdumpTest(unittest.TestCase):
     def test_fulldump(self):
         start = 0x00000000
         for sample in self.samples:
-            #util.msg('T', 'Testing sample {0}'.format(sample))
             settings.filename = sample
             end = os.path.getsize(sample)
             sys.stdout = StringIO() # Suppress output

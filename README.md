@@ -16,7 +16,7 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.2.2, it is able to unlock the following x86 and x64 operating
+As of version 0.2.3, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
@@ -57,7 +57,7 @@ license.
 Key data
 --------
 
- * Version:	0.2.2
+ * Version:	0.2.3
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter:	@breaknenter Hashtag: #inceptiontool
@@ -170,6 +170,7 @@ Development history
  * 0.2.0 - Added signatures for OS X Mountain Lion (10.8) and Windows 8
  * 0.2.1 - Added signatures for Ubuntu 12.10
  * 0.2.2 - Added signatures for Linux Mint
+ * 0.2.3 - General code cleanup, and nicer and more consistent output
  
  
 Disclaimer

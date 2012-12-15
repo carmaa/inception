@@ -26,7 +26,7 @@ Created on Oct 15, 2011
 from inception import screenlock, memdump, pickpocket, cfg
 from inception.firewire import FireWire
 from inception.util import info, fail, separator, detectos, unload_fw_ip,\
-    get_termsize, warn
+    get_termsize, warn, print_wrapped
 import getopt
 import os
 import sys
@@ -34,23 +34,38 @@ import traceback
 from datetime import date
 
 
-def main(argv):
-    cfg.encoding = sys.getdefaultencoding()
-    
-    # Get and set terminal width
-    cfg.termwidth = get_termsize()
-    
-    # Print obligatory awesome ASCII banner
-    print('''
+def banner():
+    '''
+    Print obligatory awesome ASCII banner
+    '''
+    if (cfg.termwidth > 79):
+        print('''
  _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
  _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
  _|  _|  _|  _|  _|        _|_|_|    _|_|_|      _|    _|  _|    _|  _|  _|  _|
  _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
  _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
+''')
+    else:
+        print('''
+INCEPTION
+        ''')
+    
+    print_wrapped('v.{0} (C) Carsten Maartmann-Moe {1}'
+                  .format(cfg.version, date.today().strftime("%Y")), 
+                  indent = False)
+    print_wrapped('Download: {0} | Twitter: @breaknenter'.format(cfg.url), 
+                  indent = False)
+    print()
 
-v.{0} (C) Carsten Maartmann-Moe {1}
-Download: {2} | Twitter: @breaknenter
-'''.format(cfg.version, date.today().strftime("%Y"), cfg.url))
+
+def main(argv):
+    cfg.encoding = sys.getdefaultencoding()
+    
+    # Get and set terminal width
+    cfg.wrapper.width = get_termsize()
+    
+    banner()
     
     # Initialize
     targets = cfg.targets

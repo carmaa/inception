@@ -22,9 +22,10 @@ Created on Jan 30, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 from _pyio import StringIO
-from inception.util import hexstr2bytes, bytes2hexstr, bytelen, int2binhex, prnt
+from inception.util import hexstr2bytes, bytes2hexstr, bytelen, int2binhex, print_wrapped
 import sys
 import unittest
+from inception import cfg, util
 
 
 class TestUtil(unittest.TestCase):
@@ -77,13 +78,22 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(int2binhex(test4), test4_res)
         
     def test_prnt(self):
-        s = 'A ' * 42
-        sys.stdout = StringIO()
-        prnt(s)
+        s = ''.join(map(str, range(20)))
+        cfg.termwidth = 10
+        sys.stdout = StringIO() # Suppress output
+        cfg.wrapper.width = util.get_termsize()
+        sys.stdout = StringIO() # Suppress output
+        sys.stdout.write('')
+        print_wrapped(s)
         out = sys.stdout.getvalue()
         sys.stdout = sys.__stdout__ # Restore output
-        self.assertEqual(out, 'A A A A A A A A A A A A A A A A A A A A A A ' +
-                         'A A A A A A A A A A A A A A A A A A\nA A\n')
+        self.assertEqual(out, 
+                         '0123456789\n' +
+                         '    101112\n' +
+                         '    131415\n' +
+                         '    161718\n' +
+                         '    19\n')
+
 
 
 if __name__ == "__main__":

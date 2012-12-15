@@ -23,11 +23,11 @@ Created on Jun 19, 2011
 '''
 from inception import cfg
 from subprocess import call
-from textwrap import wrap
 import binascii
 import os
 import platform
 import sys
+import subprocess
 
 
 def hexstr2bytes(s):
@@ -81,42 +81,52 @@ def open_file(filename, mode):
     
 
 def get_termsize():
-    rows, columns = os.popen('stty size', 'r').read().split() #@UnusedVariable
-    if columns:
-        return int(columns)
-    else:
+    try:
+        with open(os.devnull, "w") as fnull:
+            r, c = subprocess.check_output(['stty','size'], stderr = fnull).split() #@UnusedVariable
+        cfg.termwidth = int(c)
+        return int(c)
+    except:
         warn('Cannot detect terminal column width')
         return cfg.termwidth
-    
 
-def prnt(s):
+def print_wrapped(s, indent = True, end_newline = True):
     '''
     Prints a line and wraps each line at terminal width
     '''
-    print('\n'.join(wrap(str(s), cfg.termwidth)))
+    if not indent:
+        default_indent = cfg.wrapper.subsequent_indent # Save default indent
+        cfg.wrapper.subsequent_indent = ''
+    wrapped = '\n'.join(cfg.wrapper.wrap(str(s)))
+    if not end_newline:
+        print(wrapped, end = ' ')
+    else:
+        print(wrapped)
+    if not indent:
+        cfg.wrapper.subsequent_indent = default_indent # Restore default indent
 
 
 def info(s, sign = '*'):
     '''
     Print an informational message with '*' as a sign
     '''
-    prnt('[{0}] {1}'.format(sign, s))
-        
+    print_wrapped('[{0}] {1}'.format(sign, s))
+
+
+def poll(s, sign = '?'):
+    '''
+    Prints a question to the user
+    '''
+    print_wrapped('[{0}] {1}'.format(sign, s), end_newline = False)
     
-def warn(s):
+    
+def warn(s, sign = '!'):
     '''
     Prints a warning message with '!' as a sign
     '''
-    info(s, sign = '!')
+    print_wrapped('[{0}] {1}'.format(sign, s))
     
     
-def separator():
-    '''
-    Prints a separator line with the width of the terminal
-    '''
-    print('-' * cfg.termwidth)
-
-
 def fail(err = None):
     '''
     Called if Inception fails. Optional parameter is an error message string.
@@ -124,6 +134,13 @@ def fail(err = None):
     if err: warn(err)
     warn('Attack unsuccessful')
     sys.exit(1)
+
+
+def separator():
+    '''
+    Prints a separator line with the width of the terminal
+    '''
+    print('-' * cfg.termwidth)
 
 
 def needtoavoid(address):
@@ -151,9 +168,9 @@ def unload_fw_ip():
     '''
     Unloads IP over FireWire modules if present on OS X
     '''
-    unload = input('[!] IOFireWireIP on OS X may cause kernel panics. ' +
-                   'Unload? [Y/n]: ').lower()
-    if 'y' == unload or '' == unload:
+    poll('IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ')
+    unload = input().lower()
+    if unload in ['y', '']:
         status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext',
                       shell=True)
         if status == 0:
@@ -198,8 +215,8 @@ class MemoryFile:
     
     def write(self, addr, buf):
         if cfg.forcewrite:
-            answer = input('[!] Are you sure you want to write to file [y/N]? '
-                           ).lower()
+            poll('Are you sure you want to write to file [y/N]? ')
+            answer = input().lower()
             if answer in ['y', 'yes']:
                 self.file.seek(addr)
                 self.file.write(buf)

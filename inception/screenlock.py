@@ -24,7 +24,7 @@ Created on Jun 23, 2011
 from inception import sound
 from inception.firewire import FireWire, cfg
 from inception.util import info, MemoryFile, fail, bytelen, int2binhex, \
-    separator, bytes2hexstr, warn
+    separator, bytes2hexstr, warn, poll
 import os
 import sys
 import time
@@ -37,8 +37,9 @@ def select_target(targets, selected=False):
     if len(targets) == 1:
         info('Only one target present, auto-selected')
         return targets[0]
-    if not selected: selected = input('[!] Please select target (or enter ' +
-                                      '\'q\' to quit): ')
+    if not selected:
+        poll('Please select target (or enter \'q\' to quit):')
+        selected = input()
     nof_targets = len(targets)
     try:
         selected = int(selected)

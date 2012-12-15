@@ -23,7 +23,7 @@ Created on Jan 23, 2012
 '''
 import re
 from inception.util import info, separator, fail, open_file, restart, detectos,\
-    warn
+    warn, poll
 from inception import cfg
 import sys
 import os
@@ -64,8 +64,9 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            answer = input('[!] FireWire modules do not seem to be loaded. ' +
-                           'Load them? [Y/n]: ').lower()
+            poll('FireWire modules do not seem to be loaded. Load them? ' +
+                 '[Y/n]: ')
+            answer = input().lower()
             if answer in ['y', '']:
                 status = call('modprobe firewire-ohci', shell=True)
                 if status == 0:
@@ -162,8 +163,8 @@ class FireWire:
             info('Only one device present, device auto-selected as target')
             return 0
         else:
-            selected = input('[!] Please select a device to attack (or type ' + 
-                             '\'q\' to quit): ')
+            poll('Please select a device to attack (or type \'q\' to quit): ')
+            selected = input()
             try:
                 selected = int(selected)
             except:

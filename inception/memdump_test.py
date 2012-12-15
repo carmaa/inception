@@ -21,14 +21,14 @@ Created on Nov 4, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-import unittest
-import os
-from inception import settings, memdump
-import hashlib
-import sys
 from _pyio import StringIO
+from inception import cfg, memdump
+import hashlib
+import os
 import random
 import shutil
+import sys
+import unittest
 
 
 class MemdumpTest(unittest.TestCase):
@@ -37,11 +37,11 @@ class MemdumpTest(unittest.TestCase):
     def setUp(self):
         self.samples = []
         self.tests = None
-        settings.memdump = True
-        settings.filemode = True
+        cfg.memdump = True
+        cfg.filemode = True
         if not os.path.exists('temp'):
             os.makedirs('temp')
-        settings.memdump_prefix = 'temp/unittest'
+        cfg.memdump_prefix = 'temp/unittest'
         for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), '../samples/')): #@UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
@@ -57,12 +57,12 @@ class MemdumpTest(unittest.TestCase):
     def test_fulldump(self):
         start = 0x00000000
         for sample in self.samples:
-            settings.filename = sample
+            cfg.filename = sample
             end = os.path.getsize(sample)
             sys.stdout = StringIO() # Suppress output
             memdump.dump(start, end)
             sys.stdout = sys.__stdout__ # Restore output
-            output_fn = '{0}_{1}-{2}.bin'.format(settings.memdump_prefix,hex(start), hex(end))
+            output_fn = '{0}_{1}-{2}.bin'.format(cfg.memdump_prefix,hex(start), hex(end))
             self.assertTrue(os.path.exists(output_fn))
             self.assertEqual(self.file_md5(sample), self.file_md5(output_fn))
     
@@ -73,7 +73,7 @@ class MemdumpTest(unittest.TestCase):
         start address
         '''
         sample = random.sample(self.samples, 1)[0]
-        settings.filename = sample
+        cfg.filename = sample
         self.assertTrue(os.path.exists(sample))
         sample_size = os.path.getsize(sample)
         start = random.randrange(sample_size)
@@ -83,7 +83,7 @@ class MemdumpTest(unittest.TestCase):
         sys.stdout = StringIO() # Suppress output
         memdump.dump(start, end)
         sys.stdout = sys.__stdout__ # Restore output
-        output_fn = '{0}_{1}-{2}.bin'.format(settings.memdump_prefix,hex(start), hex(end))
+        output_fn = '{0}_{1}-{2}.bin'.format(cfg.memdump_prefix,hex(start), hex(end))
         self.assertTrue(os.path.exists(output_fn))
         md5 = hashlib.md5()
         f = open(sample, 'rb')

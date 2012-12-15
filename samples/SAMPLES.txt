@@ -36,7 +36,7 @@ FILE FORMAT AND SYNTAX
    
  * Each sample has an accompanying python file containing only the page number,
    offset which the signature should match it and the name of the OS (as 
-   represented in inception/settings.py.
+   represented in inception/cfg.py.
    
    EXAMPLE:
    The corresponding text file to the example above, named
@@ -59,7 +59,7 @@ The email should contain the following:
 
  * A sample binary file as described above
  * An accompanying sample text file as described above
- * The signature (as defined in ftwautopwn/settings.py) used to match the sample
+ * The signature (as defined in inception/cfg.py) used to match the sample
  
 Only when conforming to the above rules will new signatures be accepted for
 inclusion in the tool. Please respect that I have limited means to verify any

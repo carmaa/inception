@@ -21,8 +21,8 @@ Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-import unittest
 from inception.firewire import FireWire
+import unittest
 
 
 class TestUtil(unittest.TestCase):
@@ -40,7 +40,8 @@ class TestUtil(unittest.TestCase):
         self.assertIsInstance(self.fw.oui, dict)
         # Test a couple of OUIs
         self.assertEqual(self.fw.resolve_oui(0x03), 'XEROX CORPORATION')
-        self.assertEqual(self.fw.resolve_oui(0xE0C1), 'MEMOREX TELEX JAPAN, LTD.')
+        self.assertEqual(self.fw.resolve_oui(0xE0C1), 
+                         'MEMOREX TELEX JAPAN, LTD.')
         self.assertEqual(self.fw.resolve_oui(0xFCFBFB), 'Cisco Systems')
     
 

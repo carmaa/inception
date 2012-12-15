@@ -23,11 +23,10 @@ Created on Oct 15, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from inception import screenlock, memdump, pickpocket
+from inception import screenlock, memdump, pickpocket, cfg
 from inception.firewire import FireWire
-from inception.util import msg, fail, separator, detectos, unload_fw_ip,\
+from inception.util import info, fail, separator, detectos, unload_fw_ip,\
     get_termsize, warn
-import inception.settings as settings
 import getopt
 import os
 import sys
@@ -36,10 +35,10 @@ from datetime import date
 
 
 def main(argv):
-    settings.encoding = sys.getdefaultencoding()
+    cfg.encoding = sys.getdefaultencoding()
     
     # Get and set terminal width
-    settings.termwidth = get_termsize()
+    cfg.termwidth = get_termsize()
     
     # Print obligatory awesome ASCII banner
     print('''
@@ -51,18 +50,22 @@ def main(argv):
 
 v.{0} (C) Carsten Maartmann-Moe {1}
 Download: {2} | Twitter: @breaknenter
-'''.format(settings.version, date.today().strftime("%Y"), settings.url))
+'''.format(cfg.version, date.today().strftime("%Y"), cfg.url))
     
     # Initialize
-    targets = settings.targets
+    targets = cfg.targets
     
     # Detect host OS
-    settings.os = detectos()
+    cfg.os = detectos()
     
     # Parse args
     try:
         opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:s', 
-                                   ['businfo', 'dump=', 'dump-all', 'egg', 'file=', 'force-write', 'help', 'list', 'verbose', 'wait=', 'no-write', 'pickpocket', 'unload', 'manual=', 'signatures'])
+                                   ['businfo', 'dump=', 'dump-all', 'egg', 
+                                    'file=', 'force-write', 'help', 'list', 
+                                    'verbose', 'wait=', 'no-write', 
+                                    'pickpocket', 'unload', 'manual=', 
+                                    'signatures'])
     except getopt.GetoptError as err:
         warn(err)
         usage(argv[0])
@@ -72,53 +75,55 @@ Download: {2} | Twitter: @breaknenter
             usage(argv[0])
             sys.exit()
         elif opt in ('-f', '--file'):
-            settings.filemode = True
-            settings.filename = str(arg)
+            cfg.filemode = True
+            cfg.filename = str(arg)
         elif opt in ('--force-write'):
-            settings.forcewrite = True
+            cfg.forcewrite = True
         elif opt in ('-l', '--list'):
-            msg('Available targets:')
+            info('Available targets:')
             separator()
             for n, target in enumerate(targets, 1):
-                msg(target['OS'] + ': ' + target['name'], n)
+                info(target['OS'] + ': ' + target['name'], n)
             separator()
             sys.exit()
         elif opt in ('-v', '--verbose'):
-            settings.verbose = True
+            cfg.verbose = True
         elif opt in ('-w', '--wait'):
-            settings.fw_delay = int(arg)
+            cfg.fw_delay = int(arg)
         elif opt in ('-n', '--no-write'):
-            settings.dry_run = True
+            cfg.dry_run = True
         elif opt in ('-D', '--dump-all'):
-            settings.memdump = True
-            start = settings.startaddress
-            end = settings.memsize
+            cfg.memdump = True
+            start = cfg.startaddress
+            end = cfg.memsize
         elif opt in ('-d', '--dump'):
-            settings.memdump = True
+            cfg.memdump = True
             try:
                 start, size = str(arg).split(',')
                 # Fix start
                 if '0x' in start:
                     start = int(start, 0) & 0xfffff000 # Address
                 else:
-                    start = int(start) * settings.PAGESIZE # Page number
+                    start = int(start) * cfg.PAGESIZE # Page number
                 # If the start address is below 1 MiB, the user is overriding
                 # default behavior (avoiding memory below 1 MiB)
-                if start < settings.startaddress:
-                    settings.override = True
-                    msg('Overriding default behavior, accessing memory below 1 MiB')
+                if start < cfg.startaddress:
+                    cfg.override = True
+                    info('Overriding default behavior, accessing memory ' + 
+                         'below 1 MiB')
                 # Fix size
                 size = size.lower()
                 if size.find('kib') != -1 or size.find('kb') != -1:
-                    size = int(size.rstrip(' kib')) * settings.KiB
+                    size = int(size.rstrip(' kib')) * cfg.KiB
                 elif size.find('mib') != -1 or size.find('mb') != -1:
-                    size = int(size.rstrip(' mib')) * settings.MiB
+                    size = int(size.rstrip(' mib')) * cfg.MiB
                 elif size.find('gib') != -1 or size.find('gb') != -1:
-                    size = int(size.rstrip(' gib')) * settings.GiB
+                    size = int(size.rstrip(' gib')) * cfg.GiB
                 else:
-                    size = int(size) * settings.PAGESIZE
-                if size < settings.PAGESIZE:
-                    warn('Minimum dump size is a page, {0} KiB'.format(settings.PAGESIZE // settings.KiB))
+                    size = int(size) * cfg.PAGESIZE
+                if size < cfg.PAGESIZE:
+                    warn('Minimum dump size is a page, {0} KiB'
+                         .format(cfg.PAGESIZE // cfg.KiB))
                 end = start + size
             except:
                 fail('Could not parse argument to {0}'.format(opt))
@@ -130,9 +135,9 @@ Download: {2} | Twitter: @breaknenter
             else:
                 fail("You must be root to run Inception with FireWire input")
         elif opt in ('-p', '--pickpocket'):
-            settings.pickpocket = True
+            cfg.pickpocket = True
         elif opt in ('-u', '--unload'):
-            if settings.os == settings.OSX:
+            if cfg.os == cfg.OSX:
                 unload_fw_ip()
             else:
                 fail('Host system is not OS X, aborting')
@@ -144,7 +149,8 @@ Download: {2} | Twitter: @breaknenter
                 signature = int(signature, 0)
                 patch = int(patch, 0)
             except ValueError:
-                fail('You must provide a valid offset, signature and patch in manual mode')
+                fail('You must provide a valid offset, signature and patch ' +
+                     'in manual mode')
             targets = [{'OS': 'Non-specified OS',
                         'versions': ['N/A'],
                         'architectures': ['N/A'],
@@ -156,9 +162,10 @@ Download: {2} | Twitter: @breaknenter
                                                     'patch': patch,
                                                     'patchoffset': 0x00}]}]}]
         elif opt in ('-s', '--signatures'):
-            settings.list_signatures = True
+            cfg.list_signatures = True
         elif opt in ('-e', '--egg'):
-            settings.egg = True
+            info('Turn up the volume, please!')
+            cfg.egg = True
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -166,19 +173,19 @@ Download: {2} | Twitter: @breaknenter
     if args:
         warn('Arguments {0} ignored'.format(', '.join(args)))
     
-    if settings.list_signatures:
+    if cfg.list_signatures:
         screenlock.list_targets(targets, details=True)
         sys.exit()
     
-    if not settings.filemode and not os.geteuid() == 0:
+    if not cfg.filemode and not os.geteuid() == 0:
         fail("You must be root to run Inception with FireWire input")
         
     # Here we go
     try:
-        if settings.memdump:
+        if cfg.memdump:
             memdump.dump(start, end)
-        elif settings.pickpocket:
-            if settings.filemode:
+        elif cfg.pickpocket:
+            if cfg.filemode:
                 fail("Pickpocket mode is not compatible with file mode")
             pickpocket.lurk()
         else:
@@ -195,8 +202,9 @@ Download: {2} | Twitter: @breaknenter
 
 
 def usage(execname):
-    print('''Inception is a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+    print(
+'''Inception is a FireWire physical memory manipulation and hacking tool 
+exploiting IEEE 1394 SBP-2 DMA.
 
 Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
 
@@ -235,7 +243,7 @@ Options:
     -p, --pickpocket      Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain.
-    -s, --signatures      Parses and prints the signatures from settings.py. May
+    -s, --signatures      Parses and prints the signatures from cfg.py. May
                           be used together with -m/--manual.
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over
                           FireWire module) which are known to cause kernel

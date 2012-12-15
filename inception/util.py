@@ -21,13 +21,13 @@ Created on Jun 19, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-import sys
-import binascii
-from inception import settings
-import os
-import platform
+from inception import cfg
 from subprocess import call
 from textwrap import wrap
+import binascii
+import os
+import platform
+import sys
 
 
 def hexstr2bytes(s):
@@ -81,22 +81,22 @@ def open_file(filename, mode):
     
 
 def get_termsize():
-    rows, columns = os.popen('stty size', 'r').read().split()
+    rows, columns = os.popen('stty size', 'r').read().split() #@UnusedVariable
     if columns:
         return int(columns)
     else:
         warn('Cannot detect terminal column width')
-        return settings.termwidth
+        return cfg.termwidth
     
 
 def prnt(s):
     '''
     Prints a line and wraps each line at terminal width
     '''
-    print('\n'.join(wrap(str(s), settings.termwidth)))
+    print('\n'.join(wrap(str(s), cfg.termwidth)))
 
 
-def msg(s, sign = '*'):
+def info(s, sign = '*'):
     '''
     Print an informational message with '*' as a sign
     '''
@@ -107,14 +107,14 @@ def warn(s):
     '''
     Prints a warning message with '!' as a sign
     '''
-    msg(s, sign = '!')
+    info(s, sign = '!')
     
     
 def separator():
     '''
     Prints a separator line with the width of the terminal
     '''
-    print('-' * settings.termwidth)
+    print('-' * cfg.termwidth)
 
 
 def fail(err = None):
@@ -133,11 +133,11 @@ def needtoavoid(address):
     target
     '''
     avoid = []
-    if settings.apple_target:
-        avoid = settings.apple_avoid # Avoid this region if dumping from Macs
+    if cfg.apple_target:
+        avoid = cfg.apple_avoid # Avoid this region if dumping from Macs
     else:
-        avoid = settings.avoid # Avoid this region if dumping memory from PCs
-    return avoid[0] <= address <= avoid[1] and not settings.filemode
+        avoid = cfg.avoid # Avoid this region if dumping memory from PCs
+    return avoid[0] <= address <= avoid[1] and not cfg.filemode
 
 
 def detectos():
@@ -151,12 +151,15 @@ def unload_fw_ip():
     '''
     Unloads IP over FireWire modules if present on OS X
     '''
-    unload = input('[!] IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ').lower()
+    unload = input('[!] IOFireWireIP on OS X may cause kernel panics. ' +
+                   'Unload? [Y/n]: ').lower()
     if 'y' == unload or '' == unload:
-        status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext', shell=True)
+        status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext',
+                      shell=True)
         if status == 0:
-            msg('IOFireWireIP.kext unloaded')
-            msg('To reload: sudo kextload /System/Library/Extensions/IOFireWireIP.kext')
+            info('IOFireWireIP.kext unloaded')
+            info('To reload: sudo kextload /System/Library/Extensions/' +
+                 'IOFireWireIP.kext')
         else:
             fail('Could not unload IOFireWireIP.kext')
 
@@ -173,7 +176,8 @@ def restart():
 
 class MemoryFile:
     '''
-    classdocs
+    File that exposes a similar interface as the FireWire class. Used for
+    reading from RAM memory files of memory dumps
     '''
 
     def __init__(self, file_name, pagesize):
@@ -193,13 +197,15 @@ class MemoryFile:
             yield (r[0], self.file.read(r[1]))
     
     def write(self, addr, buf):
-        if settings.forcewrite:
-            answer = input('[!] Are you sure you want to write to file [y/N]? ').lower()
+        if cfg.forcewrite:
+            answer = input('[!] Are you sure you want to write to file [y/N]? '
+                           ).lower()
             if answer in ['y', 'yes']:
                 self.file.seek(addr)
                 self.file.write(buf)
         else:
-            warn('File not patched. To enable file writing, use the --force-write switch')
+            warn('File not patched. To enable file writing, use the ' +
+                 '--force-write switch')
     
     def close(self):
         self.file.close()

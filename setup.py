@@ -7,18 +7,18 @@ Created on Jun 18, 2011
 
 # Inception's setup.py
 from distutils.core import setup
-from inception import settings
+from inception import cfg
 
 setup(
     name = 'inception',
     packages = ['inception'],
     scripts = ['incept'],
     package_data= {'inception': ['data/oui.txt', 'data/inception.wav']},
-    version = settings.version,
+    version = cfg.version,
     description = 'Memory manipulation tool exploiting FireWire SBP2 DMA.',
     author = 'Carsten Maartmann-Moe',
     author_email = 'carsten@carmaa.com',
-    url = settings.url,
+    url = cfg.url,
     download_url = 'http://github.com/carmaa/inception',
     license = 'GPL',
     requires = ['forensic1394'],

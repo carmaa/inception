@@ -22,45 +22,46 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from inception import settings
+from inception import cfg
 from inception.firewire import FireWire
-from inception.util import msg, MemoryFile, needtoavoid, bytes2hexstr
+from inception.util import info, MemoryFile, needtoavoid, bytes2hexstr
 import sys
 import time
 
 def dump(start, end):
     # Make sure that the right mode is set
-    settings.memdump = True
+    cfg.memdump = True
     
-    requestsize = settings.max_request_size
+    requestsize = cfg.max_request_size
     size = end - start
     
     # Open file for writing
-    filename = '{0}_{1}-{2}.bin'.format(settings.memdump_prefix, hex(start), hex(end))
+    filename = '{0}_{1}-{2}.bin'.format(cfg.memdump_prefix, 
+                                        hex(start), hex(end))
     file = open(filename, 'wb')
     
     # Ensure correct denomination
-    if size % settings.GiB == 0:
-        s = '{0} GiB'.format(size//settings.GiB)
-    elif size % settings.MiB == 0:
-        s = '{0} MiB'.format(size//settings.MiB)
+    if size % cfg.GiB == 0:
+        s = '{0} GiB'.format(size//cfg.GiB)
+    elif size % cfg.MiB == 0:
+        s = '{0} MiB'.format(size//cfg.MiB)
     else:
-        s = '{0} KiB'.format(size//settings.KiB)
+        s = '{0} KiB'.format(size//cfg.KiB)
         
-    msg('Dumping from {0:#x} to {1:#x}, a total of {2}'.format(start, end, s))
+    info('Dumping from {0:#x} to {1:#x}, a total of {2}'.format(start, end, s))
     
     # Initialize and lower DMA shield
-    if not settings.filemode:
+    if not cfg.filemode:
         fw = FireWire()
         starttime = time.time()
         device_index = fw.select_device()
         # Print selection
-        msg('Selected device: {0}'.format(fw.vendors[device_index]))
+        info('Selected device: {0}'.format(fw.vendors[device_index]))
 
     # Lower DMA shield or use a file as input
     device = None
-    if settings.filemode:
-        device = MemoryFile(settings.filename, settings.PAGESIZE)
+    if cfg.filemode:
+        device = MemoryFile(cfg.filename, cfg.PAGESIZE)
     else:
         elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
@@ -77,18 +78,20 @@ def dump(start, end):
                 data = device.read(i, requestsize)
             file.write(data)
             # Print status
-            dumped = (i - start) // settings.MiB
-            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far'.format(dumped))
-            if settings.verbose:
-                sys.stdout.write('. Sample data read: {0}'.format(bytes2hexstr(data)[0:24]))
+            dumped = (i - start) // cfg.MiB
+            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far'
+                             .format(dumped))
+            if cfg.verbose:
+                sys.stdout.write('. Sample data read: {0}'
+                                 .format(bytes2hexstr(data)[0:24]))
             sys.stdout.write('\r')
             sys.stdout.flush()
         file.close()
         print() # Filler
-        msg('Dumped memory to file {0}'.format(filename))
+        info('Dumped memory to file {0}'.format(filename))
         device.close()
     except KeyboardInterrupt:
         file.close()
         print()
-        msg('Dumped memory to file {0}'.format(filename))
+        info('Dumped memory to file {0}'.format(filename))
         raise KeyboardInterrupt

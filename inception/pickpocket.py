@@ -22,24 +22,25 @@ Created on Feb 1, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from inception import firewire, memdump, settings
-import time
+from inception import firewire, memdump, cfg
 import sys
+import time
 
 def lurk():
-    start = settings.startaddress
-    end = settings.memsize
+    start = cfg.startaddress
+    end = cfg.memsize
     
     try:
-        print('[*] Lurking in the shrubbery waiting for a device to connect. Ctrl-C to abort', end = '')
+        print('[*] Lurking in the shrubbery waiting for a device to ' +
+              'connect. Ctrl-C to abort', end = '')
         sys.stdout.flush()
         # Initiate FireWire
         fw = firewire.FireWire()
-        while True: # Loop until aborted
+        while True: # Loop until aborted, and poll for devices
             while len(fw.devices) == 0:
                 print('.', end = '')
                 sys.stdout.flush()
-                time.sleep(settings.polldelay)
+                time.sleep(cfg.polldelay)
                 pass # Do nothing until a device connects
             print() # Newline
             memdump.dump(start, end)

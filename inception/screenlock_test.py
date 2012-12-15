@@ -21,14 +21,14 @@ Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from inception import screenlock, settings
-import inception.settings
-import imp
-import os
-import unittest
-import sys
 from _pyio import StringIO
+from inception import screenlock, cfg
 from os import path
+import imp
+import inception.cfg
+import os
+import sys
+import unittest
 
 
 class TestScreenlock(unittest.TestCase):
@@ -42,7 +42,6 @@ class TestScreenlock(unittest.TestCase):
                 filepath = os.path.join(root, name)
                 mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])
                 if file_ext == '.py':
-                    #util.msg('*', 'Added sample {0}'.format(mod_name))
                     self.samples.append((mod_name, filepath))
 
 
@@ -52,23 +51,21 @@ class TestScreenlock(unittest.TestCase):
 
     def test_screenlock(self):
         for sample in self.samples:
-            settings = imp.reload(inception.settings)
-            settings.startaddress = 0x00000000
+            cfg = imp.reload(inception.cfg)
+            cfg.startaddress = 0x00000000
             mod_name = sample[0]
             filepath = sample[1]
-            #util.msg('T', 'Testing sample {0}'.format(mod_name))
             try:
                 module = imp.load_source(mod_name, filepath)
             except ImportError:
                 assert(module)
-            settings.filemode = True
-            settings.filename = path.join(path.dirname(__file__), '../samples/') + mod_name + '.bin'
+            cfg.filemode = True
+            cfg.filename = path.join(path.dirname(__file__), '../samples/') + mod_name + '.bin'
             foundtarget = False
-            for target in settings.targets:
+            for target in cfg.targets:
                 if target['OS'] == module.OS:
                     foundtarget = [target]
             self.assertTrue(foundtarget)
-            #util.msg('T', 'Found target: {0}'.format(foundtarget[0]['OS']))
             sys.stdout = StringIO() # Suppress output
             address, page = screenlock.attack(foundtarget)
             sys.stdout = sys.__stdout__ # Restore output

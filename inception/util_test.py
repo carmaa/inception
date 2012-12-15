@@ -21,10 +21,10 @@ Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-import unittest
+from _pyio import StringIO
 from inception.util import hexstr2bytes, bytes2hexstr, bytelen, int2binhex, prnt
 import sys
-from _pyio import StringIO
+import unittest
 
 
 class TestUtil(unittest.TestCase):
@@ -82,7 +82,8 @@ class TestUtil(unittest.TestCase):
         prnt(s)
         out = sys.stdout.getvalue()
         sys.stdout = sys.__stdout__ # Restore output
-        self.assertEqual(out, 'A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A\nA A\n')
+        self.assertEqual(out, 'A A A A A A A A A A A A A A A A A A A A A A ' +
+                         'A A A A A A A A A A A A A A A A A A\nA A\n')
 
 
 if __name__ == "__main__":

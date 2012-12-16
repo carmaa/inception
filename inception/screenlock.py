@@ -24,7 +24,7 @@ Created on Jun 23, 2011
 from inception import sound
 from inception.firewire import FireWire, cfg
 from inception.util import info, MemoryFile, fail, bytelen, int2binhex, \
-    separator, bytes2hexstr, warn, poll
+    separator, bytes2hexstr, warn, poll, ProgressBar
 import os
 import sys
 import time
@@ -170,6 +170,10 @@ def searchanddestroy(device, target, memsize):
                 chunk['patch'] = int2binhex(chunk['patch'])
             except KeyError:
                 chunk['patch'] = None
+    
+    # Progress bar
+    prog = ProgressBar(max_value = memsize, total_width = cfg.termwidth, 
+                       print_data = cfg.verbose)
 
     try:
         # Build a batch of read requests of the form: [(addr1, len1), ...] and
@@ -218,14 +222,8 @@ def searchanddestroy(device, target, memsize):
                         p = []
                         
                         # Print status
-                        mibaddr = pageaddress // cfg.MiB
-                        sys.stdout.write('[*] Searching, {0:>4d} MiB so far'
-                                         .format(mibaddr))
-                        if cfg.verbose:
-                            sys.stdout.write('. Sample data read: {0}'
-                                             .format(bytes2hexstr(cand)[0:24]))
-                        sys.stdout.write('\r')
-                        sys.stdout.flush()
+                        prog.update_amount(pageaddress, cand)
+                        prog.draw()
                          
             j += 1 # Increase read request count
             

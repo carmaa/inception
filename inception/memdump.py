@@ -24,8 +24,7 @@ Created on Jan 22, 2012
 
 from inception import cfg
 from inception.firewire import FireWire
-from inception.util import info, MemoryFile, needtoavoid, bytes2hexstr
-import sys
+from inception.util import info, MemoryFile, needtoavoid, ProgressBar
 import time
 
 def dump(start, end):
@@ -65,7 +64,11 @@ def dump(start, end):
     else:
         elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
-    
+
+    # Progress bar
+    prog = ProgressBar(min_value = start, max_value = end, 
+                       total_width = cfg.termwidth, print_data = cfg.verbose)
+        
     try:
         for i in range(start, end, requestsize):
             # Edge case, make sure that we don't read beyond the end
@@ -78,14 +81,8 @@ def dump(start, end):
                 data = device.read(i, requestsize)
             file.write(data)
             # Print status
-            dumped = (i - start) // cfg.MiB
-            sys.stdout.write('[*] Dumping memory, {0:>4d} MiB so far'
-                             .format(dumped))
-            if cfg.verbose:
-                sys.stdout.write('. Sample data read: {0}'
-                                 .format(bytes2hexstr(data)[0:24]))
-            sys.stdout.write('\r')
-            sys.stdout.flush()
+            prog.update_amount(i + requestsize, data)
+            prog.draw()
         file.close()
         print() # Filler
         info('Dumped memory to file {0}'.format(filename))

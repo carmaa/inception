@@ -16,7 +16,7 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.2.3, it is able to unlock the following x86 and x64 operating
+As of version 0.2.4, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
@@ -171,6 +171,7 @@ Development history
  * 0.2.1 - Added signatures for Ubuntu 12.10
  * 0.2.2 - Added signatures for Linux Mint
  * 0.2.3 - General code cleanup, and nicer and more consistent output
+ * 0.2.4 - Added a progress bar
  
  
 Disclaimer

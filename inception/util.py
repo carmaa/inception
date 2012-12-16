@@ -82,7 +82,7 @@ def open_file(filename, mode):
 
 def get_termsize():
     try:
-        with open(os.devnull, "w") as fnull:
+        with open(os.devnull, 'w') as fnull:
             r, c = subprocess.check_output(['stty','size'], stderr = fnull).split() #@UnusedVariable
         cfg.termwidth = int(c)
         return int(c)
@@ -141,6 +141,24 @@ def separator():
     Prints a separator line with the width of the terminal
     '''
     print('-' * cfg.termwidth)
+    
+
+def parse_unit(size):
+    '''
+    Parses input in the form of a number and a (optional) unit and returns the
+    size in either multiplies of the page size (if no unit is given) or the
+    size in KiB, MiB or GiB
+    '''
+    size = size.lower()
+    if size.find('kib') != -1 or size.find('kb') != -1:
+        size = int(size.rstrip(' kib')) * cfg.KiB
+    elif size.find('mib') != -1 or size.find('mb') != -1:
+        size = int(size.rstrip(' mib')) * cfg.MiB
+    elif size.find('gib') != -1 or size.find('gb') != -1:
+        size = int(size.rstrip(' gib')) * cfg.GiB
+    else:
+        size = int(size) * cfg.PAGESIZE
+    return size
 
 
 def needtoavoid(address):
@@ -226,4 +244,110 @@ class MemoryFile:
     
     def close(self):
         self.file.close()
+    
+    
+class ProgressBar:
+    '''
+    Builds and display a text-based progress bar
+    
+    Based on https://gist.github.com/3306295
+    '''
+
+    def __init__(self, min_value=0, max_value=100, total_width=80, 
+                 print_data = False):
+        '''
+        Initializes the progress bar
+        '''
+        self.progbar = ''   # This holds the progress bar string
+        self.old_progbar = ''
+        self.min = min_value
+        self.max = max_value
+        self.span = max_value - min_value
+        self.width = total_width - len(' 4096 MiB (100%)')
+        self.unit = cfg.MiB
+        self.unit_name = 'MiB'
+        self.print_data = print_data
+        if self.print_data:
+            self.data_width = total_width // 5
+            if self.data_width % 2 != 0:
+                self.data_width = self.data_width + 1
+            self.width = self.width - (len(' {}') + self.data_width)
+        else:
+            self.data_width = 0
+        self.amount = 0       # When amount == max, we are 100% done 
+        self.update_amount(0)  # Build progress bar string
+
+
+    def append_amount(self, append):
+        '''
+        Increases the current amount of the value of append and 
+        updates the progress bar to new ammount
+        '''
+        self.update_amount(self.amount + append)
+    
+    def update_percentage(self, new_percentage):
+        '''
+        Updates the progress bar to the new percentage
+        '''
+        self.update_amount((new_percentage * float(self.max)) / 100.0)
         
+
+    def update_amount(self, new_amount=0, data = b'\x00'):
+        '''
+        Update the progress bar with the new amount (with min and max
+        values set at initialization; if it is over or under, it takes the
+        min or max value as a default
+        '''
+        if new_amount < self.min: new_amount = self.min
+        if new_amount > self.max: new_amount = self.max
+        self.amount = new_amount
+        rel_amount = new_amount - self.min
+
+        # Figure out the new percent done, round to an integer
+        diff_from_min = float(self.amount - self.min)
+        percent_done = (diff_from_min / float(self.span)) * 100.0
+        percent_done = int(round(percent_done))
+
+        # Figure out how many hash bars the percentage should be
+        all_full = self.width - 2
+        num_hashes = (percent_done / 100.0) * all_full
+        num_hashes = int(round(num_hashes))
+
+        # Build a progress bar with an arrow of equal signs; special cases for
+        # empty and full
+        if num_hashes == 0:
+            self.progbar = '[>{0}]'.format(' ' * (all_full - 1))
+        elif num_hashes == all_full:
+            self.progbar = '[{0}]'.format('=' * all_full)
+        else:
+            self.progbar = '[{0}>{1}]'.format('=' * (num_hashes - 1),
+                                              ' ' * (all_full - num_hashes))
+
+        # Generate string
+        percent_str = '{0:>4d} {1} ({2:>3}%)'.format(rel_amount // self.unit,
+                                                     self.unit_name,
+                                                     percent_done)
+        
+        # If we are to print data, append it
+        if self.print_data:
+            data_hex = bytes.decode(binascii.hexlify(data))
+            data_str = ' {{{0:0>{1}.{1}}}}'.format(data_hex, self.data_width)
+            percent_str = percent_str + data_str    
+
+        # Slice the percentage into the bar
+        self.progbar = ' '.join([self.progbar, percent_str])
+    
+    def draw(self):
+        '''
+        Draws the progress bar if it has changed from it's previous value
+        '''
+        if self.progbar != self.old_progbar:
+            self.old_progbar = self.progbar
+            sys.stdout.write(self.progbar + '\r')
+            sys.stdout.flush() # force updating of screen
+
+    def __str__(self):
+        '''
+        Returns the current progress bar
+        '''
+        return str(self.progbar)

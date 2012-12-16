@@ -26,7 +26,7 @@ Created on Oct 15, 2011
 from inception import screenlock, memdump, pickpocket, cfg
 from inception.firewire import FireWire
 from inception.util import info, fail, separator, detectos, unload_fw_ip,\
-    get_termsize, warn, print_wrapped
+    get_termsize, warn, print_wrapped, parse_unit
 import getopt
 import os
 import sys
@@ -124,18 +124,10 @@ def main(argv):
                 # default behavior (avoiding memory below 1 MiB)
                 if start < cfg.startaddress:
                     cfg.override = True
-                    info('Overriding default behavior, accessing memory ' + 
+                    warn('Overriding default behavior, accessing memory ' + 
                          'below 1 MiB')
                 # Fix size
-                size = size.lower()
-                if size.find('kib') != -1 or size.find('kb') != -1:
-                    size = int(size.rstrip(' kib')) * cfg.KiB
-                elif size.find('mib') != -1 or size.find('mb') != -1:
-                    size = int(size.rstrip(' mib')) * cfg.MiB
-                elif size.find('gib') != -1 or size.find('gb') != -1:
-                    size = int(size.rstrip(' gib')) * cfg.GiB
-                else:
-                    size = int(size) * cfg.PAGESIZE
+                size = parse_unit(size)
                 if size < cfg.PAGESIZE:
                     warn('Minimum dump size is a page, {0} KiB'
                          .format(cfg.PAGESIZE // cfg.KiB))
@@ -198,6 +190,9 @@ def main(argv):
     # Here we go
     try:
         if cfg.memdump:
+            if cfg.filemode: 
+                # Make sure we don't read past the end of the input file
+                end = os.stat(cfg.filename).st_size
             memdump.dump(start, end)
         elif cfg.pickpocket:
             if cfg.filemode:

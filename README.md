@@ -57,7 +57,7 @@ license.
 Key data
 --------
 
- * Version:	0.2.3
+ * Version:	0.2.4
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter:	@breaknenter Hashtag: #inceptiontool

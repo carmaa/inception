@@ -1,10 +1,11 @@
 Inception
 =========
 
-Inception is a FireWire physical memory manipulation and hacking tool
-exploiting IEEE 1394 SBP-2 DMA. The tool can unlock (any password accepted)
-and escalate privileges to Administrator/root on almost any machine you have
-physical access to.
+Inception is a FireWire physical memory manipulation and hacking tool 
+exploiting IEEE 1394 SBP-2 DMA. The tool can unlock (any password accepted) 
+and escalate privileges to Administrator/root on almost* any powered on 
+machine you have physical access to. The tool can attack over FireWire, 
+Thunderbolt, ExpressCard, PC Card and any other PCI/PCIe interfaces.
 
 Inception aims to provide a stable and easy way of performing intrusive and 
 non-intrusive memory hacks in order to unlock live computers using FireWire 

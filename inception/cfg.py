@@ -50,7 +50,7 @@ WINDOWS = 'Windows'
 # Global variables/default settings
 #===============================================================================
 verbose = False                 # Not verbose
-fw_delay = 10                   # 5 seconds delay before attacking
+fw_delay = 5                    # 5 seconds delay before attacking
 filemode = False                # Search in file instead of FW DMA
 dry_run = False                 # No write-back into memory
 target = False                  # No target set
@@ -70,7 +70,7 @@ avoid = [0xa0000, 0xfffff]      # Upper Win memory area (can cause BSOD if acces
 apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple_target = False            # Set to true if we are attacking a Mac
 pickpocket = False              # Pickpocket mode off by default
-polldelay = 5                   # 5 seconds delay between FireWire polls
+polldelay = 1                   # 1 second delay between FireWire polls
 os = None                       # Detected host OS is None by default
 forcewrite = False              # Do not write back to file in file mode
 list_signatures = False         # Don't list all signatures at startup

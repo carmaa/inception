@@ -23,26 +23,28 @@ Created on Feb 1, 2012
 '''
 
 from inception import firewire, memdump, cfg
-import sys
 import time
+from inception.util import BeachBall, info
 
 def lurk():
     start = cfg.startaddress
     end = cfg.memsize
+    bb = BeachBall()
     
     try:
-        print('[*] Lurking in the shrubbery waiting for a device to ' +
-              'connect. Ctrl-C to abort', end = '')
-        sys.stdout.flush()
+        s = '\n'.join(cfg.wrapper.wrap('[-] Lurking in the shrubbery waiting ' +
+                                       'for a device to connect. Ctrl-C to ' +
+                                       'abort')) + '\r'
+        print(s, end = '')
         # Initiate FireWire
         fw = firewire.FireWire()
         while True: # Loop until aborted, and poll for devices
             while len(fw.devices) == 0:
-                print('.', end = '')
-                sys.stdout.flush()
+                bb.draw()
                 time.sleep(cfg.polldelay)
                 pass # Do nothing until a device connects
             print() # Newline
+            info('FireWire device detected')
             memdump.dump(start, end)
     except KeyboardInterrupt:
         print() # TODO: Fix keyboard handling (interrupt handling)

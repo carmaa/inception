@@ -28,6 +28,7 @@ import os
 import platform
 import sys
 import subprocess
+import time
 
 
 def hexstr2bytes(s):
@@ -351,3 +352,27 @@ class ProgressBar:
         Returns the current progress bar
         '''
         return str(self.progbar)
+    
+
+class BeachBall:
+    '''
+    An ASCII beach ball
+    '''
+    
+    def __init__(self, max_frequency = 0.1):
+        self.states = ['-', '\\', '|', '/']
+        self.state = 0
+        self.max_frequency = max_frequency
+        self.time_drawn = time.time()
+        
+    def draw(self, force = False):
+        '''
+        Draws the beach ball if the dime delta since last draw is greater than
+        the max_frequency
+        '''
+        now = time.time()
+        if self.max_frequency < now - self.time_drawn or force:
+            self.state = (self.state + 1) % len(self.states)
+            print('[{0}]\r'.format(self.states[self.state]), end = '')
+            sys.stdout.flush()
+            self.time_drawn = now

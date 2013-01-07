@@ -23,7 +23,7 @@ Created on Jan 23, 2012
 '''
 import re
 from inception.util import info, separator, fail, open_file, restart, detectos,\
-    warn, poll
+    warn, poll, BeachBall
 from inception import cfg
 import sys
 import os
@@ -192,12 +192,14 @@ class FireWire:
         
     def getdevice(self, num, elapsed):
         didwait = False
+        bb = BeachBall()
         try:
             for i in range(cfg.fw_delay - elapsed, 0, -1):
-                sys.stdout.write('[*] Initializing bus and enabling SBP-2, ' +
-                                 'please wait %2d seconds or press Ctrl+C\r' 
-                                 % i) # TODO: Use .format()
+                print('[*] Initializing bus and enabling SBP-2, ' +
+                      'please wait %2d seconds or press Ctrl+C\r' 
+                      % i, end = '') # TODO: Use .format()
                 sys.stdout.flush()
+                bb.draw()
                 didwait = True
                 time.sleep(1)
         except KeyboardInterrupt:

@@ -171,7 +171,7 @@ Development history
  * 0.2.1 - Added signatures for Ubuntu 12.10
  * 0.2.2 - Added signatures for Linux Mint
  * 0.2.3 - General code cleanup, and nicer and more consistent output
- * 0.2.4 - Added a progress bar
+ * 0.2.4 - Added a progress bar 
  
  
 Disclaimer

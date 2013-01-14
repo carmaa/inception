@@ -22,14 +22,13 @@ Created on Feb 1, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from inception import firewire, memdump, cfg
+from inception import firewire, memdump, cfg, term
 import time
-from inception.util import BeachBall, info
 
 def lurk():
     start = cfg.startaddress
     end = cfg.memsize
-    bb = BeachBall()
+    bb = term.BeachBall()
     
     try:
         s = '\n'.join(cfg.wrapper.wrap('[-] Lurking in the shrubbery waiting ' +
@@ -45,7 +44,7 @@ def lurk():
                 time.sleep(cfg.polldelay)
                 pass # Do nothing until a device connects
             print() # Newline
-            info('FireWire device detected')
+            term.info('FireWire device detected')
             memdump.dump(start, end)
     except KeyboardInterrupt:
         print() # TODO: Fix keyboard handling (interrupt handling)

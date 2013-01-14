@@ -22,9 +22,7 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from inception import cfg
-from inception.firewire import FireWire
-from inception.util import info, MemoryFile, needtoavoid, ProgressBar
+from inception import cfg, firewire, util, term
 import time
 
 def dump(start, end):
@@ -47,27 +45,29 @@ def dump(start, end):
     else:
         s = '{0} KiB'.format(size//cfg.KiB)
         
-    info('Dumping from {0:#x} to {1:#x}, a total of {2}'.format(start, end, s))
+    term.info('Dumping from {0:#x} to {1:#x}, a total of {2}'
+              .format(start, end, s))
     
     # Initialize and lower DMA shield
     if not cfg.filemode:
-        fw = FireWire()
+        fw = firewire.FireWire()
         starttime = time.time()
         device_index = fw.select_device()
         # Print selection
-        info('Selected device: {0}'.format(fw.vendors[device_index]))
+        term.info('Selected device: {0}'.format(fw.vendors[device_index]))
 
     # Lower DMA shield or use a file as input
     device = None
     if cfg.filemode:
-        device = MemoryFile(cfg.filename, cfg.PAGESIZE)
+        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
     else:
         elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
 
     # Progress bar
-    prog = ProgressBar(min_value = start, max_value = end, 
-                       total_width = cfg.termwidth, print_data = cfg.verbose)
+    prog = term.ProgressBar(min_value = start, max_value = end, 
+                            total_width = cfg.termwidth, 
+                            print_data = cfg.verbose)
         
     try:
         for i in range(start, end, requestsize):
@@ -75,7 +75,7 @@ def dump(start, end):
             if  i + requestsize > end:
                 requestsize = end - i
             # Avoid accessing upper memory area if we are using FireWire
-            if needtoavoid(i):
+            if util.needtoavoid(i):
                 data = b'\x00' * requestsize
             else: 
                 data = device.read(i, requestsize)
@@ -85,10 +85,10 @@ def dump(start, end):
             prog.draw()
         file.close()
         print() # Filler
-        info('Dumped memory to file {0}'.format(filename))
+        term.info('Dumped memory to file {0}'.format(filename))
         device.close()
     except KeyboardInterrupt:
         file.close()
         print()
-        info('Dumped memory to file {0}'.format(filename))
+        term.info('Dumped memory to file {0}'.format(filename))
         raise KeyboardInterrupt

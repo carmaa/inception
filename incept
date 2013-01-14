@@ -23,15 +23,12 @@ Created on Oct 15, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 
-from inception import screenlock, memdump, pickpocket, cfg
-from inception.firewire import FireWire
-from inception.util import info, fail, separator, detectos, unload_fw_ip,\
-    get_termsize, warn, print_wrapped, parse_unit
+from datetime import date
+from inception import firewire, screenlock, memdump, pickpocket, cfg, util, term
 import getopt
 import os
 import sys
 import traceback
-from datetime import date
 
 
 def banner():
@@ -51,11 +48,11 @@ def banner():
 INCEPTION
         ''')
     
-    print_wrapped('v.{0} (C) Carsten Maartmann-Moe {1}'
-                  .format(cfg.version, date.today().strftime("%Y")), 
-                  indent = False)
-    print_wrapped('Download: {0} | Twitter: @breaknenter'.format(cfg.url), 
-                  indent = False)
+    term.write('v.{0} (C) Carsten Maartmann-Moe {1}'
+               .format(cfg.version, date.today().strftime("%Y")), 
+               indent = False)
+    term.write('Download: {0} | Twitter: @breaknenter'.format(cfg.url), 
+               indent = False)
     print()
 
 
@@ -63,7 +60,7 @@ def main(argv):
     cfg.encoding = sys.getdefaultencoding()
     
     # Get and set terminal width
-    cfg.wrapper.width = get_termsize()
+    cfg.wrapper.width = term.size()
     
     banner()
     
@@ -71,7 +68,7 @@ def main(argv):
     targets = cfg.targets
     
     # Detect host OS
-    cfg.os = detectos()
+    cfg.os = util.detectos()
     
     # Parse args
     try:
@@ -82,7 +79,7 @@ def main(argv):
                                     'pickpocket', 'unload', 'manual=', 
                                     'signatures'])
     except getopt.GetoptError as err:
-        warn(err)
+        term.warn(err)
         usage(argv[0])
         sys.exit(2)
     for opt, arg in opts:
@@ -95,11 +92,11 @@ def main(argv):
         elif opt in ('--force-write'):
             cfg.forcewrite = True
         elif opt in ('-l', '--list'):
-            info('Available targets:')
-            separator()
+            term.info('Available targets:')
+            term.separator()
             for n, target in enumerate(targets, 1):
-                info(target['OS'] + ': ' + target['name'], n)
-            separator()
+                term.info(target['OS'] + ': ' + target['name'], n)
+            term.separator()
             sys.exit()
         elif opt in ('-v', '--verbose'):
             cfg.verbose = True
@@ -124,30 +121,30 @@ def main(argv):
                 # default behavior (avoiding memory below 1 MiB)
                 if start < cfg.startaddress:
                     cfg.override = True
-                    warn('Overriding default behavior, accessing memory ' + 
-                         'below 1 MiB')
+                    term.warn('Overriding default behavior, accessing memory ' + 
+                              'below 1 MiB')
                 # Fix size
-                size = parse_unit(size)
+                size = util.parse_unit(size)
                 if size < cfg.PAGESIZE:
-                    warn('Minimum dump size is a page, {0} KiB'
-                         .format(cfg.PAGESIZE // cfg.KiB))
+                    term.warn('Minimum dump size is a page, {0} KiB'
+                              .format(cfg.PAGESIZE // cfg.KiB))
                 end = start + size
             except:
-                fail('Could not parse argument to {0}'.format(opt))
+                term.fail('Could not parse argument to {0}'.format(opt))
         elif opt in ('-b', '--businfo'):
             if os.geteuid() == 0:
-                fw = FireWire()
+                fw = firewire.FireWire()
                 fw.businfo()
                 sys.exit()
             else:
-                fail("You must be root to run Inception with FireWire input")
+                term.fail("You must be root to run Inception with FireWire input")
         elif opt in ('-p', '--pickpocket'):
             cfg.pickpocket = True
         elif opt in ('-u', '--unload'):
             if cfg.os == cfg.OSX:
-                unload_fw_ip()
+                util.unload_fw_ip()
             else:
-                fail('Host system is not OS X, aborting')
+                term.fail('Host system is not OS X, aborting')
             sys.exit()
         elif opt in ('-m', '--manual'):
             try:
@@ -156,8 +153,8 @@ def main(argv):
                 signature = int(signature, 0)
                 patch = int(patch, 0)
             except ValueError:
-                fail('You must provide a valid offset, signature and patch ' +
-                     'in manual mode')
+                term.fail('You must provide a valid offset, signature and ' +
+                          'patch in manual mode')
             targets = [{'OS': 'Non-specified OS',
                         'versions': ['N/A'],
                         'architectures': ['N/A'],
@@ -171,21 +168,21 @@ def main(argv):
         elif opt in ('-s', '--signatures'):
             cfg.list_signatures = True
         elif opt in ('-e', '--egg'):
-            info('Turn up the volume, please!')
+            term.info('Turn up the volume, please!')
             cfg.egg = True
         else:
             assert False, 'Option not handled: ' + opt
     
     # We don't accept any other arguments
     if args:
-        warn('Arguments {0} ignored'.format(', '.join(args)))
+        term.warn('Arguments {0} ignored'.format(', '.join(args)))
     
     if cfg.list_signatures:
         screenlock.list_targets(targets, details=True)
         sys.exit()
     
     if not cfg.filemode and not os.geteuid() == 0:
-        fail("You must be root to run Inception with FireWire input")
+        term.fail("You must be root to run Inception with FireWire input")
         
     # Here we go
     try:
@@ -196,19 +193,19 @@ def main(argv):
             memdump.dump(start, end)
         elif cfg.pickpocket:
             if cfg.filemode:
-                fail("Pickpocket mode is not compatible with file mode")
+                term.fail("Pickpocket mode is not compatible with file mode")
             pickpocket.lurk()
         else:
             address, page = screenlock.attack(targets)
             if not address or not page:
-                fail('Could not locate signature(s).')
+                term.fail('Could not locate signature(s).')
     except Exception as exc:
-        warn('Um, something went wrong: {0}'.format(exc))
-        separator()
+        term.warn('Um, something went wrong: {0}'.format(exc))
+        term.separator()
         traceback.print_exc()
-        separator()
+        term.separator()
     except KeyboardInterrupt:
-        warn('Aborted')
+        term.warn('Aborted')
 
 
 def usage(execname):

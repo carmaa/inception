@@ -21,7 +21,7 @@ Created on Jan 23, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from inception import cfg, util
+from inception import cfg, util, term
 from subprocess import call
 import os
 import re
@@ -43,7 +43,7 @@ except OSError:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
         util.restart()
     else:
-        util.fail('Could not load libforensic1394')
+        term.fail('Could not load libforensic1394')
 
 # List of FireWire OUIs
 OUI = {}
@@ -62,7 +62,7 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            util.poll('FireWire modules are not loaded. Load them? [Y/n]: ')
+            term.poll('FireWire modules are not loaded. Load them? [Y/n]: ')
             answer = input().lower()
             if answer in ['y', '']:
                 status = call('modprobe firewire-ohci', shell=True)
@@ -72,11 +72,11 @@ class FireWire:
                     except IOError:
                         time.sleep(2) # Give some more time
                         self._bus.enable_sbp2() # If this fails, fail hard
-                    util.info('FireWire modules loaded successfully')
+                    term.info('FireWire modules loaded successfully')
                 else:
-                    util.fail('Could not load FireWire modules')
+                    term.fail('Could not load FireWire modules')
             else:
-                util.fail('FireWire modules not loaded')
+                term.fail('FireWire modules not loaded')
                 
         # Enable SBP-2 support to ensure we get DMA
         self._devices = self._bus.devices()
@@ -112,7 +112,7 @@ class FireWire:
                                               textid[6:8]), 16)
                     OUI[ouiid] = rm.groupdict()['name']
         except IOError:
-            util.warn('Vendor OUI lookups will not be performed: {0}'
+            term.warn('Vendor OUI lookups will not be performed: {0}'
                  .format(filename))
         return OUI
     
@@ -131,9 +131,9 @@ class FireWire:
         list
         '''
         if not self._devices:
-            util.fail('No FireWire devices detected on the bus')
-        util.info('FireWire devices on the bus (names may appear blank):')
-        util.separator()
+            term.fail('No FireWire devices detected on the bus')
+        term.info('FireWire devices on the bus (names may appear blank):')
+        term.separator()
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
             vendorname = device.vendor_name.decode(cfg.encoding)
@@ -143,9 +143,9 @@ class FireWire:
             self._vendors.append(vendorname)
             pid = device.product_id
             productname = device.product_name.decode(cfg.encoding)
-            util.info('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'
+            term.info('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'
                       .format(vendorname, vid, productname, pid), sign = n)
-        util.separator()
+        term.separator()
         
     
     def select_device(self):
@@ -157,17 +157,17 @@ class FireWire:
             self.businfo()
         nof_devices = len(self._vendors)
         if nof_devices == 1 and cfg.verbose:
-            util.info('Only one device present, device auto-selected as target')
+            term.info('Only one device present, device auto-selected as target')
             return 0
         else:
-            util.poll('Select a device to attack (or type \'q\' to quit): ')
+            term.poll('Select a device to attack (or type \'q\' to quit): ')
             selected = input().lower()
             try:
                 selected = int(selected)
             except:
                 if selected == 'q': sys.exit()
                 else:
-                    util.warn('Invalid selection. Type \'q\' to quit')
+                    term.warn('Invalid selection. Type \'q\' to quit')
                     return self.select_device()
         if 0 < selected <= nof_devices:
             i = selected - 1
@@ -177,19 +177,19 @@ class FireWire:
             # (which would likely cause a kernel panic)
             if 'apple' in vendor.lower() and cfg.memdump and cfg.override:
                 cfg.apple_target = True
-                util.info('The target seems to be a Mac, forcing avoidance ' +
+                term.info('The target seems to be a Mac, forcing avoidance ' +
                           '(not dumping {0:#x}-{1:#x})'
                           .format(cfg.apple_avoid[0], cfg.apple_avoid[1]))
             return i
         else:
-            util.warn('Enter a selection between 1 and ' + str(nof_devices) + 
+            term.warn('Enter a selection between 1 and ' + str(nof_devices) + 
                       '. Type \'q\' to quit')
             return self.select_device()
         
         
     def getdevice(self, num, elapsed):
         didwait = False
-        bb = util.BeachBall()
+        bb = term.BeachBall()
         try:
             for i in range(cfg.fw_delay - elapsed, 0, -1):
                 print('[*] Initializing bus and enabling SBP-2, ' +

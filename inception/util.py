@@ -21,14 +21,12 @@ Created on Jun 19, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-from inception import cfg
+from inception import cfg, term
 from subprocess import call
 import binascii
 import os
 import platform
 import sys
-import subprocess
-import time
 
 
 def hexstr2bytes(s):
@@ -81,69 +79,6 @@ def open_file(filename, mode):
     return open(path, mode)
     
 
-def get_termsize():
-    try:
-        with open(os.devnull, 'w') as fnull:
-            r, c = subprocess.check_output(['stty','size'], stderr = fnull).split() #@UnusedVariable
-        cfg.termwidth = int(c)
-        return int(c)
-    except:
-        warn('Cannot detect terminal column width')
-        return cfg.termwidth
-
-def print_wrapped(s, indent = True, end_newline = True):
-    '''
-    Prints a line and wraps each line at terminal width
-    '''
-    if not indent:
-        default_indent = cfg.wrapper.subsequent_indent # Save default indent
-        cfg.wrapper.subsequent_indent = ''
-    wrapped = '\n'.join(cfg.wrapper.wrap(str(s)))
-    if not end_newline:
-        print(wrapped, end = ' ')
-    else:
-        print(wrapped)
-    if not indent:
-        cfg.wrapper.subsequent_indent = default_indent # Restore default indent
-
-
-def info(s, sign = '*'):
-    '''
-    Print an informational message with '*' as a sign
-    '''
-    print_wrapped('[{0}] {1}'.format(sign, s))
-
-
-def poll(s, sign = '?'):
-    '''
-    Prints a question to the user
-    '''
-    print_wrapped('[{0}] {1}'.format(sign, s), end_newline = False)
-    
-    
-def warn(s, sign = '!'):
-    '''
-    Prints a warning message with '!' as a sign
-    '''
-    print_wrapped('[{0}] {1}'.format(sign, s))
-    
-    
-def fail(err = None):
-    '''
-    Called if Inception fails. Optional parameter is an error message string.
-    '''
-    if err: warn(err)
-    warn('Attack unsuccessful')
-    sys.exit(1)
-
-
-def separator():
-    '''
-    Prints a separator line with the width of the terminal
-    '''
-    print('-' * cfg.termwidth)
-    
-
 def parse_unit(size):
     '''
     Parses input in the form of a number and a (optional) unit and returns the
@@ -187,17 +122,17 @@ def unload_fw_ip():
     '''
     Unloads IP over FireWire modules if present on OS X
     '''
-    poll('IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ')
+    term.poll('IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ')
     unload = input().lower()
     if unload in ['y', '']:
         status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext',
                       shell=True)
         if status == 0:
-            info('IOFireWireIP.kext unloaded')
-            info('To reload: sudo kextload /System/Library/Extensions/' +
+            term.info('IOFireWireIP.kext unloaded')
+            term.info('To reload: sudo kextload /System/Library/Extensions/' +
                  'IOFireWireIP.kext')
         else:
-            fail('Could not unload IOFireWireIP.kext')
+            term.fail('Could not unload IOFireWireIP.kext')
 
 
 def restart():
@@ -234,145 +169,17 @@ class MemoryFile:
     
     def write(self, addr, buf):
         if cfg.forcewrite:
-            poll('Are you sure you want to write to file [y/N]? ')
+            term.poll('Are you sure you want to write to file [y/N]? ')
             answer = input().lower()
             if answer in ['y', 'yes']:
                 self.file.seek(addr)
                 self.file.write(buf)
         else:
-            warn('File not patched. To enable file writing, use the ' +
+            term.warn('File not patched. To enable file writing, use the ' +
                  '--force-write switch')
     
     def close(self):
         self.file.close()
     
     
-class ProgressBar:
-    '''
-    Builds and display a text-based progress bar
-    
-    Based on https://gist.github.com/3306295
-    '''
 
-    def __init__(self, min_value=0, max_value=100, total_width=80, 
-                 print_data = False):
-        '''
-        Initializes the progress bar
-        '''
-        self.progbar = ''   # This holds the progress bar string
-        self.old_progbar = ''
-        self.min = min_value
-        self.max = max_value
-        self.span = max_value - min_value
-        self.width = total_width - len(' 4096 MiB (100%)')
-        self.unit = cfg.MiB
-        self.unit_name = 'MiB'
-        self.print_data = print_data
-        if self.print_data:
-            self.data_width = total_width // 5
-            if self.data_width % 2 != 0:
-                self.data_width = self.data_width + 1
-            self.width = self.width - (len(' {}') + self.data_width)
-        else:
-            self.data_width = 0
-        self.amount = 0       # When amount == max, we are 100% done 
-        self.update_amount(0)  # Build progress bar string
-
-
-    def append_amount(self, append):
-        '''
-        Increases the current amount of the value of append and 
-        updates the progress bar to new ammount
-        '''
-        self.update_amount(self.amount + append)
-    
-    def update_percentage(self, new_percentage):
-        '''
-        Updates the progress bar to the new percentage
-        '''
-        self.update_amount((new_percentage * float(self.max)) / 100.0)
-        
-
-    def update_amount(self, new_amount=0, data = b'\x00'):
-        '''
-        Update the progress bar with the new amount (with min and max
-        values set at initialization; if it is over or under, it takes the
-        min or max value as a default
-        '''
-        if new_amount < self.min: new_amount = self.min
-        if new_amount > self.max: new_amount = self.max
-        self.amount = new_amount
-        rel_amount = new_amount - self.min
-
-        # Figure out the new percent done, round to an integer
-        diff_from_min = float(self.amount - self.min)
-        percent_done = (diff_from_min / float(self.span)) * 100.0
-        percent_done = int(round(percent_done))
-
-        # Figure out how many hash bars the percentage should be
-        all_full = self.width - 2
-        num_hashes = (percent_done / 100.0) * all_full
-        num_hashes = int(round(num_hashes))
-
-        # Build a progress bar with an arrow of equal signs; special cases for
-        # empty and full
-        if num_hashes == 0:
-            self.progbar = '[>{0}]'.format(' ' * (all_full - 1))
-        elif num_hashes == all_full:
-            self.progbar = '[{0}]'.format('=' * all_full)
-        else:
-            self.progbar = '[{0}>{1}]'.format('=' * (num_hashes - 1),
-                                              ' ' * (all_full - num_hashes))
-
-        # Generate string
-        percent_str = '{0:>4d} {1} ({2:>3}%)'.format(rel_amount // self.unit,
-                                                     self.unit_name,
-                                                     percent_done)
-        
-        # If we are to print data, append it
-        if self.print_data:
-            data_hex = bytes.decode(binascii.hexlify(data))
-            data_str = ' {{{0:0>{1}.{1}}}}'.format(data_hex, self.data_width)
-            percent_str = percent_str + data_str    
-
-        # Slice the percentage into the bar
-        self.progbar = ' '.join([self.progbar, percent_str])
-    
-    def draw(self):
-        '''
-        Draws the progress bar if it has changed from it's previous value
-        '''
-        if self.progbar != self.old_progbar:
-            self.old_progbar = self.progbar
-            sys.stdout.write(self.progbar + '\r')
-            sys.stdout.flush() # force updating of screen
-
-    def __str__(self):
-        '''
-        Returns the current progress bar
-        '''
-        return str(self.progbar)
-    
-
-class BeachBall:
-    '''
-    An ASCII beach ball
-    '''
-    
-    def __init__(self, max_frequency = 0.1):
-        self.states = ['-', '\\', '|', '/']
-        self.state = 0
-        self.max_frequency = max_frequency
-        self.time_drawn = time.time()
-        
-    def draw(self, force = False):
-        '''
-        Draws the beach ball if the dime delta since last draw is greater than
-        the max_frequency
-        '''
-        now = time.time()
-        if self.max_frequency < now - self.time_drawn or force:
-            self.state = (self.state + 1) % len(self.states)
-            print('[{0}]\r'.format(self.states[self.state]), end = '')
-            sys.stdout.flush()
-            self.time_drawn = now

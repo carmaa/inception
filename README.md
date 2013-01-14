@@ -96,9 +96,8 @@ as:
 ### Download and install dependencies
 
 	sudo apt-get install git cmake python3 g++
-	wget http://freddie.witherden.org/tools/libforensic1394/releases/libforensic1394-0.2.tar.gz
-	tar xvf libforensic1394-0.2.tar.gz
-	cd libforensic1394-0.2
+	git clone git://git.freddie.witherden.org/forensic1394.git
+	cd forensic1394
 	cmake CMakeLists.txt
 	sudo make install
 	cd python
@@ -106,7 +105,7 @@ as:
 
 ### Download and install Inception
 
-	git clone https://github.com/carmaa/inception.git
+	git clone git://github.com/carmaa/inception.git
 	cd inception
 	sudo setup.py install
 

@@ -21,20 +21,18 @@ Created on Jan 23, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
-import re
-from inception.util import info, separator, fail, open_file, restart, detectos,\
-    warn, poll, BeachBall
-from inception import cfg
-import sys
-import os
-import time
+from inception import cfg, util
 from subprocess import call
+import os
+import re
+import sys
+import time
 
 # Error handling for cases where libforensic1394 is not installed in /usr/lib
 try:
     from forensic1394.bus import Bus
 except OSError:
-    host_os = detectos()
+    host_os = util.detectos()
     try:
         path = os.environ['LD_LIBRARY_PATH']
     except KeyError:
@@ -43,9 +41,9 @@ except OSError:
     # find the libs
     if host_os == cfg.LINUX and '/usr/local/lib' not in path:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
-        restart()
+        util.restart()
     else:
-        fail('Could not load libforensic1394')
+        util.fail('Could not load libforensic1394')
 
 # List of FireWire OUIs
 OUI = {}
@@ -64,8 +62,7 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            poll('FireWire modules do not seem to be loaded. Load them? ' +
-                 '[Y/n]: ')
+            util.poll('FireWire modules are not loaded. Load them? [Y/n]: ')
             answer = input().lower()
             if answer in ['y', '']:
                 status = call('modprobe firewire-ohci', shell=True)
@@ -75,11 +72,11 @@ class FireWire:
                     except IOError:
                         time.sleep(2) # Give some more time
                         self._bus.enable_sbp2() # If this fails, fail hard
-                    info('FireWire modules loaded successfully')
+                    util.info('FireWire modules loaded successfully')
                 else:
-                    fail('Could not load FireWire modules')
+                    util.fail('Could not load FireWire modules')
             else:
-                fail('FireWire modules not loaded')
+                util.fail('FireWire modules not loaded')
                 
         # Enable SBP-2 support to ensure we get DMA
         self._devices = self._bus.devices()
@@ -102,7 +99,7 @@ class FireWire:
         '''
         OUI = {}
         try:
-            f = open_file(filename, 'r')
+            f = util.open_file(filename, 'r')
             lines = f.readlines()
             f.close()
             regex = re.compile('(?P<id>([0-9a-fA-F]{2}-){2}[0-9a-fA-F]{2})' + 
@@ -115,7 +112,7 @@ class FireWire:
                                               textid[6:8]), 16)
                     OUI[ouiid] = rm.groupdict()['name']
         except IOError:
-            warn('Vendor OUI lookups will not be performed: {0}'
+            util.warn('Vendor OUI lookups will not be performed: {0}'
                  .format(filename))
         return OUI
     
@@ -134,9 +131,9 @@ class FireWire:
         list
         '''
         if not self._devices:
-            fail('No FireWire devices detected on the bus')
-        info('FireWire devices on the bus (names may appear blank):')
-        separator()
+            util.fail('No FireWire devices detected on the bus')
+        util.info('FireWire devices on the bus (names may appear blank):')
+        util.separator()
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
             vendorname = device.vendor_name.decode(cfg.encoding)
@@ -146,9 +143,9 @@ class FireWire:
             self._vendors.append(vendorname)
             pid = device.product_id
             productname = device.product_name.decode(cfg.encoding)
-            info('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'
-                 .format(vendorname, vid, productname, pid), sign = n)
-        separator()
+            util.info('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'
+                      .format(vendorname, vid, productname, pid), sign = n)
+        util.separator()
         
     
     def select_device(self):
@@ -159,45 +156,45 @@ class FireWire:
         if not self._vendors:
             self.businfo()
         nof_devices = len(self._vendors)
-        if nof_devices == 1:
-            info('Only one device present, device auto-selected as target')
+        if nof_devices == 1 and cfg.verbose:
+            util.info('Only one device present, device auto-selected as target')
             return 0
         else:
-            poll('Please select a device to attack (or type \'q\' to quit): ')
-            selected = input()
+            util.poll('Select a device to attack (or type \'q\' to quit): ')
+            selected = input().lower()
             try:
                 selected = int(selected)
             except:
                 if selected == 'q': sys.exit()
                 else:
-                    warn('Invalid selection, please try again. Type \'q\' ' +
-                         'to quit')
+                    util.warn('Invalid selection. Type \'q\' to quit')
                     return self.select_device()
         if 0 < selected <= nof_devices:
-            i = selected - 1 
+            i = selected - 1
             vendor = self._vendors[i]
             # If the target is a Mac, and we are in memdump mode with the
             # --override switch set, make sure we don't touch OS X's g-spot
+            # (which would likely cause a kernel panic)
             if 'apple' in vendor.lower() and cfg.memdump and cfg.override:
                 cfg.apple_target = True
-                info('The target seems to be a Mac, forcing avoidance ' +
-                     '(not dumping {0:#x}-{1:#x})'
-                     .format(cfg.apple_avoid[0], cfg.apple_avoid[1]))
+                util.info('The target seems to be a Mac, forcing avoidance ' +
+                          '(not dumping {0:#x}-{1:#x})'
+                          .format(cfg.apple_avoid[0], cfg.apple_avoid[1]))
             return i
         else:
-            warn('Please enter a selection between 1 and ' + str(nof_devices) + 
-                 '. Type \'q\' to quit')
+            util.warn('Enter a selection between 1 and ' + str(nof_devices) + 
+                      '. Type \'q\' to quit')
             return self.select_device()
         
         
     def getdevice(self, num, elapsed):
         didwait = False
-        bb = BeachBall()
+        bb = util.BeachBall()
         try:
             for i in range(cfg.fw_delay - elapsed, 0, -1):
                 print('[*] Initializing bus and enabling SBP-2, ' +
                       'please wait %2d seconds or press Ctrl+C\r' 
-                      % i, end = '') # TODO: Use .format()
+                      % i, end = '')
                 sys.stdout.flush()
                 bb.draw()
                 didwait = True

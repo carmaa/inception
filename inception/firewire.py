@@ -210,33 +210,33 @@ class FireWire:
             
     @property
     def bus(self):
-        """
+        '''
         The firewire bus; Bus.
-        """
+        '''
         return self._bus
     
     
     @property
     def devices(self):
-        """
+        '''
         The firewire devices connected to the bus; list of Device.
-        """
+        '''
         self._devices = self._bus.devices()
         return self._devices
     
     
     @property
     def oui(self):
-        """
+        '''
         The OUI dict
-        """
+        '''
         return self._oui
     
     
     @property
     def vendors(self):
-        """
+        '''
         The list of vendors
-        """
+        '''
         return self._vendors
 

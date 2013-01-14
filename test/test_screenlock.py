@@ -37,7 +37,7 @@ class TestScreenlock(unittest.TestCase):
     def setUp(self):
         self.samples = []
         self.tests = None
-        for root, dirs, files in os.walk(path.join(os.path.dirname(__file__), '../samples/')): #@UnusedVariable
+        for root, dirs, files in os.walk(path.join(os.path.dirname(__file__), 'samples/')): #@UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
                 mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])
@@ -60,7 +60,7 @@ class TestScreenlock(unittest.TestCase):
             except ImportError:
                 assert(module)
             cfg.filemode = True
-            cfg.filename = path.join(path.dirname(__file__), '../samples/') + mod_name + '.bin'
+            cfg.filename = path.join(path.dirname(__file__), 'samples/') + mod_name + '.bin'
             foundtarget = False
             for target in cfg.targets:
                 if target['OS'] == module.OS:

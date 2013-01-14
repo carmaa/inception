@@ -42,7 +42,7 @@ class MemdumpTest(unittest.TestCase):
         if not os.path.exists('temp'):
             os.makedirs('temp')
         cfg.memdump_prefix = 'temp/unittest'
-        for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), '../samples/')): #@UnusedVariable
+        for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'samples/')): #@UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
                 mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1]) #@UnusedVariable
@@ -91,6 +91,7 @@ class MemdumpTest(unittest.TestCase):
         read = f.read(dump_size)
         md5.update(read)
         self.assertEqual(md5.digest(), self.file_md5(output_fn))
+        f.close()
     
     
     def file_md5(self, filename):

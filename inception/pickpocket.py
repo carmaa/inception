@@ -36,6 +36,7 @@ def lurk():
                                        'for a device to connect. Ctrl-C to ' +
                                        'abort')) + '\r'
         print(s, end = '')
+        
         # Initiate FireWire
         fw = firewire.FireWire()
         while True: # Loop until aborted, and poll for devices

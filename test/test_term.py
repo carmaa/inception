@@ -22,7 +22,8 @@ Created on Jan 13, 2013
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
 from _pyio import StringIO
-from inception import cfg, term
+from inception import cfg
+from inception import term
 import sys
 import unittest
 

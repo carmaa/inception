@@ -21,3 +21,15 @@ Created on Jan 14, 2013
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
 '''
+
+class InceptionException(Exception):
+    '''
+    Generic Inception specific exception
+    '''
+    def __init__(self, message, Errors):
+
+        # Call the base class constructor
+        Exception.__init__(self, message)
+
+        # Handle errors (for now assign to base class Errors)
+        self.Errors = Errors

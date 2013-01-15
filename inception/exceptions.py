@@ -24,7 +24,10 @@ Created on Jan 14, 2013
 
 class InceptionException(Exception):
     '''
-    Generic Inception specific exception
+    Non... rien de rien
+    Non je ne regrette rien
+    Ni le bien... qu'on m'a fait
+    Ni le mal, tout ça m'est bien égale...
     '''
     def __init__(self, message, Errors):
 

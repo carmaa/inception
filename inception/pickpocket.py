@@ -26,6 +26,9 @@ from inception import firewire, memdump, cfg, term
 import time
 
 def lurk():
+    '''
+    Wait for devices to connect to the FireWire bus, and attack when they do
+    '''
     start = cfg.startaddress
     end = cfg.memsize
     bb = term.BeachBall()
@@ -40,12 +43,14 @@ def lurk():
         fw = firewire.FireWire()
         while True: # Loop until aborted, and poll for devices
             while len(fw.devices) == 0:
+                # Draw a beach ball while waiting
                 bb.draw()
                 time.sleep(cfg.polldelay)
-                pass # Do nothing until a device connects
-            print() # Newline
+
+            print() # Newline 
             term.info('FireWire device detected')
             memdump.dump(start, end)
+            
     except KeyboardInterrupt:
         print() # TODO: Fix keyboard handling (interrupt handling)
         raise KeyboardInterrupt

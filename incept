@@ -137,7 +137,8 @@ def main(argv):
                 fw.businfo()
                 sys.exit()
             else:
-                term.fail("You must be root to run Inception with FireWire input")
+                term.fail('You must be root to run Inception with FireWire ' +
+                          'input')
         elif opt in ('-p', '--pickpocket'):
             cfg.pickpocket = True
         elif opt in ('-u', '--unload'):

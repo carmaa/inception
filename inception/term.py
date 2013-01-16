@@ -27,8 +27,12 @@ import os
 import subprocess
 import sys
 import time
+from textwrap import TextWrapper
 
 def size():
+    '''
+    Returns the size (width) of the terminal
+    '''
     try:
         with open(os.devnull, 'w') as fnull:
             r, c = subprocess.check_output(['stty','size'], stderr = fnull).split() #@UnusedVariable
@@ -144,8 +148,10 @@ class ProgressBar:
         values set at initialization; if it is over or under, it takes the
         min or max value as a default
         '''
-        if new_amount < self.min: new_amount = self.min
-        if new_amount > self.max: new_amount = self.max
+        if new_amount < self.min:
+            new_amount = self.min
+        if new_amount > self.max:
+            new_amount = self.max
         self.amount = new_amount
         rel_amount = new_amount - self.min
 

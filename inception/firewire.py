@@ -136,10 +136,11 @@ class FireWire:
         term.separator()
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
-            vendorname = device.vendor_name.decode(cfg.encoding)
-            # Resolve if name not given by device vendor ID
-            if not vendorname:
-                vendorname = self.resolve_oui(vid) 
+            # In the current version of libforensic1394, the 
+            # device.vendor_name.decode() method cannot be trusted (it  ofen
+            # returns erroneous data. We'll rely on OUI lookups instead
+            # vendorname = device.vendor_name.decode(cfg.encoding)
+            vendorname = self.resolve_oui(vid)
             self._vendors.append(vendorname)
             pid = device.product_id
             productname = device.product_name.decode(cfg.encoding)
@@ -158,7 +159,8 @@ class FireWire:
         nof_devices = len(self._vendors)
         if nof_devices == 1:
             if cfg.verbose:
-                term.info('Only one device present, device auto-selected as target')
+                term.info('Only one device present, device auto-selected as ' +
+                          'target')
             return 0
         else:
             term.poll('Select a device to attack (or type \'q\' to quit): ')

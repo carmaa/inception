@@ -156,8 +156,9 @@ class FireWire:
         if not self._vendors:
             self.businfo()
         nof_devices = len(self._vendors)
-        if nof_devices == 1 and cfg.verbose:
-            term.info('Only one device present, device auto-selected as target')
+        if nof_devices == 1:
+            if cfg.verbose:
+                term.info('Only one device present, device auto-selected as target')
             return 0
         else:
             term.poll('Select a device to attack (or type \'q\' to quit): ')

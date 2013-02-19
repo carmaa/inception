@@ -40,21 +40,19 @@ class Test(unittest.TestCase):
     
         
     def test_write(self):
-        s = ''.join(map(str, range(20)))
-        cfg.termwidth = 10
-        sys.stdout = StringIO() # Suppress output
+        s = 'A' * (3 * term.size())
         cfg.wrapper.width = term.size()
         sys.stdout = StringIO() # Suppress output
         sys.stdout.write('')
         term.write(s)
         out = sys.stdout.getvalue()
         sys.stdout = sys.__stdout__ # Restore output
-        self.assertEqual(out, 
-                         '0123456789\n' +
-                         '    101112\n' +
-                         '    131415\n' +
-                         '    161718\n' +
-                         '    19\n')
+        expected = 'A' * term.size()
+        n = term.size()
+        expected = 'A' * term.size() + '\n    '
+        t = 'A' * (2 * term.size())
+        expected = expected + '\n    '.join([t[i:i+n-4] for i in range(0, len(t) -4 , n-4)]) + '\n'
+        self.assertEqual(out, expected)
 
 
 if __name__ == "__main__":

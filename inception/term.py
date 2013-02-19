@@ -36,7 +36,6 @@ def size():
     try:
         with open(os.devnull, 'w') as fnull:
             r, c = subprocess.check_output(['stty','size'], stderr = fnull).split() #@UnusedVariable
-        cfg.termwidth = int(c)
         return int(c)
     except:
         warn('Cannot detect terminal column width')
@@ -93,7 +92,7 @@ def separator():
     '''
     Prints a separator line with the width of the terminal
     '''
-    print('-' * cfg.termwidth)
+    print('-' * size())
     
 
 class ProgressBar:

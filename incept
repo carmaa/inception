@@ -132,13 +132,9 @@ def main(argv):
             except:
                 term.fail('Could not parse argument to {0}'.format(opt))
         elif opt in ('-b', '--businfo'):
-            if os.geteuid() == 0:
-                fw = firewire.FireWire()
-                fw.businfo()
-                sys.exit()
-            else:
-                term.fail('You must be root to run Inception with FireWire ' +
-                          'input')
+            fw = firewire.FireWire()
+            fw.businfo()
+            sys.exit()
         elif opt in ('-p', '--pickpocket'):
             cfg.pickpocket = True
         elif opt in ('-u', '--unload'):
@@ -182,9 +178,6 @@ def main(argv):
         screenlock.list_targets(targets, details=True)
         sys.exit()
     
-    if not cfg.filemode and not os.geteuid() == 0:
-        term.fail("You must be root to run Inception with FireWire input")
-        
     # Here we go
     try:
         if cfg.memdump:

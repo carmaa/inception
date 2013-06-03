@@ -88,7 +88,7 @@ dependencies on Mac OS X and Linux distros. Check out the README file in
  * git
  * gcc (incl. g++)
  * cmake
- * libforensic1394 [1]
+ * [libforensic1394] [1]
 
 #### Linux
 
@@ -99,7 +99,7 @@ as:
 
 #### Mac OS X
 
-On OS X, you can install the tool dependencies with homebrew [2]:
+On OS X, you can install the tool dependencies with [homebrew] [2]:
 
 	brew install git cmake python3
 
@@ -192,5 +192,5 @@ I can improve it. Or even better, fork my code, change it and issue a pull
 request.
 
 
-[1] http://freddie.witherden.org/tools/libforensic1394/
-[2] http://mxcl.github.io/homebrew/
+[1]: http://freddie.witherden.org/tools/libforensic1394/
+[2]: http://mxcl.github.io/homebrew/

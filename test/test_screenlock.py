@@ -29,6 +29,7 @@ import inception.cfg
 import os
 import sys
 import unittest
+import importlib
 
 
 class TestScreenlock(unittest.TestCase):
@@ -54,9 +55,10 @@ class TestScreenlock(unittest.TestCase):
             cfg = imp.reload(inception.cfg)
             cfg.startaddress = 0x00000000
             mod_name = sample[0]
+            #print(mod_name)
             filepath = sample[1]
             try:
-                module = imp.load_source(mod_name, filepath)
+                module = importlib.machinery.SourceFileLoader(mod_name, filepath).load_module()
             except ImportError:
                 assert(module)
             cfg.filemode = True
@@ -69,6 +71,8 @@ class TestScreenlock(unittest.TestCase):
             sys.stdout = StringIO() # Suppress output
             address, page = screenlock.attack(foundtarget)
             sys.stdout = sys.__stdout__ # Restore output
+            #print(address & 0x00000fff)
+            #print(module.offset)
             self.assertEqual(address & 0x00000fff, module.offset)
             self.assertEqual(page, module.page)
 

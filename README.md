@@ -84,18 +84,27 @@ dependencies on Mac OS X and Linux distros. Check out the README file in
 
 ### Dependencies
 
- * Python 3		(http://www.python.org)
- * git			(http://git-scm.com)
- * gcc (incl. g++)	(http://gcc.gnu.org)
- * cmake		(http://www.cmake.org)
- * libforensic1394	(http://freddie.witherden.org/tools/libforensic1394/)
+ * Python 3
+ * git
+ * gcc (incl. g++)
+ * cmake
+ * libforensic1394 [1]
+
+#### Linux
 
 On Debian-based distributions the installation command lines can be summarized
 as:
 
-### Download and install dependencies
-
 	sudo apt-get install git cmake python3 g++
+
+#### Mac OS X
+
+On OS X, you can install the tool dependencies with homebrew [2]:
+
+	brew install git cmake python3
+
+After installing the dependencies, download and install libforensic1394:
+
 	git clone git://git.freddie.witherden.org/forensic1394.git
 	cd forensic1394
 	cmake CMakeLists.txt
@@ -116,7 +125,7 @@ Usage
  1. Connect the attacker machine (host) and the victim (target) with a FireWire cable
  2. Run Inception
 
-Simply type (as root if required by your OS):
+Simply type:
 
 	incept
 
@@ -172,6 +181,7 @@ Development history
  * 0.2.2 - Added signatures for Linux Mint
  * 0.2.3 - General code cleanup, and nicer and more consistent output
  * 0.2.4 - Added a progress bar 
+ * 0.2.5 - No longer needed to be root to run the tool
  
  
 Disclaimer
@@ -180,3 +190,7 @@ Do no evil with this tool. Also, I am a pentester, not a developer. So if you
 see weird code that bugs your pythonesque purity senses, drop me a note on how
 I can improve it. Or even better, fork my code, change it and issue a pull
 request.
+
+
+[1] http://freddie.witherden.org/tools/libforensic1394/
+[2] http://mxcl.github.io/homebrew/

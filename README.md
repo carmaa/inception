@@ -17,7 +17,7 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.2.4, it is able to unlock the following x86 and x64 operating
+As of version 0.2.5, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
@@ -58,7 +58,7 @@ license.
 Key data
 --------
 
- * Version:	0.2.4
+ * Version:	0.2.5
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter:	@breaknenter Hashtag: #inceptiontool
@@ -133,19 +133,19 @@ For a more complete and up-to-date description, please run:
 
 	incept -h
 
-or see the tool home page at http://www.breaknenter.org/projects/inception.
+or see the [tool home page] [3].
 
 
 Known bugs / caveats
 --------------------
 
-Please see the tool home page at http://www.breaknenter.org/projects/inception/#Known_bugs.
+Please see the [tool home page] [3].
    
 
 Troubleshooting
 ---------------
 
-Please see the tool home page at http://www.breaknenter.org/projects/inception/#Troubleshooting.
+Please see the [tool home page] [3].
 
 
 Planned features
@@ -194,3 +194,4 @@ request.
 
 [1]: http://freddie.witherden.org/tools/libforensic1394/
 [2]: http://mxcl.github.io/homebrew/
+[3]: http://www.breaknenter.org/projects/inception/

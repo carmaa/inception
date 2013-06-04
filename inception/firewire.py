@@ -43,7 +43,7 @@ except OSError:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
         util.restart()
     else:
-        term.fail('Could not load libforensic1394')
+        term.fail('Could not load libforensic1394, try running inception as root')
 
 # List of FireWire OUIs
 OUI = {}
@@ -74,7 +74,7 @@ class FireWire:
                         self._bus.enable_sbp2() # If this fails, fail hard
                     term.info('FireWire modules loaded successfully')
                 else:
-                    term.fail('Could not load FireWire modules')
+                    term.fail('Could not load FireWire modules, try running inception as root')
             else:
                 term.fail('FireWire modules not loaded')
                 

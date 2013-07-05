@@ -314,7 +314,12 @@ def attack(targets):
             term.poll('Press [enter] to revert:')
             input()
             device.write(address, backup)
-            
+
+            if backup == device.read(address, cfg.PAGESIZE):
+                term.info('Revert patch verified; successful')
+            else:
+                term.warn('Revert patch could not be verified')
+
     #Clean up
     device.close()
     

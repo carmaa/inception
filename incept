@@ -72,12 +72,12 @@ def main(argv):
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:s', 
+        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:sP:r', 
                                    ['businfo', 'dump=', 'dump-all', 'egg', 
                                     'file=', 'force-write', 'help', 'list', 
                                     'verbose', 'wait=', 'no-write', 
                                     'pickpocket', 'unload', 'manual=', 
-                                    'signatures'])
+                                    'signatures', 'patch-file=', 'revert'])
     except getopt.GetoptError as err:
         term.warn(err)
         usage(argv[0])
@@ -167,6 +167,13 @@ def main(argv):
         elif opt in ('-e', '--egg'):
             term.info('Turn up the volume, please!')
             cfg.egg = True
+        elif opt in ('-P', '--patch-file'):
+            try:
+                cfg.patchfile = open(arg, 'rb').read()
+            except:
+                term.fail('Could not read patch file {0}'.format(arg))
+        elif opt in ('-r', '--revert'):
+            cfg.revert = True
         else:
             assert False, 'Option not handled: ' + opt
     

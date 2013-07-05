@@ -72,12 +72,12 @@ def main(argv):
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:s', 
+        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:sP:r', 
                                    ['businfo', 'dump=', 'dump-all', 'egg', 
                                     'file=', 'force-write', 'help', 'list', 
                                     'verbose', 'wait=', 'no-write', 
                                     'pickpocket', 'unload', 'manual=', 
-                                    'signatures'])
+                                    'signatures', 'patch-file=', 'revert'])
     except getopt.GetoptError as err:
         term.warn(err)
         usage(argv[0])
@@ -167,6 +167,13 @@ def main(argv):
         elif opt in ('-e', '--egg'):
             term.info('Turn up the volume, please!')
             cfg.egg = True
+        elif opt in ('-P', '--patch-file'):
+            try:
+                cfg.patchfile = open(arg, 'rb').read()
+            except:
+                term.fail('Could not read patch file {0}'.format(arg))
+        elif opt in ('-r', '--revert'):
+            cfg.revert = True
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -244,6 +251,9 @@ Options:
     -p, --pickpocket      Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain.
+    -P, --patch-file=FILENAME
+                          Specify custom patch from file (screen unlock mode)
+    -r, --revert          Revert patch after use (screen unlock mode)
     -s, --signatures      Parses and prints the signatures from cfg.py. May
                           be used together with -m/--manual.
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over

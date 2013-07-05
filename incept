@@ -251,6 +251,9 @@ Options:
     -p, --pickpocket      Dump the physical memory of any device that connects
                           to the FireWire bus. This may be useful when
                           exploiting a Daisy chain.
+    -P, --patch-file=FILENAME
+                          Specify custom patch from file (screen unlock mode)
+    -r, --revert          Revert patch after use (screen unlock mode)
     -s, --signatures      Parses and prints the signatures from cfg.py. May
                           be used together with -m/--manual.
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over

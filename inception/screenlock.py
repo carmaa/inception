@@ -2,7 +2,7 @@
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
 IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2012  Carsten Maartmann-Moe
+Copyright (C) 2011-2013  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Created on Jun 23, 2011
 
-@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from inception import firewire, cfg, sound, util, term
 import os
@@ -89,7 +89,7 @@ def printdetails(target): # TODO: Fix this fugly method
     
     
 def list_targets(targets, details=False):
-    term.info('Available targets:')
+    term.info('Available targets (known signatures):')
     term.separator()
     for number, target in enumerate(targets, 1):
                 term.info(target['OS'] + ': ' + target['name'], sign = number)
@@ -149,7 +149,7 @@ def patch(device, address, chunks):
         device.write(realaddress, patch)
         read = device.read(realaddress, len(patch))
         if cfg.verbose:
-            term.info('Data read back: ' + util.bytes2hexstr(read))
+            term.info('Data read back: ' + util.bytes2hexstr(read)) #TODO: Change to .format()
         if read != patch:
             success = False
 
@@ -298,11 +298,11 @@ def attack(targets):
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / cfg.PAGESIZE)
-    term.info('Signature found at {0:#x} (in page # {1})'.format(address, page))
+    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
     if not cfg.dry_run:
         success, backup = patch(device, address, chunks)
         if success:
-            term.info('Write-back verified; patching successful')
+            term.info('Patch verified; successful')
             if cfg.egg:
                 sound.play('data/inception.wav')
             term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
@@ -311,7 +311,7 @@ def attack(targets):
                       'have been unsuccessful')
 
         if cfg.revert:
-            term.poll('Press [enter] to revert:')
+            term.poll('Press [enter] to revert the patch:')
             input()
             device.write(address, backup)
 

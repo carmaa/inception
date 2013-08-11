@@ -3,7 +3,7 @@
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
 IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2012  Carsten Maartmann-Moe
+Copyright (C) 2011-2013  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Created on Jan 14, 2013
 
-@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
 # Inception's setup.py

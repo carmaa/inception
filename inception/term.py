@@ -2,7 +2,7 @@
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
 IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2012  Carsten Maartmann-Moe
+Copyright (C) 2011-2013  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Created on Sep 6, 2011
 
-@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from inception import cfg
 import binascii
@@ -97,7 +97,7 @@ def separator():
 
 class ProgressBar:
     '''
-    Builds and display a text-based progress bar
+    Builds and displays a text-based progress bar
     
     Based on https://gist.github.com/3306295
     '''

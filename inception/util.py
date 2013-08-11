@@ -2,7 +2,7 @@
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
 IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2012  Carsten Maartmann-Moe
+Copyright (C) 2011-2013  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Created on Jun 19, 2011
 
-@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy <n@tropy.org>
+@author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from inception import cfg, term
 from subprocess import call
@@ -176,7 +176,7 @@ class MemoryFile:
                 self.file.write(buf)
         else:
             term.warn('File not patched. To enable file writing, use the ' +
-                 '--force-write switch')
+                      '--force-write switch')
     
     def close(self):
         self.file.close()

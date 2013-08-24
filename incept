@@ -188,7 +188,7 @@ def main(argv):
     # Here we go
     try:
         if cfg.memdump:
-            if cfg.filemode: 
+            if cfg.filemode and end == cfg.memsize: 
                 # Make sure we don't read past the end of the input file
                 end = os.stat(cfg.filename).st_size
             memdump.dump(start, end)
@@ -221,7 +221,7 @@ Options:
                           to the FireWire bus.
     -d, --dump=ADDRESS,PAGES
                           Non-intrusive memory dump. Dumps PAGES of memory
-                          content from ADDRESS page. Memory content is dumped to 
+                          content from ADDRESS page. Memory content is dumped to
                           files with the file name syntax:
                           'memdump_START-END.bin'. ADDR can be a page number or 
                           a hexadecimal address within a page. PAGES can be a

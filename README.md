@@ -17,7 +17,7 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.2.5, it is able to unlock the following x86 and x64 operating
+As of version 0.3.0, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
@@ -32,11 +32,12 @@ systems:
 |Windows XP   |SP2            |        Yes       |        Yes        |        Yes        |
 |Windows XP   |SP1            |                  |                   |        Yes        |
 |Windows XP   |SP0            |                  |                   |        Yes        |
-|Mac OS X     |Mountain Lion  |       Yes (1)    |       Yes (1)     |       Yes (1)     |
-|Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |       Yes (1)     |
+|Mac OS X     |Mountain Lion  |       Yes[*][a]  |       Yes[*][a]   |      Yes[*][a]    |
+|Mac OS X     |Lion           |       Yes[*][a]  |       Yes[*][a]   |      Yes[*][a]    |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |        Yes        |
 |Mac OS X     |Leopard        |                  |                   |        Yes        |
-|Ubuntu (2)   |Quantal (12.10)|        Yes       |        Yes        |        Yes        |
+|Ubuntu[*][b] |Raring (13.04) |        Yes       |        Yes        |        Yes        |
+|Ubuntu       |Quantal (12.10)|        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Precise (12.04)|        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Oneiric (11.10)|        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Natty (11.04)  |        Yes       |        Yes        |        Yes        |
@@ -44,21 +45,21 @@ systems:
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
 
-(1) If FileVault 2 is enabled, the tool will only work when the operating
-    system is unlocked.
-(2) Other Linux distributions that use PAM-based authentication may also work 
-    using the Ubuntu signatures.
+[a]: If FileVault 2 is enabled, the tool will only work when the operating
+     system is unlocked.
+[b]: Other Linux distributions that use PAM-based authentication may also work 
+     using the Ubuntu signatures.
 
-The tool also effectively enables escalation of privileges via the `runas` or 
-`sudo -s` commands, respectively. More signatures will be added. The tool makes
-use of the `libforensic1394` library courtesy of Freddie Witherden under a LGPL
-license.
+The tool also effectively enables escalation of privileges, for instance via 
+the `runas` or `sudo -s` commands, respectively. More signatures will be added.
+The tool makes use of the `libforensic1394` library courtesy of Freddie Witherden
+under a LGPL license.
 
 
 Key data
 --------
 
- * Version:	0.2.5
+ * Version:	0.3.0
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter:	@breaknenter Hashtag: #inceptiontool
@@ -182,6 +183,8 @@ Development history
  * 0.2.3 - General code cleanup, and nicer and more consistent output
  * 0.2.4 - Added a progress bar 
  * 0.2.5 - No longer needed to be root to run the tool
+ * 0.2.6 - Bug fixes
+ * 0.3.0 - Added support for Ubuntu 13.04 targets
  
  
 Disclaimer

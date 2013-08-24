@@ -27,7 +27,7 @@ from textwrap import TextWrapper
 #===============================================================================
 # General information
 #===============================================================================
-version = '0.2.5'
+version = '0.2.6'
 url = 'http://breaknenter.org/projects/inception'
 
 #===============================================================================
@@ -267,11 +267,13 @@ targets = [{'OS': 'Windows 8',
                                         'internaloffset': 0x00,
                                         'patch': 0xbd00000000eb,
                                         'patchoffset': 0x00}]},
-                           {'offsets': [0x4aa], # 12.10 x64
-                            'chunks': [{'chunk': 0xe80105000083f81f,
-                                        'internaloffset': 0x00,
+                           {'offsets': [0x4aa, 0x69b], # 12.10 x64, 13.04 x64
+                            'chunks': [{'chunk': 0xe8,
+                                        'internaloffset': 0x00},
+                                       {'chunk': 0x83f81f,
+                                        'internaloffset': 0x05,
                                         'patch': 0x6631c0, # xor eax,eax
-                                        'patchoffset': 0x05}]}]},
+                                        'patchoffset': 0x00}]}]},
            {'OS': 'Linux Mint',
             'versions': ['11','12','13'],
             'architectures': ['x86', 'x64'],

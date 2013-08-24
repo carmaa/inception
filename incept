@@ -29,6 +29,7 @@ import getopt
 import os
 import sys
 import traceback
+import unittest
 
 
 def banner():
@@ -72,12 +73,13 @@ def main(argv):
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:sP:r', 
+        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:stP:r', 
                                    ['businfo', 'dump=', 'dump-all', 'egg', 
                                     'file=', 'force-write', 'help', 'list', 
                                     'verbose', 'wait=', 'no-write', 
                                     'pickpocket', 'unload', 'manual=', 
-                                    'signatures', 'patch-file=', 'revert'])
+                                    'signatures', 'patch-file=', 'revert',
+                                    'test'])
     except getopt.GetoptError as err:
         term.warn(err)
         usage(argv[0])
@@ -177,6 +179,10 @@ def main(argv):
                 term.fail('Could not read patch file {0}'.format(arg))
         elif opt in ('-r', '--revert'):
             cfg.revert = True
+        elif opt in ('-t', '--test'):
+            suite = unittest.TestLoader().discover('./test')
+            unittest.TextTestRunner().run(suite)
+            sys.exit()
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -259,6 +265,8 @@ Options:
     -r, --revert          Revert patch after use (screen unlock mode)
     -s, --signatures      Parses and prints the signatures from cfg.py. May
                           be used together with -m/--manual.
+    -t, --test            Run all unit tests; test that Inception works as 
+                          intended.
     -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over
                           FireWire module) which are known to cause kernel
                           panics when the host (attacking system) is OS X. Must

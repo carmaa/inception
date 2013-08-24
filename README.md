@@ -32,11 +32,11 @@ systems:
 |Windows XP   |SP2            |        Yes       |        Yes        |        Yes        |
 |Windows XP   |SP1            |                  |                   |        Yes        |
 |Windows XP   |SP0            |                  |                   |        Yes        |
-|Mac OS X     |Mountain Lion  |       Yes[*][a]  |       Yes[*][a]   |      Yes[*][a]    |
-|Mac OS X     |Lion           |       Yes[*][a]  |       Yes[*][a]   |      Yes[*][a]    |
+|Mac OS X     |Mountain Lion  |       Yes[*][1]  |       Yes[*][1]   |      Yes[*][1]    |
+|Mac OS X     |Lion           |       Yes[*][1]  |       Yes[*][1]   |      Yes[*][1]    |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |        Yes        |
 |Mac OS X     |Leopard        |                  |                   |        Yes        |
-|Ubuntu[*][b] |Raring (13.04) |        Yes       |        Yes        |        Yes        |
+|Ubuntu[*][2] |Raring (13.04) |        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Quantal (12.10)|        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Precise (12.04)|        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Oneiric (11.10)|        Yes       |        Yes        |        Yes        |
@@ -89,7 +89,7 @@ dependencies on Mac OS X and Linux distros. Check out the README file in
  * git
  * gcc (incl. g++)
  * cmake
- * [libforensic1394] [1]
+ * [libforensic1394] [3]
 
 #### Linux
 
@@ -100,7 +100,7 @@ as:
 
 #### Mac OS X
 
-On OS X, you can install the tool dependencies with [homebrew] [2]:
+On OS X, you can install the tool dependencies with [homebrew] [4]:
 
 	brew install git cmake python3
 
@@ -134,19 +134,19 @@ For a more complete and up-to-date description, please run:
 
 	incept -h
 
-or see the [tool home page] [3].
+or see the [tool home page] [5].
 
 
 Known bugs / caveats
 --------------------
 
-Please see the [tool home page] [3].
+Please see the [tool home page] [5].
    
 
 Troubleshooting
 ---------------
 
-Please see the [tool home page] [3].
+Please see the [tool home page] [5].
 
 
 Planned features
@@ -195,6 +195,6 @@ I can improve it. Or even better, fork my code, change it and issue a pull
 request.
 
 
-[1]: http://freddie.witherden.org/tools/libforensic1394/
-[2]: http://mxcl.github.io/homebrew/
-[3]: http://www.breaknenter.org/projects/inception/
+[3]: http://freddie.witherden.org/tools/libforensic1394/
+[4]: http://mxcl.github.io/homebrew/
+[5]: http://www.breaknenter.org/projects/inception/

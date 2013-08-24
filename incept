@@ -124,7 +124,10 @@ def main(argv):
                     term.warn('Overriding default behavior, accessing memory ' + 
                               'below 1 MiB')
                 # Fix size
-                size = util.parse_unit(size)
+                try:
+                  size = util.parse_unit(size)
+                except ValueError:
+                  term.fail("Could not convert '{0}' to a data size")
                 if size < cfg.PAGESIZE:
                     term.warn('Minimum dump size is a page, {0} KiB'
                               .format(cfg.PAGESIZE // cfg.KiB))

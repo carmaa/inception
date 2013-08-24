@@ -21,7 +21,7 @@ Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception.util import hexstr2bytes, bytes2hexstr, bytelen, int2binhex
+from inception.util import hexstr2bytes, bytes2hexstr, bytelen, int2binhex, parse_unit
 import unittest
 
 
@@ -73,6 +73,18 @@ class TestUtil(unittest.TestCase):
         test4 = 256
         test4_res = b'\x01\x00'
         self.assertEqual(int2binhex(test4), test4_res)
+
+    def test_parse_unit(self):
+        test1 = '1KB'
+        self.assertEqual(parse_unit(test1), 1024)
+        test2 = '45MiB'
+        self.assertEqual(parse_unit(test2), 47185920)
+        test3 = '1337gb'
+        self.assertEqual(parse_unit(test3), 1435592818688)
+        test4 = '12g12gb'
+        with self.assertRaises(ValueError):
+            parse_unit(test4)
+
 
 
 if __name__ == "__main__":

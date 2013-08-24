@@ -34,7 +34,7 @@ def lurk():
     bb = term.BeachBall()
     
     try:
-        s = '\n'.join(term.wrapper.wrap('[-] Lurking in the shrubbery ' +
+        s = '\n'.join(cfg.wrapper.wrap('[-] Lurking in the shrubbery ' +
                                         'waiting for a device to connect. ' +
                                         'Ctrl-C to abort')) + '\r'
         print(s, end = '')

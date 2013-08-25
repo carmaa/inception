@@ -62,21 +62,25 @@ class FireWire:
         try:
             self._bus.enable_sbp2()
         except IOError:
-            term.poll('FireWire modules are not loaded (or insufficient privileges). Try loading them? [Y/n]: ')
-            answer = input().lower()
-            if answer in ['y', '']:
-                status = call('modprobe firewire-ohci', shell=True)
-                if status == 0:
-                    try:
-                        self._bus.enable_sbp2()
-                    except IOError:
-                        time.sleep(2) # Give some more time
-                        self._bus.enable_sbp2() # If this fails, fail hard
-                    term.info('FireWire modules loaded successfully')
+            if os.geteuid() == 0: # Check if we are running as root
+                term.poll('FireWire modules are not loaded. Try loading them? [Y/n]: ')
+                answer = input().lower()
+                if answer in ['y', '']:
+                    status = call('modprobe firewire-ohci', shell=True)
+                    if status == 0:
+                        try:
+                            self._bus.enable_sbp2()
+                        except IOError:
+                            time.sleep(2) # Give some more time
+                            self._bus.enable_sbp2() # If this fails, fail hard
+                        term.info('FireWire modules loaded successfully')
+                    else:
+                        term.fail('Could not load FireWire modules, try running inception as root')
                 else:
-                    term.fail('Could not load FireWire modules, try running inception as root')
+                    term.fail('FireWire modules not loaded')
             else:
-                term.fail('FireWire modules not loaded')
+                term.fail('FireWire modules are not loaded and we have insufficient privileges ' +
+                          'to load them. Try running inception as root')
                 
         # Enable SBP-2 support to ensure we get DMA
         self._devices = self._bus.devices()
@@ -137,7 +141,7 @@ class FireWire:
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
             # In the current version of libforensic1394, the 
-            # device.vendor_name.decode() method cannot be trusted (it  ofen
+            # device.vendor_name.decode() method cannot be trusted (it often
             # returns erroneous data. We'll rely on OUI lookups instead
             # vendorname = device.vendor_name.decode(cfg.encoding)
             vendorname = self.resolve_oui(vid)

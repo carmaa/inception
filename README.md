@@ -32,11 +32,11 @@ systems:
 |Windows XP   |SP2            |        Yes       |        Yes        |        Yes        |
 |Windows XP   |SP1            |                  |                   |        Yes        |
 |Windows XP   |SP0            |                  |                   |        Yes        |
-|Mac OS X     |Mountain Lion  |       Yes[*][1]  |       Yes[*][1]   |      Yes[*][1]    |
-|Mac OS X     |Lion           |       Yes[*][1]  |       Yes[*][1]   |      Yes[*][1]    |
+|Mac OS X     |Mountain Lion  |       Yes (1)    |       Yes (1)     |      Yes (1)      |
+|Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |      Yes (1)      |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |        Yes        |
 |Mac OS X     |Leopard        |                  |                   |        Yes        |
-|Ubuntu^2     |Raring (13.04) |        Yes       |        Yes        |        Yes        |
+|Ubuntu (2)   |Raring (13.04) |        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Quantal (12.10)|        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Precise (12.04)|        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Oneiric (11.10)|        Yes       |        Yes        |        Yes        |
@@ -45,9 +45,9 @@ systems:
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
 
-[1]: If FileVault 2 is enabled, the tool will only work when the operating
+(1): If FileVault 2 is enabled, the tool will only work when the operating
      system is unlocked.
-[2]: Other Linux distributions that use PAM-based authentication may also work 
+(2): Other Linux distributions that use PAM-based authentication may also work 
      using the Ubuntu signatures.
 
 The tool also effectively enables escalation of privileges, for instance via 

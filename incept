@@ -180,7 +180,7 @@ def main(argv):
         elif opt in ('-r', '--revert'):
             cfg.revert = True
         elif opt in ('-t', '--test'):
-            suite = unittest.TestLoader().discover('./test')
+            suite = unittest.TestLoader().discover('./inception/test')
             unittest.TextTestRunner().run(suite)
             sys.exit()
         else:

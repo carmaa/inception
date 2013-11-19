@@ -38,11 +38,11 @@ systems:
 |Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |      Yes (1)      |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |        Yes        |
 |Mac OS X     |Leopard        |                  |                   |        Yes        |
-|Ubuntu (2)   |Raring (13.04) |        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Quantal (12.10)|        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Precise (12.04)|        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Oneiric (11.10)|        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Natty (11.04)  |        Yes       |        Yes        |        Yes        |
+|Ubuntu (2)   |Raring         |        Yes       |        Yes        |        Yes        |
+|Ubuntu       |Quantal        |        Yes       |        Yes        |        Yes        |
+|Ubuntu       |Precise        |        Yes       |        Yes        |        Yes        |
+|Ubuntu       |Oneiric        |        Yes       |        Yes        |        Yes        |
+|Ubuntu       |Natty          |        Yes       |        Yes        |        Yes        |
 |Linux Mint   |13             |        Yes       |        Yes        |        Yes        |
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
@@ -63,8 +63,8 @@ Key data
 
  * Version:	0.3.1
  * License:	GPL
- * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
- * Twitter:	@breaknenter Hashtag: #inceptiontool
+ * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
+ * Twitter:	@breaknenter
  * Site:	http://www.breaknenter.org/projects/inception
  * Source:	https://github.com/carmaa/inception
 

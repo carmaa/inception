@@ -17,12 +17,13 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.3.0, it is able to unlock the following x86 and x64 operating
+As of version 0.3.1, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
 |:------------|:--------------|:----------------:|:-----------------:|:-----------------:|
-|Windows 8    |SP0            |        Yes       |        Yes        |        Yes        |
+|Windows 8    |8.1            |        Yes       |        Yes        |        Yes        |
+|Windows 8    |8.0            |        Yes       |        Yes        |        Yes        |
 |Windows 7    |SP1            |        Yes       |        Yes        |        Yes        |
 |Windows 7    |SP0            |        Yes       |        Yes        |        Yes        |
 |Windows Vista|SP2            |        Yes       |        Yes        |        Yes        |
@@ -32,6 +33,7 @@ systems:
 |Windows XP   |SP2            |        Yes       |        Yes        |        Yes        |
 |Windows XP   |SP1            |                  |                   |        Yes        |
 |Windows XP   |SP0            |                  |                   |        Yes        |
+|Mac OS X     |Mavericks      |       Yes (1)    |       Yes (1)     |      Yes (1)      |
 |Mac OS X     |Mountain Lion  |       Yes (1)    |       Yes (1)     |      Yes (1)      |
 |Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |      Yes (1)      |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |        Yes        |
@@ -59,7 +61,7 @@ under a LGPL license.
 Key data
 --------
 
- * Version:	0.3.0
+ * Version:	0.3.1
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy (n@tropy.org)
  * Twitter:	@breaknenter Hashtag: #inceptiontool
@@ -185,6 +187,7 @@ Development history
  * 0.2.5 - No longer needed to be root to run the tool
  * 0.2.6 - Bug fixes
  * 0.3.0 - Added support for Ubuntu 13.04 targets
+ * 0.3.1 - Added support for OS X Maverics and Windows 8.1
  
  
 Disclaimer

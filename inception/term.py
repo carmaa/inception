@@ -217,7 +217,7 @@ class BeachBall:
         
     def draw(self, force = False):
         '''
-        Draws the beach ball if the dime delta since last draw is greater than
+        Draws the beach ball if the time delta since last draw is greater than
         the max_frequency
         '''
         now = time.time()

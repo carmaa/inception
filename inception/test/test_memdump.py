@@ -62,7 +62,7 @@ class MemdumpTest(unittest.TestCase):
             sys.stdout = StringIO() # Suppress output
             memdump.dump(start, end)
             sys.stdout = sys.__stdout__ # Restore output
-            output_fn = '{0}_{1}-{2}.bin'.format(cfg.memdump_prefix,hex(start), hex(end))
+            output_fn = memdump.filename
             self.assertTrue(os.path.exists(output_fn))
             self.assertEqual(self.file_md5(sample), self.file_md5(output_fn))
     
@@ -83,7 +83,7 @@ class MemdumpTest(unittest.TestCase):
         sys.stdout = StringIO() # Suppress output
         memdump.dump(start, end)
         sys.stdout = sys.__stdout__ # Restore output
-        output_fn = '{0}_{1}-{2}.bin'.format(cfg.memdump_prefix,hex(start), hex(end))
+        output_fn = memdump.filename
         self.assertTrue(os.path.exists(output_fn))
         md5 = hashlib.md5()
         f = open(sample, 'rb')

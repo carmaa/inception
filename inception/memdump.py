@@ -25,7 +25,12 @@ Created on Jan 22, 2012
 from inception import cfg, firewire, util, term
 import time
 
+filename = ''
+
 def dump(start, end):
+    # Ensure that the filename is accessible outside this module
+    global filename
+
     # Make sure that the right mode is set
     cfg.memdump = True
     

@@ -128,6 +128,7 @@ Usage
 
  1. Connect the attacker machine (host) and the victim (target) with a FireWire cable
  2. Run Inception
+ 3. Logon to the target using any password
 
 Simply type:
 

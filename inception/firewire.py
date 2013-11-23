@@ -142,7 +142,7 @@ class FireWire:
         list
         '''
         if not self._devices:
-            term.fail('No FireWire devices detected on the bus')
+            term.fail('Could not detect any FireWire devices connected to this system')
         term.info('FireWire devices on the bus (names may appear blank):')
         term.separator()
         for n, device in enumerate(self._devices, 1):

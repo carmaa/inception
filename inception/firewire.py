@@ -66,13 +66,20 @@ class FireWire:
                 term.poll('FireWire modules are not loaded. Try loading them? [Y/n]: ')
                 answer = input().lower()
                 if answer in ['y', '']:
-                    status = call('modprobe firewire-ohci', shell=True)
-                    if status == 0:
+                    status_modprobe = call('modprobe firewire-ohci', shell=True)
+                    status_rescan = call('echo 1 > /sys/bus/pci/rescan', shell=True)
+                    if status_modprobe == 0 and status_rescan == 0:
                         try:
                             self._bus.enable_sbp2()
                         except IOError:
                             time.sleep(2) # Give some more time
-                            self._bus.enable_sbp2() # If this fails, fail hard
+                            try:
+                                self._bus.enable_sbp2() # If this fails, fail hard
+                            except IOError:
+                                term.fail('Unable to detect any local FireWire ports. Please make ' +
+                                          'sure FireWire is enabled in BIOS, and connected ' +
+                                          'to this system. If you are using an adapter, please make ' +
+                                          'sure it is properly connected, and re-run inception')
                         term.info('FireWire modules loaded successfully')
                     else:
                         term.fail('Could not load FireWire modules, try running inception as root')

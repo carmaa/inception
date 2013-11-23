@@ -17,7 +17,7 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.3.1, it is able to unlock the following x86 and x64 operating
+As of version 0.3.2, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
@@ -38,7 +38,8 @@ systems:
 |Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |      Yes (1)      |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |        Yes        |
 |Mac OS X     |Leopard        |                  |                   |        Yes        |
-|Ubuntu (2)   |Raring         |        Yes       |        Yes        |        Yes        |
+|Ubuntu (2)   |Saucy          |        Yes       |        Yes        |        Yes        |
+|Ubuntu       |Raring         |        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Quantal        |        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Precise        |        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Oneiric        |        Yes       |        Yes        |        Yes        |
@@ -61,7 +62,7 @@ under a LGPL license.
 Key data
 --------
 
- * Version:	0.3.1
+ * Version:	0.3.2
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
  * Twitter:	@breaknenter

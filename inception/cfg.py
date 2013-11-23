@@ -27,7 +27,7 @@ from textwrap import TextWrapper
 #===============================================================================
 # General information
 #===============================================================================
-version = '0.3.1'
+version = '0.3.2'
 url = 'http://breaknenter.org/projects/inception'
 
 #===============================================================================
@@ -78,7 +78,8 @@ polldelay = 1                   # 1 second delay between FireWire polls
 os = None                       # Detected host OS is None by default
 forcewrite = False              # Do not write back to file in file mode
 list_signatures = False         # Don't list all signatures at startup
-memdump_prefix = 'memdump'      # Prefix for memory dump file
+memdump_prefix = 'inceptiondump'# Prefix for memory dump file
+memdump_ext = 'bin'             # Binary extesnion for memory dumps
 termwidth = 80                  # Default terminal size is 80 chars wide
 
 #===============================================================================

@@ -33,8 +33,11 @@ def dump(start, end):
     size = end - start
     
     # Open file for writing
-    filename = '{0}_{1}-{2}.bin'.format(cfg.memdump_prefix, 
-                                        hex(start), hex(end))
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    filename = '{0}_{1}-{2}_{3}.{4}'.format(cfg.memdump_prefix, 
+                                            hex(start), hex(end),
+                                            timestr,
+                                            cfg.memdump_ext)
     file = open(filename, 'wb')
     
     # Ensure correct denomination

@@ -190,6 +190,7 @@ Development history
  * 0.2.6 - Bug fixes
  * 0.3.0 - Added support for Ubuntu 13.04 targets
  * 0.3.1 - Added support for OS X Maverics and Windows 8.1
+ * 0.3.2 - Bug fixes and support for Ubuntu 13.10
  
  
 Disclaimer

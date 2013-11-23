@@ -265,7 +265,7 @@ targets = [{'OS': 'Windows 8',
                                         'internaloffset': 0x00,
                                         'patch': 0xbf00000000eb,
                                         'patchoffset': 0x00}]},
-                           {'offsets': [0xb46, 0xcae, 0xc9a], # 12.10, 13.04, 13.10 x86
+                           {'offsets': [0xb46, 0xcae, 0xc95], # 12.10, 13.04, 13.10 x86
                             'chunks': [{'chunk': 0xe8,
                                         'internaloffset': 0x00},
                                        {'chunk': 0x83f81f,
@@ -277,7 +277,7 @@ targets = [{'OS': 'Windows 8',
                                         'internaloffset': 0x00,
                                         'patch': 0xbd00000000eb,
                                         'patchoffset': 0x00}]},
-                           {'offsets': [0x4aa, 0x69b, 0x68d], # 12.10, 13.04, 13.10 x64
+                           {'offsets': [0x4aa, 0x69b, 0x688], # 12.10, 13.04, 13.10 x64
                             'chunks': [{'chunk': 0xe8,
                                         'internaloffset': 0x00},
                                        {'chunk': 0x83f81f,

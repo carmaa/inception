@@ -76,17 +76,20 @@ def dump(start, end):
     prog = term.ProgressBar(min_value = start, max_value = end, 
                             total_width = cfg.termwidth, 
                             print_data = cfg.verbose)
-        
+
+
     try:
+        # Fill the first MB and avoid reading from that region
+        if not cfg.filemode:
+            fillsize = cfg.startaddress - start
+            data = b'\x00' * fillsize
+            file.write(data)
+            start = cfg.startaddress
         for i in range(start, end, requestsize):
             # Edge case, make sure that we don't read beyond the end
             if  i + requestsize > end:
                 requestsize = end - i
-            # Avoid accessing upper memory area if we are using FireWire
-            if util.needtoavoid(i):
-                data = b'\x00' * requestsize
-            else: 
-                data = device.read(i, requestsize)
+            data = device.read(i, requestsize)
             file.write(data)
             # Print status
             prog.update_amount(i + requestsize, data)

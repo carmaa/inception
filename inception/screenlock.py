@@ -262,8 +262,6 @@ def attack(targets):
                       'loaded into the kernel?')
         start = time.time()
         device_index = fw.select_device()
-        # Print selection
-        term.info('Selected device: {0}'.format(fw.vendors[device_index]))
 
     # List targets
     list_targets(targets)

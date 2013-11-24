@@ -97,24 +97,6 @@ def parse_unit(size):
     return size
 
 
-def needtoavoid(address):
-    '''
-    Checks if the address given as parameter is within the memory regions that
-    the tool should avoid to make sure no kernel panics are induced at the
-    target
-    '''
-    if cfg.filemode:
-        return False
-    if cfg.apple_target:
-        # Avoid this region if dumping from Macs
-        return cfg.apple_avoid[0] <= address <= cfg.apple_avoid[1]
-    elif cfg.avoid:
-        # Avoid this region if dumping memory from PCs
-        return cfg.pc_avoid[0] <= address <= cfg.pc_avoid[1]
-    else:
-        return False
-
-
 def detectos():
     '''
     Detects host operating system

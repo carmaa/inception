@@ -17,7 +17,7 @@ doesn't pack encryption.
 The tool works over any interface that expands and can master the PCIe bus. This
 includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
 
-As of version 0.3.2, it is able to unlock the following x86 and x64 operating
+As of version 0.3.3, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
@@ -62,7 +62,7 @@ under a LGPL license.
 Key data
 --------
 
- * Version:	0.3.2
+ * Version:	0.3.3
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
  * Twitter:	@breaknenter
@@ -75,8 +75,8 @@ Requirements
 
 Inception requires:
 
- * Linux or Mac OS X (host / attacker machine)
- * A FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port
+ * Attacker machine: Linux or Mac OS X (host / attacker machine) with a FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port. Linux is currently recommended due to buggy firewire interfaces on OS X
+ * Victim machine: A FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port
 
 
 Installation

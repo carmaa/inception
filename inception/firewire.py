@@ -158,9 +158,16 @@ class FireWire:
             term.info('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'
                       .format(vendorname, vid, productname, pid), sign = n)
         term.separator()
+
+    def select_device(self):
+        selected = self.select()
+        vendor = self._vendors[selected]
+        # Print selection
+        term.info('Selected device: {0}'.format(vendor))
+        return selected
         
     
-    def select_device(self):
+    def select(self):
         '''
         Present the user of the option to select what device (connected to the
         bus) to attack
@@ -172,15 +179,6 @@ class FireWire:
             if cfg.verbose:
                 term.info('Only one device present, device auto-selected as ' +
                           'target')
-            vendor = self._vendors[0]
-            # If the target is a Mac, and we are in memdump mode make sure 
-            # we don't touch OS X's g-spot (which would sometimes cause a 
-            # kernel panic)
-            if 'apple' in vendor.lower():
-                cfg.apple_target = True
-                term.info('The target seems to be a Mac, forcing avoidance ' +
-                          '(not touching {0:#x}-{1:#x})'
-                          .format(cfg.apple_avoid[0], cfg.apple_avoid[1]))
             return 0
         else:
             term.poll('Select a device to attack (or type \'q\' to quit): ')
@@ -191,23 +189,13 @@ class FireWire:
                 if selected == 'q': sys.exit()
                 else:
                     term.warn('Invalid selection. Type \'q\' to quit')
-                    return self.select_device()
+                    return self.select()
         if 0 < selected <= nof_devices:
-            i = selected - 1
-            vendor = self._vendors[i]
-            # If the target is a Mac, and we are in memdump mode make sure 
-            # we don't touch OS X's g-spot (which would sometimes cause a 
-            # kernel panic)
-            if 'apple' in vendor.lower():
-                cfg.apple_target = True
-                term.info('The target seems to be a Mac, forcing avoidance ' +
-                          '(not touching {0:#x}-{1:#x})'
-                          .format(cfg.apple_avoid[0], cfg.apple_avoid[1]))
-            return i
+            return selected - 1
         else:
             term.warn('Enter a selection between 1 and ' + str(nof_devices) + 
                       '. Type \'q\' to quit')
-            return self.select_device()
+            return self.select()
         
         
     def getdevice(self, num, elapsed):

@@ -27,7 +27,7 @@ from textwrap import TextWrapper
 #===============================================================================
 # General information
 #===============================================================================
-version = '0.3.2'
+version = '0.3.3'
 url = 'http://breaknenter.org/projects/inception'
 
 #===============================================================================
@@ -63,7 +63,7 @@ success = True                  # Optimistic-by-nature setting
 encoding = None                 # System encoding
 vectorsize = 128                # Read vector size
 memdump = False                 # Memory dump mode off
-startaddress = 0                # Default memory start address
+startaddress = MiB              # Default memory start address
 dumpsize = False                # Not set by default
 interactive = False             # Interactive mode off
 max_request_size = PAGESIZE//2  # By default the max request size is the PSZ/2

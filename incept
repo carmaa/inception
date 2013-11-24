@@ -108,7 +108,7 @@ def main(argv):
             cfg.dry_run = True
         elif opt in ('-D', '--dump-all'):
             cfg.memdump = True
-            start = cfg.startaddress
+            start = 0x00
             end = cfg.memsize
         elif opt in ('-d', '--dump'):
             cfg.memdump = True
@@ -177,8 +177,6 @@ def main(argv):
             suite = unittest.TestLoader().discover('./inception/test')
             unittest.TextTestRunner().run(suite)
             sys.exit()
-        elif opt in ('-a', '--avoid'):
-            cfg.avoid = True
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -189,6 +187,10 @@ def main(argv):
     if cfg.list_signatures:
         screenlock.list_targets(targets, details=True)
         sys.exit()
+
+    # Warn OS X users
+    if cfg.os == cfg.OSX and not cfg.filemode:
+        term.warn('Attacking from OS X may cause host system crashes')
     
     # Here we go
     try:
@@ -222,25 +224,23 @@ exploiting IEEE 1394 SBP-2 DMA.
 Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
 
 Options:
-    -a, --avoid           Force avoidance of memory areas that historically 
-                          cause BSOD and crashes. Not necessary on (most) modern 
-                          OSes (I'm looking at you, OS X).
     -b, --businfo         Prints information about the devices that is connected
                           to the FireWire bus.
     -d, --dump=ADDRESS,PAGES
                           Non-intrusive memory dump. Dumps PAGES of memory
                           content from ADDRESS page. Memory content is dumped to
-                          a file in the working dir. ADDR can be a page number or 
-                          a hexadecimal address within a page. PAGES can be a
+                          a file in the working dir. ADDR can be a page number 
+                          or a hexadecimal address within a page. PAGES can be a
                           number of pages or a size of data using the
                           denomination KiB, MiB or GiB. Example: -d 0x00ff,5MiB
                           This command dumps the first 5 MiB of memory after 
                           0x00ff. Note that due to unreliable behavior on some 
-                          OS X targets when accessing data below 1 MiB, this
-                          command will avoid certain regions of upper memory 
-                          when dumping on that platform.
+                          targets when accessing data below 1 MiB, this command 
+                          will avoid that region of upper memory when dumping,
+                          and replace the first MB with zeroes.
     -D                    Same as -d, but dumps all available memory. Same notes
-                          as above apply.
+                          as above apply. The first MB of memory will be
+                          replaced by zeroes.
     -f, --file=FILE       Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machine memory
                           files (.vmem) and to ease testing and signature 

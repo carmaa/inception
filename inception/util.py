@@ -106,11 +106,7 @@ def needtoavoid(address):
     avoid = []
     if cfg.apple_target:
         avoid = cfg.apple_avoid # Avoid this region if dumping from Macs
-    elif not cfg.avoid:
-            # Return at once if we are dumping from file or the -a switch
-            # isn't set
-            return False
-    else:
+    elif cfg.avoid:
         avoid = cfg.pc_avoid # Avoid this region if dumping memory from PCs
     return avoid[0] <= address <= avoid[1] and not cfg.filemode
 

@@ -73,13 +73,13 @@ def main(argv):
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:stP:r', 
+        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:stP:ra', 
                                    ['businfo', 'dump=', 'dump-all', 'egg', 
                                     'file=', 'force-write', 'help', 'list', 
                                     'verbose', 'wait=', 'no-write', 
                                     'pickpocket', 'unload', 'manual=', 
                                     'signatures', 'patch-file=', 'revert',
-                                    'test'])
+                                    'test', 'avoid'])
     except getopt.GetoptError as err:
         term.warn(err)
         usage(argv[0])
@@ -183,6 +183,8 @@ def main(argv):
             suite = unittest.TestLoader().discover('./inception/test')
             unittest.TextTestRunner().run(suite)
             sys.exit()
+        elif opt in ('-a', '--avoid'):
+            cfg.avoid = True
         else:
             assert False, 'Option not handled: ' + opt
     
@@ -226,6 +228,8 @@ exploiting IEEE 1394 SBP-2 DMA.
 Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
 
 Options:
+    -a, --avoid           Avoid memory areas that historically cause BSOD and
+                          crashes. Not necessary on modern OSes.
     -b, --businfo         Prints information about the devices that is connected
                           to the FireWire bus.
     -d, --dump=ADDRESS,PAGES

@@ -172,6 +172,15 @@ class FireWire:
             if cfg.verbose:
                 term.info('Only one device present, device auto-selected as ' +
                           'target')
+            vendor = self._vendors[0]
+            # If the target is a Mac, and we are in memdump mode make sure 
+            # we don't touch OS X's g-spot (which would sometimes cause a 
+            # kernel panic)
+            if 'apple' in vendor.lower():
+                cfg.apple_target = True
+                term.info('The target seems to be a Mac, forcing avoidance ' +
+                          '(not touching {0:#x}-{1:#x})'
+                          .format(cfg.apple_avoid[0], cfg.apple_avoid[1]))
             return 0
         else:
             term.poll('Select a device to attack (or type \'q\' to quit): ')

@@ -103,12 +103,16 @@ def needtoavoid(address):
     the tool should avoid to make sure no kernel panics are induced at the
     target
     '''
-    avoid = [-1, -1]
+    if cfg.filemode:
+        return False
     if cfg.apple_target:
-        avoid = cfg.apple_avoid # Avoid this region if dumping from Macs
+        # Avoid this region if dumping from Macs
+        return cfg.apple_avoid[0] <= address <= cfg.apple_avoid[1]
     elif cfg.avoid:
-        avoid = cfg.pc_avoid # Avoid this region if dumping memory from PCs
-    return avoid[0] <= address <= avoid[1] and not cfg.filemode
+        # Avoid this region if dumping memory from PCs
+        return cfg.pc_avoid[0] <= address <= cfg.pc_avoid[1]
+    else:
+        return False
 
 
 def detectos():

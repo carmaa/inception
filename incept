@@ -119,12 +119,6 @@ def main(argv):
                     start = int(start, 0) & 0xfffff000 # Address
                 else:
                     start = int(start) * cfg.PAGESIZE # Page number
-                # If the start address is below 1 MiB, the user is overriding
-                # default behavior (avoiding memory below 1 MiB)
-                if start < cfg.startaddress:
-                    cfg.override = True
-                    term.warn('Overriding default behavior, accessing memory ' + 
-                              'below 1 MiB')
                 # Fix size
                 try:
                   size = util.parse_unit(size)
@@ -228,25 +222,25 @@ exploiting IEEE 1394 SBP-2 DMA.
 Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
 
 Options:
-    -a, --avoid           Avoid memory areas that historically cause BSOD and
-                          crashes. Not necessary on modern OSes.
+    -a, --avoid           Force avoidance of memory areas that historically 
+                          cause BSOD and crashes. Not necessary on (most) modern 
+                          OSes (I'm looking at you, OS X).
     -b, --businfo         Prints information about the devices that is connected
                           to the FireWire bus.
     -d, --dump=ADDRESS,PAGES
                           Non-intrusive memory dump. Dumps PAGES of memory
                           content from ADDRESS page. Memory content is dumped to
-                          files with the file name syntax:
-                          'memdump_START-END.bin'. ADDR can be a page number or 
+                          a file in the working dir. ADDR can be a page number or 
                           a hexadecimal address within a page. PAGES can be a
                           number of pages or a size of data using the
                           denomination KiB, MiB or GiB. Example: -d 0x00ff,5MiB
                           This command dumps the first 5 MiB of memory after 
-                          0x00ff.
-    -D                    Same as -d, but dumps all available memory. Note that
-                          due to unreliable behavior on some targets when
-                          accessing data below 1 MiB, this command will start
-                          dumping at the 1 MiB physical address (0x100000). To 
-                          override, use the -d switch (e.g., -d 0x00,256MiB).
+                          0x00ff. Note that due to unreliable behavior on some 
+                          OS X targets when accessing data below 1 MiB, this
+                          command will avoid certain regions of upper memory 
+                          when dumping on that platform.
+    -D                    Same as -d, but dumps all available memory. Same notes
+                          as above apply.
     -f, --file=FILE       Use a file instead of FireWire bus data as input; for
                           example to facilitate attacks on VMware machine memory
                           files (.vmem) and to ease testing and signature 

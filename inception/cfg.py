@@ -67,7 +67,6 @@ startaddress = 0                # Default memory start address
 dumpsize = False                # Not set by default
 interactive = False             # Interactive mode off
 max_request_size = PAGESIZE//2  # By default the max request size is the PSZ/2
-override = False                # By default, avoid access Upper Memory
 avoid = False                   # Do we need to avoid certain regions of memory?
 pc_avoid = [0xa0000, 0xfffff]   # Upper Win memory area (can cause BSOD if accessed)
 apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs

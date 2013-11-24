@@ -186,10 +186,10 @@ class FireWire:
         if 0 < selected <= nof_devices:
             i = selected - 1
             vendor = self._vendors[i]
-            # If the target is a Mac, and we are in memdump mode with the
-            # --override switch set, make sure we don't touch OS X's g-spot
-            # (which would likely cause a kernel panic)
-            if 'apple' in vendor.lower() and cfg.memdump and cfg.override:
+            # If the target is a Mac, and we are in memdump mode make sure 
+            # we don't touch OS X's g-spot (which would sometimes cause a 
+            # kernel panic)
+            if 'apple' in vendor.lower() and cfg.memdump:
                 cfg.apple_target = True
                 term.info('The target seems to be a Mac, forcing avoidance ' +
                           '(not dumping {0:#x}-{1:#x})'

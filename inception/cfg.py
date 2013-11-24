@@ -80,7 +80,6 @@ forcewrite = False              # Do not write back to file in file mode
 list_signatures = False         # Don't list all signatures at startup
 memdump_prefix = 'inceptiondump'# Prefix for memory dump file
 memdump_ext = 'bin'             # Binary extesnion for memory dumps
-termwidth = 80                  # Default terminal size is 80 chars wide
 
 #===============================================================================
 # Targets are collected in a list of dicts using the following syntax:

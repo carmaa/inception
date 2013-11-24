@@ -39,7 +39,7 @@ def size():
         return int(c)
     except:
         warn('Cannot detect terminal column width')
-        return cfg.termwidth
+        return 80
     
 
 def write(s, indent = True, end_newline = True):

@@ -180,7 +180,7 @@ def searchanddestroy(device, target, memsize):
                 chunk['patch'] = None
     
     # Progress bar
-    prog = term.ProgressBar(max_value = memsize, total_width = cfg.termwidth, 
+    prog = term.ProgressBar(max_value = memsize, total_width = cfg.wrapper.width, 
                             print_data = cfg.verbose)
 
     try:

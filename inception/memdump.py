@@ -74,7 +74,7 @@ def dump(start, end):
 
     # Progress bar
     prog = term.ProgressBar(min_value = start, max_value = end, 
-                            total_width = cfg.termwidth, 
+                            total_width = cfg.wrapper.width, 
                             print_data = cfg.verbose)
 
 

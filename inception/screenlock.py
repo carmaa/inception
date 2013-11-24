@@ -302,7 +302,7 @@ def attack(targets):
         if success:
             term.info('Patch verified; successful')
             if cfg.egg:
-                sound.play('data/inception.wav')
+                sound.play('resources/inception.wav')
             term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
             term.warn('Write-back could not be verified; patching *may* ' +

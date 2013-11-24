@@ -189,10 +189,10 @@ class FireWire:
             # If the target is a Mac, and we are in memdump mode make sure 
             # we don't touch OS X's g-spot (which would sometimes cause a 
             # kernel panic)
-            if 'apple' in vendor.lower() and cfg.memdump:
+            if 'apple' in vendor.lower():
                 cfg.apple_target = True
                 term.info('The target seems to be a Mac, forcing avoidance ' +
-                          '(not dumping {0:#x}-{1:#x})'
+                          '(not touching {0:#x}-{1:#x})'
                           .format(cfg.apple_avoid[0], cfg.apple_avoid[1]))
             return i
         else:

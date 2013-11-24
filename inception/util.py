@@ -103,7 +103,7 @@ def needtoavoid(address):
     the tool should avoid to make sure no kernel panics are induced at the
     target
     '''
-    avoid = []
+    avoid = [-1, -1]
     if cfg.apple_target:
         avoid = cfg.apple_avoid # Avoid this region if dumping from Macs
     elif cfg.avoid:

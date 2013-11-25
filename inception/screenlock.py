@@ -300,9 +300,9 @@ def attack(targets):
     if not cfg.dry_run:
         success, backup = patch(device, address, chunks)
         if success:
-            term.info('Patch verified; successful')
             if cfg.egg:
                 sound.play('resources/inception.wav')
+            term.info('Patch verified; successful')
             term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
             term.warn('Write-back could not be verified; patching *may* ' +

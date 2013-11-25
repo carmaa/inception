@@ -24,7 +24,7 @@ Created on Oct 15, 2011
 '''
 
 from datetime import date
-from inception import firewire, screenlock, memdump, pickpocket, cfg, util, term
+from inception import firewire, screenlock, memdump, pickpocket, cfg, util, term, sound
 import getopt
 import os
 import sys
@@ -194,6 +194,8 @@ def main(argv):
     
     # Here we go
     try:
+        if cfg.egg:
+                cfg.eggs.append(sound.play('resources/rien.mp3'))
         if cfg.memdump:
             if cfg.filemode and end == cfg.memsize: 
                 # Make sure we don't read past the end of the input file
@@ -214,6 +216,9 @@ def main(argv):
         term.separator()
     except KeyboardInterrupt:
         term.warn('Aborted')
+
+    for egg in cfg.eggs:
+        egg.terminate()
 
 
 def usage(execname):

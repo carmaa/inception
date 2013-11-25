@@ -301,3 +301,4 @@ targets = [{'OS': 'Windows 8',
                                         'patchoffset': 0x00}]}]}]
 
 egg = False
+eggs = []

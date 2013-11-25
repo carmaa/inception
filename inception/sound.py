@@ -33,7 +33,7 @@ def play(filename):
     f = os.path.join(os.path.dirname(__file__),filename)
 
     try:
-        if filename.endswith('.wav') & os.path.exists(f):
+        if (filename.endswith('.wav') or filename.endswith('.mp3')) and os.path.exists(f):
             if cfg.os == cfg.LINUX:
                 cmd = 'aplay'
             elif cfg.os == cfg.OSX:
@@ -41,6 +41,6 @@ def play(filename):
             else:
                 raise Exception
             with open(os.devnull, "w") as fnull:
-                subprocess.Popen([cmd,f], stdout = fnull, stderr = fnull)
+                return subprocess.Popen([cmd,f], stdout = fnull, stderr = fnull)
     except:
         pass

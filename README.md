@@ -14,9 +14,6 @@ utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or
 Pointsec. There are plenty of other (and better) ways to hack a machine that 
 doesn't pack encryption.
 
-The tool works over any interface that expands and can master the PCIe bus. This
-includes FireWire, Thunderbolt, ExpressCard and PCMCIA (PC-Card).
-
 As of version 0.3.4, it is able to unlock the following x86 and x64 operating
 systems:
 

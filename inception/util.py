@@ -120,6 +120,13 @@ def unload_fw_ip():
         else:
             term.fail('Could not unload IOFireWireIP.kext')
 
+def cleanup():
+    '''
+    Cleans up at exit
+    '''
+    for egg in cfg.eggs:
+        egg.terminate()
+
 
 def restart():
     '''

@@ -24,8 +24,8 @@ Created on Sep 6, 2011
 from inception import cfg
 import binascii
 import os
-import subprocess
 import sys
+import subprocess
 import time
 from textwrap import TextWrapper
 

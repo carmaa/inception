@@ -33,6 +33,7 @@ setup(
     scripts = ['incept'],
     package_data= {'inception': ['resources/oui.txt', 
                                  'resources/inception.wav',
+                                 'resources/rien.mp3',
                                  'test/*.py',
                                  'test/samples/*.py',
                                  'test/samples/*.bin']},

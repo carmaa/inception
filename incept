@@ -30,6 +30,7 @@ import os
 import sys
 import traceback
 import unittest
+import atexit
 
 
 def banner():
@@ -70,6 +71,9 @@ def main(argv):
     
     # Detect host OS
     cfg.os = util.detectos()
+
+    # Register cleanup function
+    atexit.register(util.cleanup)
     
     # Parse args
     try:
@@ -209,6 +213,7 @@ def main(argv):
             address, page = screenlock.attack(targets)
             if not address or not page:
                 term.fail('Could not locate signature(s).')
+    # TODO: Add QuitException here so that the music stops (or a util.quit() method)
     except Exception as exc:
         term.warn('Um, something went wrong: {0}'.format(exc))
         term.separator()
@@ -217,8 +222,7 @@ def main(argv):
     except KeyboardInterrupt:
         term.warn('Aborted')
 
-    for egg in cfg.eggs:
-        egg.terminate()
+    sys.exit()
 
 
 def usage(execname):

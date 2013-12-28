@@ -126,7 +126,7 @@ def match(candidate, chunks):
 
 def patch(device, address, chunks):
     '''
-    Writes back to the device at address, using the patches in the signature
+    Writes to the device at address, using the patches in the signature
     chunks
     '''
     success = True

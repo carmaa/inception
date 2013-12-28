@@ -25,12 +25,12 @@ allocate:
 	call ebp                ; VirtualAlloc( NULL, dwLength, MEM_COMMIT, PAGE_EXECUTE_READWRITE );
 
 
-protect:
-	push dword 0		; oldProctect
-	push dword 0x40		; PAGE_EXECUTE_READWRITE
-	push 0x100		; size 
-	push eax		; address	
-	push 0xC38AE110 	; kernel32.dll!VirtualProtect
+; protect:
+; 	push dword 0		; oldProctect
+; 	push dword 0x40		; PAGE_EXECUTE_READWRITE
+; 	push 0x100		; size 
+; 	push eax		; address	
+; 	push 0xC38AE110 	; kernel32.dll!VirtualProtect
 
 ; Copy pattern to new page and then jump to it
 	mov word [eax], 0xe0ff  ; Copy jmp eax (0xffe0) to the address stored in eax

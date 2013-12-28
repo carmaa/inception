@@ -77,7 +77,7 @@ def main(argv):
     
     # Parse args
     try:
-        opts, args = getopt.getopt(argv[1:], 'bd:Def:hlvw:npum:stP:ra', 
+        opts, args = getopt.getopt(argv[2:], 'bd:Def:hlvw:npum:stP:ra', 
                                    ['businfo', 'dump=', 'dump-all', 'egg', 
                                     'file=', 'force-write', 'help', 'list', 
                                     'verbose', 'wait=', 'no-write', 
@@ -198,6 +198,15 @@ def main(argv):
     
     # Here we go
     try:
+        command = sys.argv[1]
+        try:
+            command_module = __import__("inception.modules.%s" % command, fromlist=["inception.modules"])
+        except ImportError:
+            term.fail('Error') # TODO: Display error message
+
+        command_module.run()
+        sys.exit()
+
         if cfg.egg:
                 cfg.eggs.append(sound.play('resources/rien.mp3'))
         if cfg.memdump:
@@ -213,7 +222,7 @@ def main(argv):
             address, page = screenlock.attack(targets)
             if not address or not page:
                 term.fail('Could not locate signature(s).')
-    # TODO: Add QuitException here so that the music stops (or a util.quit() method)
+                
     except Exception as exc:
         term.warn('Um, something went wrong: {0}'.format(exc))
         term.separator()

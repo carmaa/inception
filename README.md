@@ -14,7 +14,7 @@ utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or
 Pointsec. There are plenty of other (and better) ways to hack a machine that 
 doesn't pack encryption.
 
-As of version 0.3.4, it is able to unlock the following x86 and x64 operating
+As of version 0.3.5, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
@@ -41,6 +41,8 @@ systems:
 |Ubuntu       |Precise        |        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Oneiric        |        Yes       |        Yes        |        Yes        |
 |Ubuntu       |Natty          |        Yes       |        Yes        |        Yes        |
+|Ubuntu       |Maverick       |      Yes (3)     |       Yes (3)     |        Yes        |
+|Ubuntu       |Lucid          |      Yes (3)     |       Yes (3)     |        Yes        |
 |Linux Mint   |13             |        Yes       |        Yes        |        Yes        |
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
 |Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
@@ -49,6 +51,7 @@ systems:
      system is unlocked.
 (2): Other Linux distributions that use PAM-based authentication may also work 
      using the Ubuntu signatures.
+(3): x86 only.
 
 The tool also effectively enables escalation of privileges, for instance via 
 the `runas` or `sudo -s` commands, respectively. More signatures will be added.
@@ -59,7 +62,7 @@ under a LGPL license.
 Key data
 --------
 
- * Version:	0.3.4
+ * Version:	0.3.5
  * License:	GPL
  * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
  * Twitter:	@breaknenter
@@ -190,6 +193,7 @@ Development history
  * 0.3.2 - Bug fixes and support for Ubuntu 13.10
  * 0.3.3 - Bug fixes regarding output and error handling
  * 0.3.4 - Maestro!
+ * 0.3.5 - Added signatures for Ubuntu 10.04 and 10.10 x86
  
  
 Disclaimer

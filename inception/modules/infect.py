@@ -29,7 +29,6 @@ import os
 info = '''A description of the module goes here.'''
 
 def run():
-    print('Running')
 
     # Start msf and generate shellcode(s) (in a separate thread?)
 

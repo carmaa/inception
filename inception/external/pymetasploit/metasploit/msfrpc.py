@@ -3,9 +3,9 @@
 from http.client import HTTPConnection, HTTPSConnection
 from numbers import Number
 
-from msgpack import packb, unpackb, unpack
+from msgpack import packb, unpackb
 
-from metasploit.utils import convert
+from inception.external.pymetasploit.metasploit.utils import convert
 
 __author__ = 'Nadeem Douba'
 __copyright__ = 'Copyright 2012, PyMetasploit Project'
@@ -198,7 +198,7 @@ class MsfRpcClient(object):
         - ssl : if true uses SSL else regular HTTP (default: SSL enabled)
         """
         self.uri = kwargs.get('uri', '/api/')
-        self.port = kwargs.get('port', 55552)
+        self.port = kwargs.get('port', 55553)
         self.server = kwargs.get('server', '127.0.0.1')
         self.ssl = kwargs.get('ssl', True)
         self.sessionid = kwargs.get('token')
@@ -1470,7 +1470,7 @@ class MsfModule(object):
                     runopts['PAYLOAD'] = payload
                 else:
                     raise TypeError("Expected type str or PayloadModule not '%s'" % type(kwargs['payload']).__name__)
-
+        runopts.update(kwargs.items())
         return self.rpc.call(MsfRpcMethod.ModuleExecute, self.moduletype, self.modulename, runopts)
 
 

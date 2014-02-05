@@ -55,7 +55,7 @@ class TestScreenlock(unittest.TestCase):
             cfg = imp.reload(inception.cfg)
             cfg.startaddress = 0x00000000
             mod_name = sample[0]
-            #print(mod_name)
+            print(mod_name)
             filepath = sample[1]
             try:
                 module = importlib.machinery.SourceFileLoader(mod_name, filepath).load_module()

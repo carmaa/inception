@@ -19,8 +19,14 @@ __all__ = [
 ]
 
 def convert(data):
+    '''
+    Converts data in the msgpack dicts from binary to strings (or other data types)
+    '''
     if isinstance(data, bytes):
-        return data.decode('ascii')
+        try:
+            return data.decode('ascii')
+        except UnicodeDecodeError:
+            return data
     elif isinstance(data, collections.Mapping):
         return dict(map(convert, data.items()))
     elif isinstance(data, collections.Iterable):

@@ -199,10 +199,10 @@ def main(argv):
     # Here we go
     try:
         command = sys.argv[1]
-        try:
-            command_module = __import__("inception.modules.%s" % command, fromlist=["inception.modules"])
-        except ImportError:
-            term.fail('Error') # TODO: Display error message
+        # try:
+        command_module = __import__("inception.modules.%s" % command, fromlist=["inception.modules"])
+        # except ImportError as e:
+        #     term.fail(e) # TODO: Display error message
 
         command_module.run()
         sys.exit()

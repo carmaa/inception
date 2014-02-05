@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from threading import Timer, Lock
-from metasploit.msfrpc import ShellSession
+from inception.external.pymetasploit.metasploit.msfrpc import ShellSession
 
 __author__ = 'Nadeem Douba'
 __copyright__ = 'Copyright 2012, Cygnos Corporation'

@@ -22,78 +22,120 @@ Created on Feb 3, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-import inception.util
+from inception import util, term
 import collections
-from jsonschema import validate
+from pprint import pprint
 
-class InceptionTarget():
 
+class Target():
+    '''
+    A target consisting of metadata and binary signatures. Can contain
+    one or more signatures.
+
+    Mandatory Arguments:
+    - signatures : The binary signatures
+
+    Optional Keyword Arguments:
+    - name: Name of the target
+    - note: Text note of what the target does
+    '''
     def __init__(self, **kwargs):
-        '''
-        A target consisting of metadata and binary signatures.
+        self.signatures = kwargs.get('signatures', [])
+        self.name = kwargs.get('name', 'Not set')
+        self.note = kwargs.get('note', 'None')
 
-        Mandatory Arguments:
-        - signatures : The binary signatures
+    def __str__(self):
+        return 'Name: {0}\n' \
+               'Note: {1}\n' \
+               '{2}' \
+               .format(self.name, self.note,
+                '\n'.join(map(str, self.signatures)))
 
-        Optional Keyword Arguments:
-        - os: Operating system
-        - os_versions: Versions of the OS targets where the sig works
-        - os_architectures: Archs (e.g., x86, x64, etc.)
-        - executable: The executable (exe, DLL) where the signature is located
-        - executable_ver: The version of the executable
-        - md5: MD5 of the executable where the signature is located
-        - name: Name of the target
-        - note: Text note of what the target does
-        '''
-        self.signatures = []
-        self.os = kwargs.get('os', '')
-        self.os_versions = kwargs.get('os_versions', '')
-        self.os_architectures = kwargs.get('os_architectures', ['x86', 'x64'])
-        self.executable = kwargs.get('executable', '')
-        self.executable_ver = kwargs.get('executable_ver', '')
-        self.md5 = kwargs.get('md5', '')
-        self.name = kwargs.get('name', '')
-        self.note = kwargs.get('note', '')
 
-InceptionSignature = collections.namedtuple('InceptionSignature', ['offsets', 'chunks'])
-class InceptionSignature():
+class Signature(collections.namedtuple('Signature', ['os',
+                                                     'os_versions',
+                                                     'os_architectures',
+                                                     'executable',
+                                                     'version',
+                                                     'md5',
+                                                     'offsets',
+                                                     'chunks'])):
+    '''
+    A signature consisting of metadata and binary chunks of data that form
+    the signature. Can contain one or more chunks.
 
-    def __init__(self, offsets, chunks):
-        self.offsets = offsets
-        self._chunks = chunks
+    Mandatory Arguments:
+    - offsets: The offsets within a page where the chunks should be found
+    - chunks: Bits of the binary signatures
 
-    @property
-    def chunks(self):
-        return self._chunks
+    Optional Keyword Arguments:
+    - os: Operating system
+    - os_versions: Versions of the OS targets where the sig works
+    - os_architectures: Archs (e.g., x86, x64, etc.)
+    - executable: The executable (exe, DLL) where the signature is located
+    - executable_ver: The version of the executable
+    - md5: MD5 of the executable where the signature is located
+    '''
+    def __str__(self):
+        l = []
+        for field in self._fields:
+            name = field.capitalize().replace('_', ' ')
+            value = getattr(self, field)
+            if isinstance(value, list):
+                value = ', '.join(map(str, value))
+            l.append('{0}: {1}'.format(name, value))
+        return '\n'.join(l)
 
-class InceptionChunk():
 
-    def __init__(self, chunk, internaloffset, patch, patchoffset):
-        self.chunk = chunk
-        self.internaloffset = internaloffset
-        self.patch = patch
-        self.patchoffset = patchoffset
+class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset', 'patch',
+                                             'patchoffset'])):
+    '''
+    A chunk of binary data to search for and a matching patch, with offsets.
+
+    Mandatory arguments:
+    - chunk: The binary string to search for
+    - patch: The binary string that we're writing into memory
+
+    Optional keyword arguments:
+    - chunkoffset: An offset (in bytes) where to look for the chunk (default: 0)
+    - patchoffset: An offset (in bytes) where to patch (default: 0)
+    '''
+    def __str__(self):
+        return '\n' \
+               '\tChunk: {0:#x}\n' \
+               '\tOffset: {1:#x} ({1})\n' \
+               '\tPatch: {2:#x}\n' \
+               '\tOffset: {3:#x} ({3})\n' \
+               .format(self.chunk, self.chunkoffset,
+                       self.patch, self.patchoffset)
+               
 
 if __name__ == '__main__':
-    schema = {
-        "type" : "object",
-        "properties" : {
-            "source" : {
-                "type" : "object",
-                "properties" : {
-                    "name" : {"type" : "integer" }
-                }
-            }
-        }
-    }
-    data ={
-       "source":{
-          "name":0x1,
-          "bad_key":"This data is not allowed according to the schema."
-       }
-    }
-    validate(data,schema)
-    target = InceptionSignature(offsets=[0x18c], chunks={'a':0x8b})
-    target.chunks.update(c=3)
-    print(target.chunks.get('c'))
+    target = Target(
+        name='Test',
+        note='Testing',
+        signatures=[
+            Signature(
+                offsets=0x18c,
+                chunks=[
+                    Chunk(
+                        chunk=0x01,
+                        chunkoffset=0x02,
+                        patch=0,
+                        patchoffset=99),
+                    Chunk(
+                        chunk=0x01,
+                        chunkoffset=0x02,
+                        patch=0,
+                        patchoffset=99)
+                    ],
+                os='Windows',
+                os_versions=['SP0', 'SP1', 'SP2'],
+                os_architectures=['x86', 'x64'],
+                executable='explorer.exe',
+                version='4.3.2',
+                md5='fffffffffffffffffffffffffff')
+            ])
+    print(target)
+
 

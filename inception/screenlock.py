@@ -173,9 +173,9 @@ def searchanddestroy(device, target, memsize):
         signature['length'] = siglen(signature['chunks'])
         offsets = signature['offsets'] # Offsets within pages
         for chunk in signature['chunks']:
-            chunk['chunk'] = util.int2binhex(chunk['chunk'])
+            chunk['chunk'] = util.int2bytes(chunk['chunk'])
             try:
-                chunk['patch'] = util.int2binhex(chunk['patch'])
+                chunk['patch'] = util.int2bytes(chunk['patch'])
             except KeyError:
                 chunk['patch'] = None
     

@@ -297,7 +297,7 @@ if __name__ == '__main__':
     # print(target)
     # print(target.signatures[0].length)
     # print(target.signatures[0].chunks[0].chunk)
-    # print(util.int2binhex(target.signatures[0].chunks[0].chunk))
+    # print(util.int2bytes(target.signatures[0].chunks[0].chunk))
 
     # testsig = [{'chunk': 0x01020304,
     #                                     'internaloffset': 0x00,

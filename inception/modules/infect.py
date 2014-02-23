@@ -23,16 +23,27 @@ Created on Dec 5, 2013
 '''
 from inception import firewire, cfg, term, util
 from inception.screenlock import list_targets, select_target, searchanddestroy, patch
-from inception.raw import InceptionTarget
+from inception.memory import Signature
 from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
 from inception.external.pymetasploit.metasploit.msfconsole import MsfRpcConsole
 
+import collections
 import time
 import os
 
 info = '''A description of the module goes here.'''
 
-class Target(InceptionTarget):
+class InfectSignature(collections.namedtuple('InfectSignature', 
+                                             Signature._fields +
+                                             ('primary', 'staged'))):
+    '''
+    An extension of the Signature class, with the added 'primary' field that 
+    allows distinguishing between primary and backup signatures.
+
+    Mandatory additional keyword arguments:
+    - primary: Set to True if this is the primary signature
+    - staged: Set to True if the signature need to be staged (allocate page)
+    '''
     pass
 
 def run():

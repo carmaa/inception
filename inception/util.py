@@ -51,7 +51,17 @@ def bytes2hexstr(b):
         return '0x' + bytes.decode(binascii.hexlify(b))
     else:
         raise BytesWarning('Not a byte string')
-        
+
+
+def str2bytes(s):
+    '''
+    Takes a string and converts it to a bytes object.
+    '''
+    if isinstance(s, str):
+        return bytes(s, sys.getdefaultencoding())
+    else:
+        raise TypeError('Not a string: {0}'.format(s))
+
 
 def bytelen(s):
     '''
@@ -60,7 +70,7 @@ def bytelen(s):
     return (len(hex(s))) // 2
 
 
-def int2binhex(i):
+def int2bytes(i):
     '''
     Converts positive integer to its binary hexadecimal representation
     '''

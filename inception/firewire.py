@@ -63,8 +63,7 @@ class FireWire:
             self._bus.enable_sbp2()
         except IOError:
             if os.geteuid() == 0: # Check if we are running as root
-                term.poll('FireWire modules are not loaded. Try loading them? [Y/n]: ')
-                answer = input().lower()
+                answer = term.poll('FireWire modules are not loaded. Try loading them? [Y/n]: ')
                 if answer in ['y', '']:
                     status_modprobe = call('modprobe firewire-ohci', shell=True)
                     status_rescan = call('echo 1 > /sys/bus/pci/rescan', shell=True)
@@ -181,8 +180,7 @@ class FireWire:
                           'target')
             return 0
         else:
-            term.poll('Select a device to attack (or type \'q\' to quit): ')
-            selected = input().lower()
+            selected = term.poll('Select a device to attack (or type \'q\' to quit): ')
             try:
                 selected = int(selected)
             except:

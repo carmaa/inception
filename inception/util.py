@@ -118,8 +118,7 @@ def unload_fw_ip():
     '''
     Unloads IP over FireWire modules if present on OS X
     '''
-    term.poll('IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ')
-    unload = input().lower()
+    unload = term.poll('IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ')
     if unload in ['y', '']:
         status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext',
                       shell=True)
@@ -170,8 +169,7 @@ class MemoryFile:
     
     def write(self, addr, buf):
         if cfg.forcewrite:
-            term.poll('Are you sure you want to write to file [y/N]? ')
-            answer = input().lower()
+            answer = term.poll('Are you sure you want to write to file [y/N]? ')
             if answer in ['y', 'yes']:
                 self.file.seek(addr)
                 self.file.write(buf)

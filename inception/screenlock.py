@@ -35,8 +35,7 @@ def select_target(targets, selected=False):
         term.info('Only one target present, auto-selected')
         return targets[0]
     if not selected:
-        term.poll('Please select target (or enter \'q\' to quit):')
-        selected = input()
+        selected = term.poll('Please select target (or enter \'q\' to quit):')
     nof_targets = len(targets)
     try:
         selected = int(selected)
@@ -253,7 +252,7 @@ def attack(targets):
     '''
     Main attack logic
     '''
-    # Initialize and lower DMA shield
+    # Initialize
     if not cfg.filemode:
         try:
             fw = firewire.FireWire()
@@ -310,7 +309,6 @@ def attack(targets):
 
         if cfg.revert:
             term.poll('Press [enter] to revert the patch:')
-            input()
             device.write(address, backup)
 
             if backup == device.read(address, cfg.PAGESIZE):

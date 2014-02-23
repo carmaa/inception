@@ -175,6 +175,42 @@ class MemorySpace():
         return True
 
 
+    def patch(self, address, chunks):
+        '''
+        Writes to the device at address, using the patches in the signature
+        chunks
+        '''
+        success = True
+        backup = self.memory.read(address, cfg.PAGESIZE)
+
+        for c in chunks:
+            if len(cfg.patchfile) > 0:
+                patch = cfg.patchfile
+            else:
+                patch = c.patch
+            if not patch:
+                continue
+
+            coffset = c.chunkoffset
+            poffset = c.patchoffset
+            if not poffset: 
+                poffset = 0
+            realaddress = address + coffset + poffset
+
+            self.memory.write(realaddress, patch)
+            read = self.memory.read(realaddress, len(patch))
+            if cfg.verbose:
+                term.info('Data read back: ' + util.bytes2hexstr(read)) #TODO: Change to .format()
+            if read != patch:
+                success = False
+
+            # Only patch once from file
+            if len(cfg.patchfile) > 0:
+                break
+
+        return success, backup
+
+
     def find(self, target, findtag=False, findall=False):
         '''
         Searches through memory and returns a list of matches
@@ -291,7 +327,7 @@ if __name__ == '__main__':
                 executable='explorer.exe',
                 version='4.3.2',
                 md5='fffffffffffffffffffffffffff',
-                tag=False)
+                tag=True)
             ])
     
     # print(target)
@@ -322,5 +358,7 @@ if __name__ == '__main__':
         print(chunks)
     except:
         pass
+
+    memory.patch(address, chunks)
 
 

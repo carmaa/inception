@@ -133,6 +133,7 @@ class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset',
         elif isinstance(patch, int):
             patch = util.int2bytes(patch)
         elif isinstance(patch, str):
+            print('jere')
             patch = util.str2bytes(patch)
         else:
             raise TypeError('Patch not bytes, int or str: {0}'.format(patch))

@@ -55,10 +55,10 @@ def bytes2hexstr(b):
 
 def str2bytes(s):
     '''
-    Takes a string and converts it to a bytes object.
+    Takes a string of the format '\x01\xff' and converts it to a bytes object.
     '''
     if isinstance(s, str):
-        return bytes(s, sys.getdefaultencoding())
+        return s.encode('latin-1')
     else:
         raise TypeError('Not a string: {0}'.format(s))
 

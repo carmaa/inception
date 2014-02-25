@@ -111,7 +111,7 @@ class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset',
     def __new__(cls, chunk, chunkoffset, patch, patchoffset):
         '''
         Basically ensures that all values are stored
-        as python 3 bytes (i.e. b'\x01', etc.) and ints
+        as python3 bytes (i.e. b'\x01', etc.) and ints
         '''
         # Check offsets
         if not (isinstance(chunkoffset, int) and isinstance(patchoffset, int)):
@@ -133,7 +133,6 @@ class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset',
         elif isinstance(patch, int):
             patch = util.int2bytes(patch)
         elif isinstance(patch, str):
-            print('jere')
             patch = util.str2bytes(patch)
         else:
             raise TypeError('Patch not bytes, int or str: {0}'.format(patch))
@@ -201,7 +200,8 @@ class MemorySpace():
             self.memory.write(realaddress, patch)
             read = self.memory.read(realaddress, len(patch))
             if cfg.verbose:
-                term.info('Data read back: ' + util.bytes2hexstr(read)) #TODO: Change to .format()
+                # TODO: Change to .format()
+                term.info('Data read back: ' + util.bytes2hexstr(read)) 
             if read != patch:
                 success = False
 

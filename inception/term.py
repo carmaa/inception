@@ -65,11 +65,11 @@ def info(s, sign = '*'):
     write('[{0}] {1}'.format(sign, s))
 
 
-def poll(s, sign = '?', default=''):
+def poll(s, sign = '?', default='', newline=False):
     '''
     Prints a question to the user. Returns the answer, in lower case
     '''
-    write('[{0}] {1}'.format(sign, s), end_newline = False)
+    write('[{0}] {1}'.format(sign, s), end_newline = newline)
     user_input = input('{0}'.format(default + chr(8) * len(default)))
     if not user_input:
         user_input = default

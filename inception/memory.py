@@ -180,6 +180,7 @@ class MemorySpace():
         Writes to the device at address, using the patches in the signature
         chunks
         '''
+        # TODO: Fix this method so that it is usable for infection
         success = True
         backup = self.memory.read(address, cfg.PAGESIZE)
 

@@ -269,18 +269,28 @@ def run():
     #                                     'internaloffset': 0x00,
     #                                     'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
     #                                     'patchoffset': 0x00}]}]}
-
-    # Works except for network connection - best shot so far
+    # Test for sechost.dll
     t = {'OS': 'Windows 7',
             'versions': ['SP1'],
-            'architectures': ['x86'],
-            'name': 'SearchIndexer.exe',
+            'architectures': ['x64'],
+            'name': 'sechost.dll',
             'notes': 'w00t',
-            'signatures': [{'offsets': [0x18c],
-                            'chunks': [{'chunk': 0x8bff558bec813D,
+            'signatures': [{'offsets': [0xdc6],
+                            'chunks': [{'chunk': 0x8bff558becff75088d450850,
                                         'internaloffset': 0x00,
                                         'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
                                         'patchoffset': 0x00}]}]}
+    # Works except for network connection - best shot so far - this one works
+    # t = {'OS': 'Windows 7',
+    #         'versions': ['SP1'],
+    #         'architectures': ['x86'],
+    #         'name': 'SearchIndexer.exe',
+    #         'notes': 'w00t',
+    #         'signatures': [{'offsets': [0x18c],
+    #                         'chunks': [{'chunk': 0x8bff558bec813D,
+    #                                     'internaloffset': 0x00,
+    #                                     'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
+    #                                     'patchoffset': 0x00}]}]}
     #dllhost
     # target = {'OS': 'Windows 7',
     #     'versions': ['SP1'],

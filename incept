@@ -31,6 +31,7 @@ import sys
 import traceback
 import unittest
 import atexit
+import optparse
 
 
 def banner():
@@ -58,6 +59,15 @@ INCEPTION
     print()
 
 
+def add_options(parser):
+    parser.add_option('-f', '--file', dest='filename',
+        help='use a file instead of FireWire bus data as input; for example '
+        'to facilitate attacks on VMware machine memory files (.vmem) and to '
+        'ease testing and signature creation efforts.')
+    parser.add_option('--force-write', action="store_true", dest='forcewrite',
+        help='forces patching when using files as input (see -f)')
+
+
 def main(argv):
     cfg.encoding = sys.getdefaultencoding()
     
@@ -76,121 +86,123 @@ def main(argv):
     atexit.register(util.cleanup)
     
     # Parse args
-    try:
-        opts, args = getopt.getopt(argv[2:], 'bd:Def:hlvw:npum:stP:ra', 
-                                   ['businfo', 'dump=', 'dump-all', 'egg', 
-                                    'file=', 'force-write', 'help', 'list', 
-                                    'verbose', 'wait=', 'no-write', 
-                                    'pickpocket', 'unload', 'manual=', 
-                                    'signatures', 'patch-file=', 'revert',
-                                    'test', 'avoid'])
-    except getopt.GetoptError as err:
-        term.warn(err)
-        usage(argv[0])
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt in ('-h', '--help'):
-            usage(argv[0])
-            sys.exit()
-        elif opt in ('-f', '--file'):
-            cfg.filemode = True
-            cfg.filename = str(arg)
-        elif opt in ('--force-write'):
-            cfg.forcewrite = True
-        elif opt in ('-l', '--list'):
-            term.info('Available targets:')
-            term.separator()
-            for n, target in enumerate(targets, 1):
-                term.info(target['OS'] + ': ' + target['name'], n)
-            term.separator()
-            sys.exit()
-        elif opt in ('-v', '--verbose'):
-            cfg.verbose = True
-        elif opt in ('-w', '--wait'):
-            cfg.fw_delay = int(arg)
-        elif opt in ('-n', '--no-write'):
-            cfg.dry_run = True
-        elif opt in ('-D', '--dump-all'):
-            cfg.memdump = True
-            start = 0x00
-            end = cfg.memsize
-        elif opt in ('-d', '--dump'):
-            cfg.memdump = True
-            try:
-                start, size = str(arg).split(',')
-                # Fix start
-                if '0x' in start:
-                    start = int(start, 0) & 0xfffff000 # Address
-                else:
-                    start = int(start) * cfg.PAGESIZE # Page number
-                # Fix size
-                try:
-                  size = util.parse_unit(size)
-                except ValueError:
-                  term.fail("Could not convert '{0}' to a data size")
-                if size < cfg.PAGESIZE:
-                    term.warn('Minimum dump size is a page, {0} KiB'
-                              .format(cfg.PAGESIZE // cfg.KiB))
-                end = start + size
-            except:
-                term.fail('Could not parse argument to {0}'.format(opt))
-        elif opt in ('-b', '--businfo'):
-            fw = firewire.FireWire()
-            fw.businfo()
-            sys.exit()
-        elif opt in ('-p', '--pickpocket'):
-            cfg.pickpocket = True
-        elif opt in ('-u', '--unload'):
-            if cfg.os == cfg.OSX:
-                util.unload_fw_ip()
-            else:
-                term.fail('Host system is not OS X, aborting')
-            sys.exit()
-        elif opt in ('-m', '--manual'):
-            try:
-                offset, signature, patch = str(arg).split(',')
-                offset = int(offset, 0)
-                signature = int(signature, 0)
-                patch = int(patch, 0)
-            except ValueError:
-                term.fail('You must provide a valid offset, signature and ' +
-                          'patch in manual mode')
-            targets = [{'OS': 'Non-specified OS',
-                        'versions': ['N/A'],
-                        'architectures': ['N/A'],
-                        'name': 'Manual patch',
-                        'notes': 'N/A',
-                        'signatures': [{'offsets': [offset],
-                                        'chunks': [{'chunk': signature,
-                                                    'internaloffset': 0x00,
-                                                    'patch': patch,
-                                                    'patchoffset': 0x00}]}]}]
-        elif opt in ('-s', '--signatures'):
-            cfg.list_signatures = True
-        elif opt in ('-e', '--egg'):
-            term.info('Turn up the volume, please!')
-            cfg.egg = True
-        elif opt in ('-P', '--patch-file'):
-            try:
-                cfg.patchfile = open(arg, 'rb').read()
-            except:
-                term.fail('Could not read patch file {0}'.format(arg))
-        elif opt in ('-r', '--revert'):
-            cfg.revert = True
-        elif opt in ('-t', '--test'):
-            suite = unittest.TestLoader().discover('./inception/test')
-            unittest.TextTestRunner().run(suite)
-            sys.exit()
-        else:
-            assert False, 'Option not handled: ' + opt
+    parser = optparse.OptionParser() # TODO: parse the below using OptionParser
+    add_options(parser)
+    # try:
+    #     opts, args = getopt.getopt(argv[2:], 'bd:Def:hlvw:npum:stP:ra', 
+    #                                ['businfo', 'dump=', 'dump-all', 'egg', 
+    #                                 'file=', 'force-write', 'help', 'list', 
+    #                                 'verbose', 'wait=', 'no-write', 
+    #                                 'pickpocket', 'unload', 'manual=', 
+    #                                 'signatures', 'patch-file=', 'revert',
+    #                                 'test', 'avoid'])
+    # except getopt.GetoptError as err:
+    #     term.warn(err)
+    #     usage(argv[0])
+    #     sys.exit(2)
+    # for opt, arg in opts:
+    #     if opt in ('-h', '--help'):
+    #         usage(argv[0])
+    #         sys.exit()
+    #     elif opt in ('-f', '--file'):
+    #         cfg.filemode = True
+    #         cfg.filename = str(arg)
+    #     elif opt in ('--force-write'):
+    #         cfg.forcewrite = True
+    #     elif opt in ('-l', '--list'):
+    #         term.info('Available targets:')
+    #         term.separator()
+    #         for n, target in enumerate(targets, 1):
+    #             term.info(target['OS'] + ': ' + target['name'], n)
+    #         term.separator()
+    #         sys.exit()
+    #     elif opt in ('-v', '--verbose'):
+    #         cfg.verbose = True
+    #     elif opt in ('-w', '--wait'):
+    #         cfg.fw_delay = int(arg)
+    #     elif opt in ('-n', '--no-write'):
+    #         cfg.dry_run = True
+    #     elif opt in ('-D', '--dump-all'):
+    #         cfg.memdump = True
+    #         start = 0x00
+    #         end = cfg.memsize
+    #     elif opt in ('-d', '--dump'):
+    #         cfg.memdump = True
+    #         try:
+    #             start, size = str(arg).split(',')
+    #             # Fix start
+    #             if '0x' in start:
+    #                 start = int(start, 0) & 0xfffff000 # Address
+    #             else:
+    #                 start = int(start) * cfg.PAGESIZE # Page number
+    #             # Fix size
+    #             try:
+    #               size = util.parse_unit(size)
+    #             except ValueError:
+    #               term.fail("Could not convert '{0}' to a data size")
+    #             if size < cfg.PAGESIZE:
+    #                 term.warn('Minimum dump size is a page, {0} KiB'
+    #                           .format(cfg.PAGESIZE // cfg.KiB))
+    #             end = start + size
+    #         except:
+    #             term.fail('Could not parse argument to {0}'.format(opt))
+    #     elif opt in ('-b', '--businfo'):
+    #         fw = firewire.FireWire()
+    #         fw.businfo()
+    #         sys.exit()
+    #     elif opt in ('-p', '--pickpocket'):
+    #         cfg.pickpocket = True
+    #     elif opt in ('-u', '--unload'):
+    #         if cfg.os == cfg.OSX:
+    #             util.unload_fw_ip()
+    #         else:
+    #             term.fail('Host system is not OS X, aborting')
+    #         sys.exit()
+    #     elif opt in ('-m', '--manual'):
+    #         try:
+    #             offset, signature, patch = str(arg).split(',')
+    #             offset = int(offset, 0)
+    #             signature = int(signature, 0)
+    #             patch = int(patch, 0)
+    #         except ValueError:
+    #             term.fail('You must provide a valid offset, signature and ' +
+    #                       'patch in manual mode')
+    #         targets = [{'OS': 'Non-specified OS',
+    #                     'versions': ['N/A'],
+    #                     'architectures': ['N/A'],
+    #                     'name': 'Manual patch',
+    #                     'notes': 'N/A',
+    #                     'signatures': [{'offsets': [offset],
+    #                                     'chunks': [{'chunk': signature,
+    #                                                 'internaloffset': 0x00,
+    #                                                 'patch': patch,
+    #                                                 'patchoffset': 0x00}]}]}]
+    #     elif opt in ('-s', '--signatures'):
+    #         cfg.list_signatures = True
+    #     elif opt in ('-e', '--egg'):
+    #         term.info('Turn up the volume, please!')
+    #         cfg.egg = True
+    #     elif opt in ('-P', '--patch-file'):
+    #         try:
+    #             cfg.patchfile = open(arg, 'rb').read()
+    #         except:
+    #             term.fail('Could not read patch file {0}'.format(arg))
+    #     elif opt in ('-r', '--revert'):
+    #         cfg.revert = True
+    #     elif opt in ('-t', '--test'):
+    #         suite = unittest.TestLoader().discover('./inception/test')
+    #         unittest.TextTestRunner().run(suite)
+    #         sys.exit()
+    #     else:
+    #         assert False, 'Option not handled: ' + opt
     
-    # We don't accept any other arguments
-    if args:
-        term.warn('Arguments {0} ignored'.format(', '.join(args)))
+    # # We don't accept any other arguments
+    # if args:
+    #     term.warn('Arguments {0} ignored'.format(', '.join(args)))
     
-    if cfg.list_signatures:
-        screenlock.list_targets(targets, details=True)
-        sys.exit()
+    # if cfg.list_signatures:
+    #     screenlock.list_targets(targets, details=True)
+    #     sys.exit()
 
     # Warn OS X users
     if cfg.os == cfg.OSX and not cfg.filemode:
@@ -203,8 +215,11 @@ def main(argv):
         command_module = __import__("inception.modules.%s" % command, fromlist=["inception.modules"])
         # except ImportError as e:
         #     term.fail(e) # TODO: Display error message
-
-        command_module.run()
+        command_module.add_options(parser)
+        global opts
+        global args
+        opts, args = parser.parse_args()
+        command_module.run(opts)
         sys.exit()
 
         if cfg.egg:

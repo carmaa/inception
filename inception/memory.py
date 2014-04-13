@@ -164,6 +164,14 @@ class MemorySpace():
         self.memsize = memsize
 
 
+    def page_no(self, address):
+        '''
+        Returns the page number of a given address
+        '''
+        mask = 0xfffff000 # Mask away the lower bits
+        return int((address & mask) / cfg.PAGESIZE)
+
+
     def match(self, candidate, chunks):
         '''
         Matches a candidate read from memory with the signature chunks
@@ -183,7 +191,6 @@ class MemorySpace():
         # TODO: Fix this method so that it is usable for infection
         success = True
         backup = self.memory.read(address, cfg.PAGESIZE)
-
         for c in chunks:
             if len(cfg.patchfile) > 0:
                 patch = cfg.patchfile
@@ -213,6 +220,32 @@ class MemorySpace():
         return success, backup
 
 
+    def rawfind(self, offset, data):
+        '''
+        Finds raw data at a page offset
+        '''
+        target = Target(
+            signatures=[
+                Signature(
+                    offsets=[offset],
+                    chunks=[
+                        Chunk(
+                            chunk=data,
+                            chunkoffset=0,
+                            patch=0,
+                            patchoffset=0)
+                        ],
+                    os='',
+                    os_versions=[],
+                    os_architectures=[],
+                    executable='',
+                    version='',
+                    md5='',
+                    tag=False)
+                ])
+        return self.find(target)
+
+
     def find(self, target, findtag=False, findall=False):
         '''
         Searches through memory and returns a list of matches
@@ -220,6 +253,10 @@ class MemorySpace():
 
         Mandatory arguments:
         - target: The Target object that we are searching for
+
+        Optional arguments:
+        - findtag: True if searching for a tagged (preferred) signature
+        - findall: True if searching for all signatures
 
         Return:
         - A list of matches containting the address, signature, offset and

@@ -22,7 +22,7 @@ Created on Feb 1, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import firewire, memdump, cfg, term
+from inception import firewire, memdump, cfg
 import time
 
 def lurk():
@@ -34,7 +34,7 @@ def lurk():
     bb = term.BeachBall()
     
     try:
-        s = '\n'.join(cfg.wrapper.wrap('[-] Lurking in the shrubbery ' +
+        s = '\n'.join(wrapper.wrap('[-] Lurking in the shrubbery ' +
                                         'waiting for a device to connect. ' +
                                         'Ctrl-C to abort')) + '\r'
         print(s, end = '')

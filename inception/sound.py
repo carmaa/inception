@@ -34,9 +34,9 @@ def play(filename):
 
     try:
         if (filename.endswith('.wav') or filename.endswith('.mp3')) and os.path.exists(f):
-            if cfg.os == cfg.LINUX:
+            if env['os'] == 'Linux':
                 cmd = 'aplay'
-            elif cfg.os == cfg.OSX:
+            elif env['os'] == 'Darwin':
                 cmd = 'afplay'
             else:
                 raise Exception

@@ -22,7 +22,7 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import cfg, firewire, util, term
+from inception import cfg, firewire, util
 import time
 
 filename = ''
@@ -67,15 +67,15 @@ def dump(start, end):
     # Lower DMA shield or use a file as input
     device = None
     if cfg.filemode:
-        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
+        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
     else:
         elapsed = int(time.time() - starttime)
         device = fw.getdevice(device_index, elapsed)
 
     # Progress bar
     prog = term.ProgressBar(min_value = start, max_value = end, 
-                            total_width = cfg.wrapper.width, 
-                            print_data = cfg.verbose)
+                            total_width = wrapper.width, 
+                            print_data = opts.verbose)
 
 
     try:

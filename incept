@@ -23,22 +23,25 @@ Created on Oct 15, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from datetime import date
-from inception import firewire, screenlock, memdump, pickpocket, cfg, util, term, sound
+from inception import firewire, screenlock, memdump, pickpocket, cfg, util, \
+    terminal, sound
 import getopt
 import os
 import sys
+import datetime
 import traceback
-import unittest
 import atexit
 import optparse
+import builtins
+import textwrap
 
+CONFIG_FILENAME = 'inception.conf'
 
 def banner():
     '''
     Print obligatory awesome ASCII banner
     '''
-    if (term.size() > 79):
+    if (term.width() > 79):
         print('''
  _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
  _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
@@ -52,9 +55,11 @@ INCEPTION
         ''')
     
     term.write('v.{0} (C) Carsten Maartmann-Moe {1}'
-               .format(cfg.version, date.today().strftime("%Y")), 
+               .format(cfg.version,
+               datetime.date.today().strftime("%Y")), 
                indent = False)
-    term.write('Download: {0} | Twitter: @breaknenter'.format(cfg.url), 
+    term.write('Download: {0} | Twitter: @breaknenter'
+               .format(cfg.url), 
                indent = False)
     print()
 
@@ -66,27 +71,40 @@ def add_options(parser):
         'ease testing and signature creation efforts.')
     parser.add_option('--force-write', action="store_true", dest='forcewrite',
         help='forces patching when using files as input (see -f)')
+    parser.add_option('-v','--verbose', action="store_true", dest='verbose',
+        help='verbose mode - among other things, this prints read data to '
+        'stdout, useful for debugging.')
+    parser.add_option('-d','--delay', dest='delay',
+        help='delay attack by TIME seconds. This is useful in order to '
+        'guarantee that the target machine has successfully granted the host '
+        'DMA before attacking. If the attack fails, try to increase this '
+        'value. Default delay is 5 seconds.',
+        default=cfg.delay)
+    parser.add_option('--dry-run', action="store_true", dest='dry_run',
+        help='dry run, do not write back to memory.')
 
 
 def main(argv):
+    global opts, args
+
+    # cfg = configparser.ConfigParser()
+    # cfg.read(CONFIG_FILENAME)
     cfg.encoding = sys.getdefaultencoding()
-    
-    # Get and set terminal width
-    cfg.wrapper.width = term.size()
-    
-    banner()
-    
-    # Initialize
-    targets = cfg.targets
-    
-    # Detect host OS
-    cfg.os = util.detectos()
+    cfg.os = util.detectos()  
+
+    # Get terminal and add to builtins
+    builtins.term = terminal.Terminal()
 
     # Register cleanup function
     atexit.register(util.cleanup)
     
-    # Parse args
-    parser = optparse.OptionParser() # TODO: parse the below using OptionParser
+    banner()
+    
+    # Parse arguments and options
+    description = 'Inception is a FireWire physical memory manipulation ' \
+    'and hacking tool exploiting IEEE 1394 SBP-2 DMA.'
+    usage = 'Usage: %prog module [options]'
+    parser = optparse.OptionParser(usage=usage, description = description)
     add_options(parser)
     # try:
     #     opts, args = getopt.getopt(argv[2:], 'bd:Def:hlvw:npum:stP:ra', 
@@ -101,27 +119,13 @@ def main(argv):
     #     usage(argv[0])
     #     sys.exit(2)
     # for opt, arg in opts:
-    #     if opt in ('-h', '--help'):
-    #         usage(argv[0])
-    #         sys.exit()
-    #     elif opt in ('-f', '--file'):
-    #         cfg.filemode = True
-    #         cfg.filename = str(arg)
-    #     elif opt in ('--force-write'):
-    #         cfg.forcewrite = True
-    #     elif opt in ('-l', '--list'):
+    #     elif opt in ('-l', '--list'): # Per module?
     #         term.info('Available targets:')
     #         term.separator()
     #         for n, target in enumerate(targets, 1):
     #             term.info(target['OS'] + ': ' + target['name'], n)
     #         term.separator()
     #         sys.exit()
-    #     elif opt in ('-v', '--verbose'):
-    #         cfg.verbose = True
-    #     elif opt in ('-w', '--wait'):
-    #         cfg.fw_delay = int(arg)
-    #     elif opt in ('-n', '--no-write'):
-    #         cfg.dry_run = True
     #     elif opt in ('-D', '--dump-all'):
     #         cfg.memdump = True
     #         start = 0x00
@@ -146,18 +150,8 @@ def main(argv):
     #             end = start + size
     #         except:
     #             term.fail('Could not parse argument to {0}'.format(opt))
-    #     elif opt in ('-b', '--businfo'):
-    #         fw = firewire.FireWire()
-    #         fw.businfo()
-    #         sys.exit()
     #     elif opt in ('-p', '--pickpocket'):
     #         cfg.pickpocket = True
-    #     elif opt in ('-u', '--unload'):
-    #         if cfg.os == cfg.OSX:
-    #             util.unload_fw_ip()
-    #         else:
-    #             term.fail('Host system is not OS X, aborting')
-    #         sys.exit()
     #     elif opt in ('-m', '--manual'):
     #         try:
     #             offset, signature, patch = str(arg).split(',')
@@ -203,31 +197,37 @@ def main(argv):
     # if cfg.list_signatures:
     #     screenlock.list_targets(targets, details=True)
     #     sys.exit()
-
-    # Warn OS X users
-    if cfg.os == cfg.OSX and not cfg.filemode:
-        term.warn('Attacking from OS X may cause host system crashes')
     
+    command = sys.argv[1]
+
+    if command not in ['-h', '--help']:
+        try:
+            command_module = __import__("inception.modules.{0}"
+                .format(command), fromlist=["inception.modules"])
+            group = optparse.OptionGroup(parser, 'Module-specific '
+                'description and options',
+                command_module.info)
+            command_module.add_options(group)
+            parser.add_option_group(group)
+        except ImportError as e:
+            term.fail(e)
+    else:
+        parser.epilog = 'For module-specific help, type: {0} ' \
+            'module -h/--help'.format(sys.argv[0] )
+
+    opts, args = parser.parse_args()
+
     # Here we go
     try:
-        command = sys.argv[1]
-        # try:
-        command_module = __import__("inception.modules.%s" % command, fromlist=["inception.modules"])
-        # except ImportError as e:
-        #     term.fail(e) # TODO: Display error message
-        command_module.add_options(parser)
-        global opts
-        global args
-        opts, args = parser.parse_args()
         command_module.run(opts)
-        sys.exit()
+        sys.exit() # TODO: Remove
 
         if cfg.egg:
                 cfg.eggs.append(sound.play('resources/rien.mp3'))
         if cfg.memdump:
             if cfg.filemode and end == cfg.memsize: 
                 # Make sure we don't read past the end of the input file
-                end = os.stat(cfg.filename).st_size
+                end = os.stat(opts.filename).st_size
             memdump.dump(start, end)
         elif cfg.pickpocket:
             if cfg.filemode:
@@ -239,7 +239,7 @@ def main(argv):
                 term.fail('Could not locate signature(s).')
                 
     except Exception as exc:
-        term.warn('Um, something went wrong: {0}'.format(exc))
+        term.warn('Um, something went dreadfully wrong: {0}'.format(exc))
         term.separator()
         traceback.print_exc()
         term.separator()
@@ -274,12 +274,6 @@ Options:
     -D                    Same as -d, but dumps all available memory. Same notes
                           as above apply. The first MB of memory will be
                           replaced by zeroes.
-    -f, --file=FILE       Use a file instead of FireWire bus data as input; for
-                          example to facilitate attacks on VMware machine memory
-                          files (.vmem) and to ease testing and signature 
-                          creation efforts.
-    --force-write         Forces patching when using files as input (see -f). By
-                          default, Inception does not write back to data files.
     -h, --help:           Displays this message.
     -l, --list:           Lists configured operating system targets.
     -m, --manual=OFFSET,SIGNATURE,PATCH

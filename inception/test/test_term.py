@@ -41,7 +41,7 @@ class Test(unittest.TestCase):
         
     def test_write(self):
         s = 'A' * (3 * term.size())
-        cfg.wrapper.width = term.size()
+        wrapper.width = term.size()
         sys.stdout = StringIO() # Suppress output
         sys.stdout.write('')
         term.write(s)

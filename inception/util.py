@@ -21,7 +21,7 @@ Created on Jun 19, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg, term
+from inception import cfg
 from subprocess import call
 import binascii
 import os
@@ -168,7 +168,7 @@ class MemoryFile:
             yield (r[0], self.file.read(r[1]))
     
     def write(self, addr, buf):
-        if cfg.forcewrite:
+        if opts.forcewrite:
             answer = term.poll('Are you sure you want to write to file [y/N]? ')
             if answer in ['y', 'yes']:
                 self.file.seek(addr)

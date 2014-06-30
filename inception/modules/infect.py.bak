@@ -102,8 +102,8 @@ def run():
     device = None
     memsize = None
     if cfg.filemode:
-        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
-        memsize = os.path.getsize(cfg.filename)
+        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
+        memsize = os.path.getsize(opts.filename)
     else:
         elapsed = int(time.time() - start)
         device = fw.getdevice(device_index, elapsed)
@@ -412,15 +412,15 @@ def run():
 
     # Print selection. If verbose, print selection with signatures
     #term.info('Selected target: ' + target['OS'] + ': ' + target['name'])
-    #if cfg.verbose:
+    #if opts.verbose:
     #    printdetails(target)
     
     # Lower DMA shield or use a file as input, and set memsize
     device = None
     memsize = None
     if cfg.filemode:
-        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
-        memsize = os.path.getsize(cfg.filename)
+        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
+        memsize = os.path.getsize(opts.filename)
     else:
         elapsed = int(time.time() - start)
         device = fw.getdevice(device_index, elapsed)

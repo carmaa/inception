@@ -21,7 +21,7 @@ Created on Dec 5, 2013
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import firewire, cfg, term, util
+from inception import firewire, cfg, util
 from inception.screenlock import list_targets, select_target, searchanddestroy, patch
 from inception.memory import Target, Signature, Chunk, MemorySpace
 from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
@@ -32,7 +32,8 @@ import optparse
 import time
 import os
 
-info = '''A description of the module goes here.'''
+info = 'This module enables infection of the target machine by writing a ' \
+'memory-only Metasploit payload directly to volatile memory.'
 
 # class InfectSignature(collections.namedtuple('InfectSignature', 
 #                                              Signature._fields +
@@ -147,11 +148,11 @@ stage1 = Target(
 #         ]),
 # 'x64': None}
 
-def add_options(parser):
-    parser.add_option('--msfopts', dest='msfopts',
+def add_options(group):
+    group.add_option('--msfopts', dest='msfopts',
         help='exploit options in a comma-separated list using the format ' \
         '\'OPTION=value\'')
-    parser.add_option('--msfpw', dest='msfpw',
+    group.add_option('--msfpw', dest='msfpw',
         help='password for the MSFRPC daemon')
 
 
@@ -185,7 +186,7 @@ def run(opts):
     # TODO: externalize this
     if not opts.filename:
         try:
-            fw = firewire.FireWire()
+            fw = firewire.FireWire(opts.delay)
         except IOError:
             term.fail('Could not initialize FireWire. Are the modules ' +
                       'loaded into the kernel?')
@@ -554,15 +555,15 @@ def run(opts):
 
     # Print selection. If verbose, print selection with signatures
     #term.info('Selected target: ' + target['OS'] + ': ' + target['name'])
-    #if cfg.verbose:
+    #if opts.verbose:
     #    printdetails(target)
     
     # Lower DMA shield or use a file as input, and set memsize
     device = None
     memsize = None
     if cfg.filemode:
-        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
-        memsize = os.path.getsize(cfg.filename)
+        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
+        memsize = os.path.getsize(opts.filename)
     else:
         elapsed = int(time.time() - start)
         device = fw.getdevice(device_index, elapsed)

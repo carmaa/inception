@@ -22,7 +22,7 @@ Created on Feb 3, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import util, term, cfg, screenlock
+from inception import util, cfg, screenlock
 from inception.exceptions import InceptionException
 import collections
 from pprint import pprint
@@ -207,7 +207,7 @@ class MemorySpace():
 
             self.memory.write(realaddress, patch)
             read = self.memory.read(realaddress, len(patch))
-            if cfg.verbose:
+            if opts.verbose:
                 # TODO: Change to .format()
                 term.info('Data read back: ' + util.bytes2hexstr(read)) 
             if read != patch:
@@ -271,8 +271,8 @@ class MemorySpace():
         
         # Progress bar
         prog = term.ProgressBar(max_value = self.memsize,
-                                total_width = cfg.wrapper.width, 
-                                print_data = cfg.verbose)
+                                total_width = wrapper.width, 
+                                print_data = opts.verbose)
         prog.draw()
 
         try:
@@ -333,11 +333,11 @@ class MemorySpace():
         
         # Catch eventual exceptions, print a newline and pass them on   
         except:
-            print()
+            print() # Next line
             raise
         
         # If we get here, return all found sigs
-        print()    
+        print() # Next line  
         return z
 
 

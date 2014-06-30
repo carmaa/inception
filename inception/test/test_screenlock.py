@@ -62,7 +62,7 @@ class TestScreenlock(unittest.TestCase):
             except ImportError:
                 assert(module)
             cfg.filemode = True
-            cfg.filename = path.join(path.dirname(__file__), 'samples/') + mod_name + '.bin'
+            opts.filename = path.join(path.dirname(__file__), 'samples/') + mod_name + '.bin'
             foundtarget = False
             for target in cfg.targets:
                 if target['OS'] == module.OS:

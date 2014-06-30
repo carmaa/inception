@@ -21,7 +21,7 @@ Created on Jun 23, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import firewire, cfg, sound, util, term
+from inception import firewire, cfg, sound, util
 import os
 import sys
 import time
@@ -147,7 +147,7 @@ def patch(device, address, chunks):
 
         device.write(realaddress, patch)
         read = device.read(realaddress, len(patch))
-        if cfg.verbose:
+        if opts.verbose:
             term.info('Data read back: ' + util.bytes2hexstr(read)) #TODO: Change to .format()
         if read != patch:
             success = False
@@ -179,8 +179,8 @@ def searchanddestroy(device, target, memsize):
                 chunk['patch'] = None
     
     # Progress bar
-    prog = term.ProgressBar(max_value = memsize, total_width = cfg.wrapper.width, 
-                            print_data = cfg.verbose)
+    prog = term.ProgressBar(max_value = memsize, total_width = wrapper.width, 
+                            print_data = opts.verbose)
 
     try:
         # Build a batch of read requests of the form: [(addr1, len1), ...] and
@@ -270,15 +270,15 @@ def attack(targets):
     
     # Print selection. If verbose, print selection with signatures
     term.info('Selected target: ' + target['OS'] + ': ' + target['name'])
-    if cfg.verbose:
+    if opts.verbose:
         printdetails(target)
     
     # Lower DMA shield or use a file as input, and set memsize
     device = None
     memsize = None
     if cfg.filemode:
-        device = util.MemoryFile(cfg.filename, cfg.PAGESIZE)
-        memsize = os.path.getsize(cfg.filename)
+        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
+        memsize = os.path.getsize(opts.filename)
     else:
         elapsed = int(time.time() - start)
         device = fw.getdevice(device_index, elapsed)

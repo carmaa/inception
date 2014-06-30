@@ -57,7 +57,7 @@ class MemdumpTest(unittest.TestCase):
     def test_fulldump(self):
         start = 0x00000000
         for sample in self.samples:
-            cfg.filename = sample
+            opts.filename = sample
             end = os.path.getsize(sample)
             sys.stdout = StringIO() # Suppress output
             memdump.dump(start, end)
@@ -73,7 +73,7 @@ class MemdumpTest(unittest.TestCase):
         start address
         '''
         sample = random.sample(self.samples, 1)[0]
-        cfg.filename = sample
+        opts.filename = sample
         self.assertTrue(os.path.exists(sample))
         sample_size = os.path.getsize(sample)
         start = random.randrange(sample_size)

@@ -21,7 +21,7 @@ Created on Jan 23, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg, util, term
+from inception import cfg, util
 from subprocess import call
 import os
 import re
@@ -53,11 +53,15 @@ class FireWire:
     FireWire wrapper class to handle some attack-specific functions
     '''
 
-    def __init__(self):
+    def __init__(self, delay):
         '''
         Constructor
         Initializes the bus and sets device, OUI variables
         '''
+        # Warn OS X users
+        if cfg.os == cfg.OSX:
+            term.warn('Attacking from OS X may cause host system crashes')
+        self.delay = delay
         self._bus = Bus()
         try:
             self._bus.enable_sbp2()
@@ -175,7 +179,7 @@ class FireWire:
             self.businfo()
         nof_devices = len(self._vendors)
         if nof_devices == 1:
-            if cfg.verbose:
+            if opts.verbose:
                 term.info('Only one device present, device auto-selected as ' +
                           'target')
             return 0
@@ -200,7 +204,7 @@ class FireWire:
         didwait = False
         bb = term.BeachBall()
         try:
-            for i in range(cfg.fw_delay - elapsed, 0, -1):
+            for i in range(self.delay - elapsed, 0, -1):
                 print('[*] Initializing bus and enabling SBP-2, ' +
                       'please wait %2d seconds or press Ctrl+C\r' 
                       % i, end = '')

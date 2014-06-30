@@ -22,7 +22,8 @@ Created on Feb 1, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import firewire, memdump, cfg
+from inception import firewire, cfg
+from inception.modules import dump
 import time
 
 def lurk():
@@ -49,7 +50,7 @@ def lurk():
 
             print() # Newline 
             term.info('FireWire device detected')
-            memdump.dump(start, end)
+            dump.run(start, end)
             
     except KeyboardInterrupt:
         print() # TODO: Fix keyboard handling (interrupt handling)

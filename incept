@@ -23,8 +23,7 @@ Created on Oct 15, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import firewire, screenlock, memdump, pickpocket, cfg, util, \
-    terminal, sound
+from inception import firewire, cfg, util, terminal, sound
 import getopt
 import os
 import sys
@@ -66,12 +65,12 @@ INCEPTION
 
 def add_options(parser):
     parser.add_option('-f', '--file', dest='filename',
-        help='use a file instead of FireWire bus data as input; for example '
+        help='use a file instead of FireWire data as input; for example '
         'to facilitate attacks on VMware machine memory files (.vmem) and to '
-        'ease testing and signature creation efforts.')
-    parser.add_option('--force-write', action="store_true", dest='forcewrite',
+        'ease testing and signature creation.')
+    parser.add_option('--force-write', action='store_true', dest='forcewrite',
         help='forces patching when using files as input (see -f)')
-    parser.add_option('-v','--verbose', action="store_true", dest='verbose',
+    parser.add_option('-v','--verbose', action='store_true', dest='verbose',
         help='verbose mode - among other things, this prints read data to '
         'stdout, useful for debugging.')
     parser.add_option('-d','--delay', dest='delay',
@@ -80,7 +79,7 @@ def add_options(parser):
         'DMA before attacking. If the attack fails, try to increase this '
         'value. Default delay is 5 seconds.',
         default=cfg.delay)
-    parser.add_option('--dry-run', action="store_true", dest='dry_run',
+    parser.add_option('--dry-run', action='store_true', dest='dry_run',
         help='dry run, do not write back to memory.')
 
 
@@ -197,29 +196,31 @@ def main(argv):
     # if cfg.list_signatures:
     #     screenlock.list_targets(targets, details=True)
     #     sys.exit()
-    
-    command = sys.argv[1]
+    try:
+        prog = sys.argv[0]
+        command = sys.argv[1]
 
-    if command not in ['-h', '--help']:
-        try:
-            command_module = __import__("inception.modules.{0}"
-                .format(command), fromlist=["inception.modules"])
-            group = optparse.OptionGroup(parser, 'Module-specific '
-                'description and options',
-                command_module.info)
-            command_module.add_options(group)
-            parser.add_option_group(group)
-        except ImportError as e:
-            term.fail(e)
-    else:
-        parser.epilog = 'For module-specific help, type: {0} ' \
-            'module -h/--help'.format(sys.argv[0] )
+        if not command.startswith('-'):
+                module = __import__("inception.modules.{0}".format(command), 
+                    fromlist=["inception.modules"])
+                group = optparse.OptionGroup(parser, 'Module-specific '
+                    'description and options', module.info)
+                module.add_options(group)
+                parser.add_option_group(group)
+        else:
+            parser.epilog = 'For module-specific help, type: {0} module ' \
+            '-h/--help'.format(prog)
+    except IndexError as e:
+        parser.print_help()
+        sys.exit()
+    except ImportError as e:
+        term.fail(e)
 
     opts, args = parser.parse_args()
 
     # Here we go
     try:
-        command_module.run(opts)
+        module.run(opts)
         sys.exit() # TODO: Remove
 
         if cfg.egg:

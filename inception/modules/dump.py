@@ -142,6 +142,7 @@ def run(opts):
         device.close()
     except KeyboardInterrupt:
         file.close()
-        print()
+        print() # Filler
+        device.close()
         term.info('Partial memory dumped to file {0}'.format(filename))
         raise KeyboardInterrupt

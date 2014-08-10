@@ -63,8 +63,6 @@ apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple_target = False            # Set to true if we are attacking a Mac
 polldelay = 1                   # 1 second delay between FireWire polls
 os = None                       # Detected host OS is None by default
-memdump_prefix = 'inceptiondump'# Prefix for memory dump file
-memdump_ext = 'bin'             # Binary extesnion for memory dumps
 
 #===============================================================================
 # Options (i.e. these are the defaults, but may be overridden at invocation)

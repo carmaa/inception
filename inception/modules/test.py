@@ -28,6 +28,6 @@ info = 'This module runs all inception unit tests.'
 def add_options(parser):
     pass
 
-def run(opts):
+def run(opts, memory):
     suite = unittest.TestLoader().discover('./inception/test')
     unittest.TextTestRunner().run(suite)

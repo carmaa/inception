@@ -30,7 +30,7 @@ info = 'OS X only: Unloads IOFireWireIP.kext (OS X IP over FireWire module) whic
 def add_options(parser):
     pass
 
-def run(opts):
+def run(opts, memory):
     if cfg.os == cfg.OSX:
         util.unload_fw_ip()
     else:

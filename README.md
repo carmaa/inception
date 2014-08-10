@@ -56,6 +56,12 @@ The tool makes use of the `libforensic1394` library courtesy of Freddie Witherde
 under a LGPL license.
 
 
+Why?
+----
+
+The pros [are using it] [2], so why not you? Inception is at least free, as in beer!
+
+
 Key data
 --------
 
@@ -199,7 +205,7 @@ see weird code that bugs your pythonesque purity senses, drop me a note on how
 I can improve it. Or even better, fork my code, change it and issue a pull
 request.
 
-
+[2]: https://wikileaks.org/spyfiles/files/0/293_GAMMA-201110-FinFireWire.pdf
 [3]: http://freddie.witherden.org/tools/libforensic1394/
 [4]: http://mxcl.github.io/homebrew/
 [5]: http://www.breaknenter.org/projects/inception/

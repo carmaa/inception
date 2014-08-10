@@ -22,10 +22,12 @@ Created on Feb 3, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import util, cfg, screenlock
+from inception import util, cfg
 from inception.exceptions import InceptionException
 import collections
+import os
 from pprint import pprint
+
 
 class Target():
     '''
@@ -33,7 +35,7 @@ class Target():
     one or more signatures.
 
     Optional keyword arguments:
-    - signatures : The binary signatures
+    - signatures: The binary signatures
     - name: Name of the target
     - note: Text note of what the target does
     '''
@@ -156,12 +158,26 @@ class MemorySpace():
     Abstraction of the memory space we are operating on.
 
     Mandatory arguments:
-    - memory: A firewire device or a MemoryFile interface
+    - interface: A firewire device or a MemoryFile interface
     - memsize: The size of the memory space we're searching
     '''
-    def __init__(self, memory, memsize):
-        self.memory = memory
+    def __init__(self, interface, memsize):
+        self.interface = interface
         self.memsize = memsize
+
+
+    def read(self, address, numb):
+        '''
+        Reads numb number of bytes from the address specified.
+        '''
+        return self.interface.read(address, numb)
+
+
+    def write(self, address, data):
+        '''
+        Writes len(data) of data to the specified address.
+        '''
+        return self.interface.write(address, data)
 
 
     def page_no(self, address):
@@ -190,7 +206,7 @@ class MemorySpace():
         '''
         # TODO: Fix this method so that it is usable for infection
         success = True
-        backup = self.memory.read(address, cfg.PAGESIZE)
+        backup = self.interface.read(address, cfg.PAGESIZE)
         for c in chunks:
             if len(cfg.patchfile) > 0:
                 patch = cfg.patchfile
@@ -205,8 +221,8 @@ class MemorySpace():
                 poffset = 0
             realaddress = address + coffset + poffset
 
-            self.memory.write(realaddress, patch)
-            read = self.memory.read(realaddress, len(patch))
+            self.interface.write(realaddress, patch)
+            read = self.interface.read(realaddress, len(patch))
             if opts.verbose:
                 # TODO: Change to .format()
                 term.info('Data read back: ' + util.bytes2hexstr(read)) 
@@ -301,7 +317,7 @@ class MemorySpace():
                         if count == cfg.vectorsize:
                             # Read data from device
                             m = 0
-                            for caddr, cand in self.memory.readv(r):
+                            for caddr, cand in self.interface.readv(r):
                                 if self.match(cand, p[m]):
                                     # Add the data to the vector
                                     z.append((caddr, s, o, p[m]))
@@ -383,7 +399,7 @@ if __name__ == '__main__':
     #                                    {'chunk': 0x00, # push esi; push edi
     #                                     'internaloffset': 0x00}]
 
-    # print(screenlock.siglen(testsig))
+    # prin.siglen(testsig))
 
     memory = MemorySpace(util.MemoryFile(
         '/Users/carsten/Documents/Virtual Machines.localized/Windows 7.vmwarevm/Windows 7-Snapshot9.vmem',

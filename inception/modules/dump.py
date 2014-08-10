@@ -22,7 +22,8 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import cfg, firewire, util
+from inception import cfg, util, memory
+from inception.interfaces import firewire
 import time
 import os
 
@@ -63,23 +64,7 @@ def run(opts):
     # Ensure that the filename is accessible outside this module
     global filename
 
-    # Initialize and lower DMA shield
-    if not opts.filename:
-        fw = firewire.FireWire(opts.delay)
-        starttime = time.time()
-        device_index = fw.select_device()
-        # Print selection
-        term.info('Selected device: {0}'.format(fw.vendors[device_index]))
-
-    # Lower DMA shield or use a file as input
-    device = None
-    if opts.filename:
-        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
-        end = os.stat(opts.filename).st_size
-    else:
-        elapsed = int(time.time() - starttime)
-        device = fw.getdevice(device_index, elapsed)
-        end = cfg.memsize
+    device, end = memory.initialize(opts)
 
     # Set start and end parameters based on user input. If no input is given,
     # start at zero (i.e., the beginning of main memory)
@@ -110,7 +95,7 @@ def run(opts):
                                             hex(start), hex(end),
                                             timestr,
                                             filename_ext)
-    term.info('Dumping from {0:#x} to {1:#x}, a total of {2}'
+    term.info('Dumping from {0:#x} to {1:#x}, a total of {2}:'
               .format(start, end, s))
     file = open(filename, 'wb')
 

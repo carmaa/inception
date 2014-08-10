@@ -48,6 +48,26 @@ except OSError:
 # List of FireWire OUIs
 OUI = {}
 
+def initialize(opts):
+    '''
+    Convenience function to initialize the interface.
+
+    Mandatory arguments:
+    - opts: the options that the program was initiated with
+    '''
+    try:
+        fw = FireWire(opts.delay)
+    except IOError:
+        term.fail('Could not initialize FireWire. Are the modules '
+                  'loaded into the kernel?')
+    starttime = time.time()
+    device_index = fw.select_device()
+    elapsed = int(time.time() - starttime)
+    # Lower DMA shield, and set memsize
+    device = fw.getdevice(device_index, elapsed)
+    memsize = cfg.memsize
+    return device, memsize
+
 class FireWire:
     '''
     FireWire wrapper class to handle some attack-specific functions

@@ -27,6 +27,7 @@ import binascii
 import os
 import platform
 import sys
+import time
 
 
 def hexstr2bytes(s):
@@ -129,6 +130,7 @@ def unload_fw_ip():
         else:
             term.fail('Could not unload IOFireWireIP.kext')
 
+
 def cleanup():
     '''
     Cleans up at exit
@@ -143,42 +145,6 @@ def restart():
     '''
     python = sys.executable
     os.execl(python, python, * sys.argv)
-
-
-class MemoryFile:
-    '''
-    File that exposes a similar interface as the FireWire class. Used for
-    reading from RAM memory files of memory dumps
-    '''
-
-    def __init__(self, file_name, pagesize):
-        '''
-        Constructor
-        '''
-        self.file = open(file_name, mode='r+b')
-        self.pagesize = pagesize
-    
-    def read(self, addr, numb, buf=None):
-        self.file.seek(addr)
-        return self.file.read(numb)  
-    
-    def readv(self, req):
-        for r in req:
-            self.file.seek(r[0])
-            yield (r[0], self.file.read(r[1]))
-    
-    def write(self, addr, buf):
-        if opts.forcewrite:
-            answer = term.poll('Are you sure you want to write to file [y/N]? ')
-            if answer in ['y', 'yes']:
-                self.file.seek(addr)
-                self.file.write(buf)
-        else:
-            term.warn('File not patched. To enable file writing, use the ' +
-                      '--force-write switch')
-    
-    def close(self):
-        self.file.close()
     
     
 

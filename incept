@@ -23,7 +23,7 @@ Created on Oct 15, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import firewire, cfg, util, terminal, sound
+from inception import cfg, util, terminal, sound, memory
 import getopt
 import os
 import sys
@@ -34,7 +34,7 @@ import optparse
 import builtins
 import textwrap
 
-CONFIG_FILENAME = 'inception.conf'
+CORE_MODULES = ['test', 'unload']
 
 def banner():
     '''
@@ -64,10 +64,14 @@ INCEPTION
 
 
 def add_options(parser):
+    parser.add_option('-i', '--interface', dest='interface',
+        help='set the interface to attack through. The default is FireWire.',
+        default='firewire')
     parser.add_option('-f', '--file', dest='filename',
         help='use a file instead of FireWire data as input; for example '
         'to facilitate attacks on VMware machine memory files (.vmem) and to '
-        'ease testing and signature creation.')
+        'ease testing and signature creation. Must be used with the "file"'
+        'interface')
     parser.add_option('--force-write', action='store_true', dest='forcewrite',
         help='forces patching when using files as input (see -f)')
     parser.add_option('-v','--verbose', action='store_true', dest='verbose',
@@ -100,8 +104,8 @@ def main(argv):
     banner()
     
     # Parse arguments and options
-    description = 'Inception is a FireWire physical memory manipulation ' \
-    'and hacking tool exploiting IEEE 1394 SBP-2 DMA.'
+    description = 'Inception is a physical memory manipulation ' \
+    'and hacking tool exploiting PCI-based DMA.'
     usage = 'Usage: %prog module [options]'
     parser = optparse.OptionParser(usage=usage, description = description)
     add_options(parser)
@@ -218,9 +222,20 @@ def main(argv):
 
     opts, args = parser.parse_args()
 
+    try:
+        interface = __import__("inception.interfaces.{0}".format(opts.interface), 
+            fromlist=["inception.interfaces"])
+    except ImportError as e:
+        term.fail(e)
+
+    mem = None
+    if command not in CORE_MODULES:
+        device, memsize = interface.initialize(opts)
+        mem = memory.MemorySpace(device, memsize)
+
     # Here we go
     try:
-        module.run(opts)
+        module.run(opts, mem)
         sys.exit() # TODO: Remove
 
         if cfg.egg:

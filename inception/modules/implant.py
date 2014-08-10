@@ -22,7 +22,7 @@ Created on Dec 5, 2013
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from inception import firewire, cfg, util
-from inception.screenlock import list_targets, select_target, searchanddestroy, patch
+#from inception.screenlock import list_targets, select_target, searchanddestroy, patch
 from inception.memory import Target, Signature, Chunk, MemorySpace
 from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
 from inception.external.pymetasploit.metasploit.msfconsole import MsfRpcConsole
@@ -32,8 +32,8 @@ import optparse
 import time
 import os
 
-info = 'This module enables infection of the target machine by writing a ' \
-'memory-only Metasploit payload directly to volatile memory.'
+info = 'This module implants a (potentially memory-only) Metasploit ' \
+'payload directly to the volatile memory of the target machine.'
 
 # class InfectSignature(collections.namedtuple('InfectSignature', 
 #                                              Signature._fields +

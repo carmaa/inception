@@ -43,7 +43,8 @@ except OSError:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
         util.restart()
     else:
-        term.fail('Could not load libforensic1394, try running inception as root')
+        term.fail('Could not load libforensic1394, try running inception as '
+            'root')
 
 # List of FireWire OUIs
 OUI = {}
@@ -67,6 +68,24 @@ def initialize(opts):
     device = fw.getdevice(device_index, elapsed)
     memsize = cfg.memsize
     return device, memsize
+
+
+def unload_fw_ip():
+    '''
+    Unloads IP over FireWire modules if present on OS X
+    '''
+    unload = term.poll('Unload the IOFireWireIP modules that may cause '
+        'kernel panics? [Y/n]: ')
+    if unload in ['y', '']:
+        status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext',
+                      shell=True)
+        if status == 0:
+            term.info('IOFireWireIP.kext unloaded')
+            term.info('To reload: sudo kextload /System/Library/Extensions/' +
+                 'IOFireWireIP.kext')
+        else:
+            term.fail('Could not unload IOFireWireIP.kext')
+
 
 class FireWire:
     '''
@@ -181,6 +200,7 @@ class FireWire:
             term.info('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'
                       .format(vendorname, vid, productname, pid), sign = n)
         term.separator()
+
 
     def select_device(self):
         selected = self.select()

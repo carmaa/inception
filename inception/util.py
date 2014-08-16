@@ -115,22 +115,6 @@ def detectos():
     return platform.system()
 
 
-def unload_fw_ip():
-    '''
-    Unloads IP over FireWire modules if present on OS X
-    '''
-    unload = term.poll('IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ')
-    if unload in ['y', '']:
-        status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext',
-                      shell=True)
-        if status == 0:
-            term.info('IOFireWireIP.kext unloaded')
-            term.info('To reload: sudo kextload /System/Library/Extensions/' +
-                 'IOFireWireIP.kext')
-        else:
-            term.fail('Could not unload IOFireWireIP.kext')
-
-
 def cleanup():
     '''
     Cleans up at exit

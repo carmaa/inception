@@ -35,9 +35,15 @@ filename = ''
 
 def add_options(parser):
     parser.add_option('-a', '--address', dest='address',
-    help='start address for dump.')
+    help='start address for dump. Note that due to unreliable behavior on '
+    'some targets when accessing data below 1 MiB, this command will avoid '
+    'that region of upper memory when dumping, and replace the first MB with '
+    'zeroes.')
     parser.add_option('-s', '--size', dest='size',
-    help='the size (expressed in pages or memory size) to dump.')
+    help='the size (expressed in pages or memory size) to dump. The size can '
+    'be anumber of pages or a size of data using the denomination KiB, MiB '
+    'GiB. Example: If you give the arguments "-s 5MiB", tool dumps the 5 MiB '
+    'of memory.')
 
 def calculate(address, size):
     '''Calculate the start and end memory addresses of the dump'''
@@ -60,14 +66,13 @@ def calculate(address, size):
     except:
         term.fail('Could not parse argument to {0}'.format(opt))
 
-def run(opts):
+def run(opts, memspace):
     # Ensure that the filename is accessible outside this module
     global filename
 
-    device, end = memory.initialize(opts)
-
     # Set start and end parameters based on user input. If no input is given,
     # start at zero (i.e., the beginning of main memory)
+    end = memspace.memsize
     if opts.address and opts.size:
         start, end = calculate(opts.address, opts.size)
     elif opts.address:
@@ -78,7 +83,7 @@ def run(opts):
         start = 0 # May be overridden later
 
     # Make sure that the right mode is set
-    cfg.memdump = True #TODO: do we need this?
+    # cfg.memdump = True #TODO: do we really need this?
     
     # Ensure correct denomination
     size = end - start
@@ -116,7 +121,7 @@ def run(opts):
             # Edge case, make sure that we don't read beyond the end
             if  i + requestsize > end:
                 requestsize = end - i
-            data = device.read(i, requestsize)
+            data = memspace.read(i, requestsize)
             file.write(data)
             # Print status
             prog.update_amount(i + requestsize, data)
@@ -124,10 +129,10 @@ def run(opts):
         file.close()
         print() # Filler
         term.info('Dumped memory to file {0}'.format(filename))
-        device.close()
+        # device.close()
     except KeyboardInterrupt:
         file.close()
         print() # Filler
-        device.close()
+        # device.close()
         term.info('Partial memory dumped to file {0}'.format(filename))
         raise KeyboardInterrupt

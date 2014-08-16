@@ -180,31 +180,7 @@ def set_exitfunc(payload, exitfunk):
     pass # TODO
 
 
-def run(opts):
-
-    # Initialize
-    # TODO: externalize this
-    if not opts.filename:
-        try:
-            fw = firewire.FireWire(opts.delay)
-        except IOError:
-            term.fail('Could not initialize FireWire. Are the modules ' +
-                      'loaded into the kernel?')
-        start = time.time()
-        device_index = fw.select_device()
-
-    # Lower DMA shield or use a file as input, and set memsize
-    device = None
-    memsize = None
-    if opts.filename:
-        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
-        memsize = os.path.getsize(opts.filename)
-    else:
-        elapsed = int(time.time() - start)
-        device = fw.getdevice(device_index, elapsed)
-        memsize = 2 * cfg.GiB
-
-    memspace = MemorySpace(device, memsize)
+def run(opts, memspace):
 
     # Connect to msf and generate shellcode(s)
     try:

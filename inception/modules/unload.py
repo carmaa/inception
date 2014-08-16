@@ -22,6 +22,7 @@ Created on Jun 29, 2014
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from inception import cfg, util
+from inception.interfaces import firewire
 
 info = 'OS X only: Unloads IOFireWireIP.kext (OS X IP over FireWire module) which ' \
 'are known to cause kernel panics when the host (attacking system) is OS X. ' \
@@ -32,6 +33,6 @@ def add_options(parser):
 
 def run(opts, memory):
     if cfg.os == cfg.OSX:
-        util.unload_fw_ip()
+        firewire.unload_fw_ip()
     else:
         term.fail('Host system is not OS X, aborting')

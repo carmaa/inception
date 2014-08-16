@@ -180,6 +180,13 @@ class MemorySpace():
         return self.interface.write(address, data)
 
 
+    def release(self):
+        '''
+        Releases the interface (i.e., closes it).
+        '''
+        return self.interface.close()
+
+
     def page_no(self, address):
         '''
         Returns the page number of a given address

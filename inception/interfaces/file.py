@@ -40,6 +40,7 @@ def initialize(opts):
     memsize = os.path.getsize(opts.filename)
     return device, memsize
 
+
 class MemoryFile:
     '''
     File that exposes a similar interface as the FireWire Device class. Used for
@@ -63,14 +64,12 @@ class MemoryFile:
             yield (r[0], self.file.read(r[1]))
     
     def write(self, addr, buf):
-        if opts.forcewrite:
-            answer = term.poll('Are you sure you want to write to file [y/N]? ')
-            if answer in ['y', 'yes']:
-                self.file.seek(addr)
-                self.file.write(buf)
+        answer = term.poll('Are you sure you want to write to file [y/N]? ')
+        if answer in ['y', 'yes']:
+            self.file.seek(addr)
+            self.file.write(buf)
         else:
-            term.warn('File not patched. To enable file writing, use the ' +
-                      '--force-write switch')
+            term.warn('File not patched.')
     
     def close(self):
         self.file.close()

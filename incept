@@ -70,8 +70,8 @@ def add_options(parser):
     parser.add_option('-f', '--file', dest='filename',
         help='use a file instead of FireWire data as input; for example '
         'to facilitate attacks on VMware machine memory files (.vmem) and to '
-        'ease testing and signature creation. Must be used with the "file"'
-        'interface')
+        'ease testing and signature creation. Must be used with the "file" '
+        'interface.')
     parser.add_option('--force-write', action='store_true', dest='forcewrite',
         help='forces patching when using files as input (see -f)')
     parser.add_option('-v','--verbose', action='store_true', dest='verbose',
@@ -205,12 +205,12 @@ def main(argv):
         command = sys.argv[1]
 
         if not command.startswith('-'):
-                module = __import__("inception.modules.{0}".format(command), 
-                    fromlist=["inception.modules"])
-                group = optparse.OptionGroup(parser, 'Module-specific '
-                    'description and options', module.info)
-                module.add_options(group)
-                parser.add_option_group(group)
+            module = __import__("inception.modules.{0}".format(command), 
+                fromlist=["inception.modules"])
+            group = optparse.OptionGroup(parser, 'Module-specific '
+                'description and options', module.info)
+            module.add_options(group)
+            parser.add_option_group(group)
         else:
             parser.epilog = 'For module-specific help, type: {0} module ' \
             '-h/--help'.format(prog)
@@ -228,14 +228,18 @@ def main(argv):
     except ImportError as e:
         term.fail(e)
 
-    mem = None
+    memspace = None
     if command not in CORE_MODULES:
         device, memsize = interface.initialize(opts)
-        mem = memory.MemorySpace(device, memsize)
+        memspace = memory.MemorySpace(device, memsize)
+
+    # Add a handle_options method here to play music, etc.?
 
     # Here we go
     try:
-        module.run(opts, mem)
+        module.run(opts, memspace)
+        if memspace:
+            memspace.release()
         sys.exit() # TODO: Remove
 
         if cfg.egg:

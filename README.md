@@ -59,7 +59,7 @@ under a LGPL license.
 Why?
 ----
 
-The pros [are using it] [2], so why not you? Inception is at least free, as in beer!
+The pros [are using it] [2], so why not you? Inception is free, as in beer!
 
 
 Key data

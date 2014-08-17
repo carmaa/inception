@@ -136,8 +136,10 @@ class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset',
             patch = util.int2bytes(patch)
         elif isinstance(patch, str):
             patch = util.str2bytes(patch)
+        elif isinstance(patch, type(None)):
+            pass
         else:
-            raise TypeError('Patch not bytes, int or str: {0}'.format(patch))
+            raise TypeError('Patch not bytes, int, str or NoneType: {0}'.format(patch))
 
         return super(Chunk, cls).__new__(
             cls, chunk, chunkoffset, patch, patchoffset)
@@ -219,7 +221,7 @@ class MemorySpace():
                 patch = cfg.patchfile
             else:
                 patch = c.patch
-            if not patch:
+            if not patch: # If no patch is set, skip this chunk
                 continue
 
             coffset = c.chunkoffset
@@ -230,9 +232,6 @@ class MemorySpace():
 
             self.interface.write(realaddress, patch)
             read = self.interface.read(realaddress, len(patch))
-            if opts.verbose:
-                # TODO: Change to .format()
-                term.info('Data read back: ' + util.bytes2hexstr(read)) 
             if read != patch:
                 success = False
 
@@ -269,7 +268,7 @@ class MemorySpace():
         return self.find(target)
 
 
-    def find(self, target, findtag=False, findall=False):
+    def find(self, target, findtag=False, findall=False, verbose=False):
         '''
         Searches through memory and returns a list of matches
         at the point in memory where the signature was found.
@@ -294,8 +293,8 @@ class MemorySpace():
         
         # Progress bar
         prog = term.ProgressBar(max_value = self.memsize,
-                                total_width = wrapper.width, 
-                                print_data = opts.verbose)
+                                total_width = term.wrapper.width, 
+                                print_data = verbose)
         prog.draw()
 
         try:

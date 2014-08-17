@@ -30,6 +30,11 @@ import sys
 import time
 
 
+class EscapeAll(bytes):
+    def __str__(self):
+        return ''.join('\\x{:02x}'.format(b) for b in self)
+
+
 def hexstr2bytes(s):
     '''
     Takes a string of hexadecimal characters preceded by '0x' and returns the

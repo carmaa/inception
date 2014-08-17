@@ -22,6 +22,7 @@ Created on Jan 23, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from inception import cfg
+from inception.exceptions import InceptionException
 import os
 
 def initialize(opts):
@@ -33,10 +34,19 @@ def initialize(opts):
     '''
     # Check if a file name has been set
     if not opts.filename:
-        term.fail('You must specify a file name to utilize this interface.')
+        raise InceptionException('You must specify a file name to utilize this interface.', None)
+
+    # Warn user that using the interface may write to file
+    dry_run = opts.dry_run
+    if not dry_run:
+        answer = term.poll('Will write to file. OK? [y/N]', default='n')
+        if answer in ['n']:
+            dry_run = True
+            term.warn('User chose to not write to file.')
+
 
     # Lower DMA shield, and set memsize
-    device = device = MemoryFile(opts.filename, cfg.PAGESIZE)
+    device = device = MemoryFile(opts.filename, cfg.PAGESIZE, dry_run)
     memsize = os.path.getsize(opts.filename)
     return device, memsize
 
@@ -47,12 +57,13 @@ class MemoryFile:
     reading from RAM memory files of memory dumps
     '''
 
-    def __init__(self, file_name, pagesize):
+    def __init__(self, file_name, pagesize, dry_run):
         '''
         Constructor
         '''
         self.file = open(file_name, mode='r+b')
         self.pagesize = pagesize
+        self.dry_run = dry_run
     
     def read(self, addr, numb, buf=None):
         self.file.seek(addr)
@@ -64,12 +75,9 @@ class MemoryFile:
             yield (r[0], self.file.read(r[1]))
     
     def write(self, addr, buf):
-        answer = term.poll('Are you sure you want to write to file [y/N]? ')
-        if answer in ['y', 'yes']:
+        if not self.dry_run:
             self.file.seek(addr)
             self.file.write(buf)
-        else:
-            term.warn('File not patched.')
     
     def close(self):
         self.file.close()

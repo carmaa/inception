@@ -21,7 +21,8 @@ Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception.firewire import FireWire
+from inception.interfaces.firewire import FireWire
+from inception import cfg
 import unittest
 
 
@@ -29,7 +30,8 @@ class TestUtil(unittest.TestCase):
 
 
     def setUp(self):
-        self.fw = FireWire()
+        cfg.os = cfg.LINUX # supress OS X error message
+        self.fw = FireWire(0)
 
 
     def tearDown(self):

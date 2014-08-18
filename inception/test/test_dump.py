@@ -22,14 +22,16 @@ Created on Nov 4, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from _pyio import StringIO
-from inception import cfg, memdump
+from inception import cfg, memory
+from inception.modules import dump
+from inception.interfaces import file as interface
 import hashlib
 import os
 import random
 import shutil
 import sys
 import unittest
-
+from collections import UserDict
 
 class MemdumpTest(unittest.TestCase):
 
@@ -37,11 +39,14 @@ class MemdumpTest(unittest.TestCase):
     def setUp(self):
         self.samples = []
         self.tests = None
-        cfg.memdump = True
-        cfg.filemode = True
+        self.opts = UserDict()
+        self.opts.dry_run = True
+        self.opts.size = None
+        self.opts.address = None
+        self.opts.verbose = None
+        self.opts.prefix = 'temp/unittest'
         if not os.path.exists('temp'):
             os.makedirs('temp')
-        cfg.memdump_prefix = 'temp/unittest'
         for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'samples/')): #@UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
@@ -55,14 +60,15 @@ class MemdumpTest(unittest.TestCase):
 
 
     def test_fulldump(self):
-        start = 0x00000000
         for sample in self.samples:
-            opts.filename = sample
-            end = os.path.getsize(sample)
+            self.opts.interface = 'file'
+            self.opts.filename = sample
             sys.stdout = StringIO() # Suppress output
-            memdump.dump(start, end)
+            device, memsize = interface.initialize(self.opts)
+            memspace = memory.MemorySpace(device, memsize)
+            dump.run(self.opts, memspace)
             sys.stdout = sys.__stdout__ # Restore output
-            output_fn = memdump.filename
+            output_fn = dump.filename
             self.assertTrue(os.path.exists(output_fn))
             self.assertEqual(self.file_md5(sample), self.file_md5(output_fn))
     
@@ -73,22 +79,23 @@ class MemdumpTest(unittest.TestCase):
         start address
         '''
         sample = random.sample(self.samples, 1)[0]
-        opts.filename = sample
+        self.opts.filename = sample
         self.assertTrue(os.path.exists(sample))
         sample_size = os.path.getsize(sample)
-        start = random.randrange(sample_size)
-        size_range = sample_size - start
-        dump_size = random.randrange(size_range)
-        end = start + dump_size
+        self.opts.address = random.randrange(sample_size)
+        size_range = sample_size - self.opts.address
+        self.opts.size = random.randrange(size_range)
         sys.stdout = StringIO() # Suppress output
-        memdump.dump(start, end)
+        device, memsize = interface.initialize(self.opts)
+        memspace = memory.MemorySpace(device, memsize)
+        dump.run(self.opts, memspace)
         sys.stdout = sys.__stdout__ # Restore output
-        output_fn = memdump.filename
+        output_fn = dump.filename
         self.assertTrue(os.path.exists(output_fn))
         md5 = hashlib.md5()
         f = open(sample, 'rb')
-        f.seek(start)
-        read = f.read(dump_size)
+        f.seek(self.opts.address)
+        read = f.read(self.opts.size)
         md5.update(read)
         self.assertEqual(md5.digest(), self.file_md5(output_fn))
         f.close()

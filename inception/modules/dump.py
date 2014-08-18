@@ -24,6 +24,7 @@ Created on Jan 22, 2012
 
 from inception import cfg, util, memory
 from inception.interfaces import firewire
+from inception.exceptions import InceptionException
 import time
 import os
 
@@ -35,24 +36,31 @@ filename = ''
 
 def add_options(parser):
     parser.add_option('-a', '--address', dest='address',
-    help='start address for dump. Note that due to unreliable behavior on '
-    'some targets when accessing data below 1 MiB, this command will avoid '
-    'that region of upper memory when dumping, and replace the first MB with '
-    'zeroes.')
+    help='start address for dump. Can be given as an integer, a hexadecimal '
+    'string prefixed with \'0x\', or as a page number prefixed with #. Note '
+    'that due to unreliable behavior on some targets when accessing data '
+    'below 1 MiB, this command will avoid that region of upper memory when '
+    'dumping, and replace the first MB with zeroes.')
     parser.add_option('-s', '--size', dest='size',
     help='the size (expressed in pages or memory size) to dump. The size can '
     'be anumber of pages or a size of data using the denomination KiB, MiB '
     'GiB. Example: If you give the arguments "-s 5MiB", tool dumps the 5 MiB '
-    'of memory.')
+    'of memory. Another example: "-s 5 will dump 5 bytes.')
+    parser.add_option('-p', '--prefix', dest='prefix',
+    help='specify the file name prefix of the dump file.')
 
 def calculate(address, size):
     '''Calculate the start and end memory addresses of the dump'''
     try:
         # Fix address
-        if '0x' in address:
+        if isinstance(address, int):
+            pass
+        elif address.startswith('0x'):
             address = int(address, 0) & 0xfffff000 # Address
-        else:
+        elif address.startswith('#'):
             address = int(address) * cfg.PAGESIZE # Page number
+        else:
+            raise InceptionException('Could not parse address')
         # Fix size
         try:
             size = util.parse_unit(size)
@@ -64,7 +72,7 @@ def calculate(address, size):
         end = address + size
         return address, end
     except:
-        term.fail('Could not parse argument to {0}'.format(opt))
+        raise InceptionException('Could not calculate start and end memory address')
 
 def run(opts, memspace):
     # Ensure that the filename is accessible outside this module
@@ -94,9 +102,14 @@ def run(opts, memspace):
     else:
         s = '{0} KiB'.format(size//cfg.KiB)
     
+    if opts.prefix:
+        prefix = opts.prefix
+    else:
+        prefix = filename_prefix
+
     # Open file for writing
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    filename = '{0}_{1}-{2}_{3}.{4}'.format(filename_prefix, 
+    filename = '{0}_{1}-{2}_{3}.{4}'.format(prefix, 
                                             hex(start), hex(end),
                                             timestr,
                                             filename_ext)
@@ -109,7 +122,10 @@ def run(opts, memspace):
                             total_width = term.wrapper.width, 
                             print_data = opts.verbose)
 
-    requestsize = cfg.max_request_size
+    if size < cfg.max_request_size:
+        requestsize = size
+    else:
+        requestsize = cfg.max_request_size
     try:
         # Fill the first MB and avoid reading from that region
         if not opts.filename:

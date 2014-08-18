@@ -73,7 +73,7 @@ def add_options(parser):
         'ease testing and signature creation. Must be used with the "file" '
         'interface.')
     parser.add_option('--force-write', action='store_true', dest='forcewrite',
-        help='forces patching when using files as input (see -f)')
+        help='forces patching when using files as input (see -f)') # TODO: Remove?
     parser.add_option('-v','--verbose', action='store_true', dest='verbose',
         help='verbose mode - among other things, this prints read data to '
         'stdout, useful for debugging.')

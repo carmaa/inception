@@ -101,6 +101,8 @@ def parse_unit(size):
     size in either multiplies of the page size (if no unit is given) or the
     size in KiB, MiB or GiB
     '''
+    if isinstance(size, int):
+        return size
     size = size.lower()
     if size.find('kib') != -1 or size.find('kb') != -1:
         size = int(size.rstrip(' kib')) * cfg.KiB

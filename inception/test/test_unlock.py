@@ -22,17 +22,17 @@ Created on Jan 30, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from _pyio import StringIO
-from inception import screenlock, cfg
+from inception import cfg
+from inception.modules import unlock
 from os import path
 import imp
-import inception.cfg
 import os
 import sys
 import unittest
 import importlib
 
 
-class TestScreenlock(unittest.TestCase):
+class TestUnlock(unittest.TestCase):
 
 
     def setUp(self):

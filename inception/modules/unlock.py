@@ -513,7 +513,8 @@ Target(
 
 
 def add_options(parser):
-    parser.add_option('-l', action='store_true', dest='list_targets',
+    parser.add_option('-l', '--list', action='store_true', 
+        dest='list_targets',
         help='list available targets.')
     parser.add_option('-r', '--revert', action='store_true', 
         dest='revert', help='revert patch after use.')

@@ -73,7 +73,7 @@ def add_options(parser):
         'ease testing and signature creation. Must be used with the "file" '
         'interface.')
     parser.add_option('--force-write', action='store_true', dest='forcewrite',
-        help='forces patching when using files as input (see -f)') # TODO: Remove?
+        help='forces patching when using files as input (see -f)') # TODO: Remove
     parser.add_option('-v','--verbose', action='store_true', dest='verbose',
         help='verbose mode - among other things, this prints read data to '
         'stdout, useful for debugging.')
@@ -88,10 +88,7 @@ def add_options(parser):
 
 
 def main(argv):
-    global opts, args
 
-    # cfg = configparser.ConfigParser()
-    # cfg.read(CONFIG_FILENAME)
     cfg.encoding = sys.getdefaultencoding()
     cfg.os = util.detectos()  
 
@@ -109,106 +106,16 @@ def main(argv):
     usage = 'Usage: %prog module [options]'
     parser = optparse.OptionParser(usage=usage, description = description)
     add_options(parser)
-    # try:
-    #     opts, args = getopt.getopt(argv[2:], 'bd:Def:hlvw:npum:stP:ra', 
-    #                                ['businfo', 'dump=', 'dump-all', 'egg', 
-    #                                 'file=', 'force-write', 'help', 'list', 
-    #                                 'verbose', 'wait=', 'no-write', 
-    #                                 'pickpocket', 'unload', 'manual=', 
-    #                                 'signatures', 'patch-file=', 'revert',
-    #                                 'test', 'avoid'])
-    # except getopt.GetoptError as err:
-    #     term.warn(err)
-    #     usage(argv[0])
-    #     sys.exit(2)
-    # for opt, arg in opts:
-    #     elif opt in ('-l', '--list'): # Per module?
-    #         term.info('Available targets:')
-    #         term.separator()
-    #         for n, target in enumerate(targets, 1):
-    #             term.info(target['OS'] + ': ' + target['name'], n)
-    #         term.separator()
-    #         sys.exit()
-    #     elif opt in ('-D', '--dump-all'):
-    #         cfg.memdump = True
-    #         start = 0x00
-    #         end = cfg.memsize
-    #     elif opt in ('-d', '--dump'):
-    #         cfg.memdump = True
-    #         try:
-    #             start, size = str(arg).split(',')
-    #             # Fix start
-    #             if '0x' in start:
-    #                 start = int(start, 0) & 0xfffff000 # Address
-    #             else:
-    #                 start = int(start) * cfg.PAGESIZE # Page number
-    #             # Fix size
-    #             try:
-    #               size = util.parse_unit(size)
-    #             except ValueError:
-    #               term.fail("Could not convert '{0}' to a data size")
-    #             if size < cfg.PAGESIZE:
-    #                 term.warn('Minimum dump size is a page, {0} KiB'
-    #                           .format(cfg.PAGESIZE // cfg.KiB))
-    #             end = start + size
-    #         except:
-    #             term.fail('Could not parse argument to {0}'.format(opt))
-    #     elif opt in ('-p', '--pickpocket'):
-    #         cfg.pickpocket = True
-    #     elif opt in ('-m', '--manual'):
-    #         try:
-    #             offset, signature, patch = str(arg).split(',')
-    #             offset = int(offset, 0)
-    #             signature = int(signature, 0)
-    #             patch = int(patch, 0)
-    #         except ValueError:
-    #             term.fail('You must provide a valid offset, signature and ' +
-    #                       'patch in manual mode')
-    #         targets = [{'OS': 'Non-specified OS',
-    #                     'versions': ['N/A'],
-    #                     'architectures': ['N/A'],
-    #                     'name': 'Manual patch',
-    #                     'notes': 'N/A',
-    #                     'signatures': [{'offsets': [offset],
-    #                                     'chunks': [{'chunk': signature,
-    #                                                 'internaloffset': 0x00,
-    #                                                 'patch': patch,
-    #                                                 'patchoffset': 0x00}]}]}]
-    #     elif opt in ('-s', '--signatures'):
-    #         cfg.list_signatures = True
-    #     elif opt in ('-e', '--egg'):
-    #         term.info('Turn up the volume, please!')
-    #         cfg.egg = True
-    #     elif opt in ('-P', '--patch-file'):
-    #         try:
-    #             cfg.patchfile = open(arg, 'rb').read()
-    #         except:
-    #             term.fail('Could not read patch file {0}'.format(arg))
-    #     elif opt in ('-r', '--revert'):
-    #         cfg.revert = True
-    #     elif opt in ('-t', '--test'):
-    #         suite = unittest.TestLoader().discover('./inception/test')
-    #         unittest.TextTestRunner().run(suite)
-    #         sys.exit()
-    #     else:
-    #         assert False, 'Option not handled: ' + opt
-    
-    # # We don't accept any other arguments
-    # if args:
-    #     term.warn('Arguments {0} ignored'.format(', '.join(args)))
-    
-    # if cfg.list_signatures:
-    #     screenlock.list_targets(targets, details=True)
-    #     sys.exit()
     try:
         prog = sys.argv[0]
         command = sys.argv[1]
 
         if not command.startswith('-'):
-            module = __import__("inception.modules.{0}".format(command), 
+            module = __import__("inception.modules.{0}"
+                .format(command), 
                 fromlist=["inception.modules"])
-            group = optparse.OptionGroup(parser, 'Module-specific '
-                'description and options', module.info)
+            group = optparse.OptionGroup(parser, 'Module description and '
+                'options', module.info)
             module.add_options(group)
             parser.add_option_group(group)
         else:
@@ -222,12 +129,15 @@ def main(argv):
 
     opts, args = parser.parse_args()
 
+    # Load the selected interface
     try:
-        interface = __import__("inception.interfaces.{0}".format(opts.interface), 
+        interface = __import__("inception.interfaces.{0}"
+            .format(opts.interface), 
             fromlist=["inception.interfaces"])
     except ImportError as e:
         term.fail(e)
 
+    # Initialize the interface, and wrap in memory space wrapper
     memspace = None
     if command not in CORE_MODULES:
         device, memsize = interface.initialize(opts)
@@ -267,63 +177,6 @@ def main(argv):
         term.warn('Aborted')
 
     sys.exit()
-
-
-def usage(execname):
-    print(
-'''Inception is a FireWire physical memory manipulation and hacking tool 
-exploiting IEEE 1394 SBP-2 DMA.
-
-Usage: ''' + os.path.basename(execname) + ''' [OPTIONS]
-
-Options:
-    -b, --businfo         Prints information about the devices that is connected
-                          to the FireWire bus.
-    -d, --dump=ADDRESS,PAGES
-                          Non-intrusive memory dump. Dumps PAGES of memory
-                          content from ADDRESS page. Memory content is dumped to
-                          a file in the working dir. ADDR can be a page number 
-                          or a hexadecimal address within a page. PAGES can be a
-                          number of pages or a size of data using the
-                          denomination KiB, MiB or GiB. Example: -d 0x00ff,5MiB
-                          This command dumps the first 5 MiB of memory after 
-                          0x00ff. Note that due to unreliable behavior on some 
-                          targets when accessing data below 1 MiB, this command 
-                          will avoid that region of upper memory when dumping,
-                          and replace the first MB with zeroes.
-    -D                    Same as -d, but dumps all available memory. Same notes
-                          as above apply. The first MB of memory will be
-                          replaced by zeroes.
-    -h, --help:           Displays this message.
-    -l, --list:           Lists configured operating system targets.
-    -m, --manual=OFFSET,SIGNATURE,PATCH
-                          Specify a patch manually. Enables easy testing of new
-                          signatures; to use provide a comma-separated list of
-                          an offset, a signature and a patch as integers or
-                          in a hexadecimal format (prepended by '0x').
-    -n, --no-write        Dry run, do not write back to memory.
-    -p, --pickpocket      Dump the physical memory of any device that connects
-                          to the FireWire bus. This may be useful when
-                          exploiting a Daisy chain.
-    -P, --patch-file=FILENAME
-                          Specify custom patch from file (screen unlock mode)
-    -r, --revert          Revert patch after use (screen unlock mode)
-    -s, --signatures      Parses and prints the signatures from cfg.py. May
-                          be used together with -m/--manual.
-    -t, --test            Run all unit tests; test that Inception works as 
-                          intended.
-    -u, --unload          OS X only: Unloads IOFireWireIP.kext (OS X IP over
-                          FireWire module) which are known to cause kernel
-                          panics when the host (attacking system) is OS X. Must
-                          be executed BEFORE any FireWire devices are connected
-                          to the host.
-    -v, --verbose         Verbose mode - among other things, this prints read 
-                          data to stdout, useful for debugging.
-    -w, --wait=TIME       Delay attack by TIME seconds. This is useful in order
-                          to guarantee that the target machine has successfully
-                          granted the host DMA before attacking. If the
-                          attack fails, try to increase this value. Default
-                          delay is 5 seconds.''')
 
 
 if __name__ == '__main__':

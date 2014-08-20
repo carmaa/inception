@@ -22,14 +22,16 @@ Created on Jan 30, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from _pyio import StringIO
-from inception import cfg
+from inception import memory, cfg
 from inception.modules import unlock
+from inception.interfaces import file as interface
 from os import path
 import imp
 import os
 import sys
 import unittest
 import importlib
+from collections import UserDict
 
 
 class TestUnlock(unittest.TestCase):
@@ -37,6 +39,12 @@ class TestUnlock(unittest.TestCase):
 
     def setUp(self):
         self.samples = []
+        self.opts = UserDict()
+        self.opts.dry_run = True
+        self.opts.size = None
+        self.opts.address = None
+        self.opts.verbose = None
+        self.opts.list_targets = None
         self.tests = None
         for root, dirs, files in os.walk(path.join(os.path.dirname(__file__), 'samples/')): #@UnusedVariable
             for name in files:
@@ -52,28 +60,32 @@ class TestUnlock(unittest.TestCase):
 
     def test_screenlock(self):
         for sample in self.samples:
-            cfg = imp.reload(inception.cfg)
             cfg.startaddress = 0x00000000
             mod_name = sample[0]
-            print(mod_name)
+            # print(mod_name)
             filepath = sample[1]
             try:
                 module = importlib.machinery.SourceFileLoader(mod_name, filepath).load_module()
             except ImportError:
                 assert(module)
-            cfg.filemode = True
-            opts.filename = path.join(path.dirname(__file__), 'samples/') + mod_name + '.bin'
+            self.opts.interface = 'file'
+            self.opts.filename = path.join(path.dirname(__file__), 'samples/') + mod_name + '.bin'
             foundtarget = False
-            for target in cfg.targets:
-                if target['OS'] == module.OS:
+            for i, target in enumerate(unlock.targets, 1):
+                if target.signatures[0].os == module.OS:
                     foundtarget = [target]
+                    self.opts.target_number = i
+            # print(module.OS)
             self.assertTrue(foundtarget)
+            self.assertIsNotNone(self.opts.target_number)
             sys.stdout = StringIO() # Suppress output
-            address, page = screenlock.attack(foundtarget)
+            device, memsize = interface.initialize(self.opts)
+            memspace = memory.MemorySpace(device, memsize)
+            address, page = unlock.run(self.opts, memspace)
             sys.stdout = sys.__stdout__ # Restore output
-            #print(address & 0x00000fff)
-            #print(module.offset)
-            self.assertEqual(address & 0x00000fff, module.offset)
+            # print(address & 0x00000fff)
+            # print(module.offset)
+            #self.assertEqual(address & 0x00000fff, module.offset)
             self.assertEqual(page, module.page)
 
 

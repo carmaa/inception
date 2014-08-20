@@ -131,7 +131,7 @@ Target(
     'he/she was member of at this machine.',
     signatures=[
         Signature(
-            os=None,
+            os='Windows 7',
             os_versions=['SP0', 'SP1'],
             os_architectures=['x64'],
             executable='msv1_0.dll',
@@ -153,7 +153,7 @@ Target(
                 ]
             ),
         Signature(
-            os=None,
+            os='Windows 7',
             os_versions=['SP0'],
             os_architectures=['x86'],
             executable='msv1_0.dll',
@@ -170,7 +170,7 @@ Target(
                 ]
             ),
         Signature(
-            os=None,
+            os='Windows 7',
             os_versions=['SP1'],
             os_architectures=['x86'],
             executable='msv1_0.dll',
@@ -517,6 +517,8 @@ def add_options(parser):
         help='list available targets.')
     parser.add_option('-r', '--revert', action='store_true', 
         dest='revert', help='revert patch after use.')
+    parser.add_option('-t', '--target-number', 
+        dest='target_number', help='specify a target number.')
 
 
 def select_target(targets, selected=False):
@@ -564,7 +566,7 @@ def run(opts, memspace):
         sys.exit(0)
        
     # Select target, print selection
-    target = select_target(targets)
+    target = select_target(targets, selected=opts.target_number)
     term.info('Selected target: ' + target.name)
     
     address, signature, offset, chunks = memspace.find(target).pop()

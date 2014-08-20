@@ -34,13 +34,13 @@ def play(filename):
 
     try:
         if (filename.endswith('.wav') or filename.endswith('.mp3')) and os.path.exists(f):
-            if env['os'] == 'Linux':
+            if cfg.os == 'Linux':
                 cmd = 'aplay'
-            elif env['os'] == 'Darwin':
+            elif cfg.os == 'Darwin':
                 cmd = 'afplay'
             else:
                 raise Exception
             with open(os.devnull, "w") as fnull:
-                return subprocess.Popen([cmd,f], stdout = fnull, stderr = fnull)
+                return subprocess.Popen([cmd,f], stdout=fnull, stderr=fnull)
     except:
         pass

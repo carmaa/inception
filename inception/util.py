@@ -126,8 +126,9 @@ def cleanup():
     '''
     Cleans up at exit
     '''
-    for egg in cfg.eggs:
-        egg.terminate()
+    if cfg.eggs:
+        for egg in cfg.eggs:
+            egg.terminate()
 
 
 def restart():

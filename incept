@@ -152,7 +152,8 @@ def main(argv):
         if opts.sound:
             cfg.eggs.append(sound.play('resources/rien.mp3'))
 
-        module.run(opts, memspace)          
+        module.run(opts, memspace)
+        
     except Exception as exc:
         term.warn('Um, something went dreadfully wrong: {0}'.format(exc))
         term.separator()
@@ -163,7 +164,7 @@ def main(argv):
 
     if memspace:
         memspace.release()
-        
+
     sys.exit()
 
 

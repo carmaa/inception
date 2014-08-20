@@ -34,7 +34,8 @@ def initialize(opts):
     '''
     # Check if a file name has been set
     if not opts.filename:
-        raise InceptionException('You must specify a file name to utilize this interface.', None)
+        term.fail('You must specify a file name to utilize this '
+            'interface.', None)
 
     # Warn user that using the interface may write to file
     dry_run = opts.dry_run
@@ -42,7 +43,7 @@ def initialize(opts):
         answer = term.poll('Will write to file. OK? [y/N]', default='n')
         if answer in ['n']:
             dry_run = True
-            term.warn('User chose to not write to file.')
+            term.warn('OK, boss!')
 
 
     # Lower DMA shield, and set memsize

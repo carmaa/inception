@@ -64,6 +64,7 @@ def initialize(opts):
     starttime = time.time()
     device_index = fw.select_device()
     elapsed = int(time.time() - starttime)
+    
     # Lower DMA shield, and set memsize
     device = fw.getdevice(device_index, elapsed)
     memsize = cfg.memsize

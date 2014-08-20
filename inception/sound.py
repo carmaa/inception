@@ -43,4 +43,4 @@ def play(filename):
             with open(os.devnull, "w") as fnull:
                 return subprocess.Popen([cmd,f], stdout=fnull, stderr=fnull)
     except:
-        pass
+        raise

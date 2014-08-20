@@ -91,76 +91,80 @@ def add_options(parser):
 
 def main(argv):
 
-    cfg.encoding = sys.getdefaultencoding()
-    cfg.os = util.detectos()  
-
-    # Get terminal and add to builtins
-    builtins.term = terminal.Terminal()
-
-    # Register cleanup function
-    atexit.register(util.cleanup)
-    
-    banner()
-    
-    # Parse arguments and options
-    description = 'Inception is a physical memory manipulation ' \
-    'and hacking tool exploiting PCI-based DMA.'
-    usage = 'Usage: %prog module [options]'
-    parser = optparse.OptionParser(usage=usage, description = description)
-    add_options(parser)
     try:
-        prog = sys.argv[0]
-        command = sys.argv[1]
+        cfg.encoding = sys.getdefaultencoding()
+        cfg.os = util.detectos()  
 
-        if not command.startswith('-'):
-            module = __import__("inception.modules.{0}"
-                .format(command), 
-                fromlist=["inception.modules"])
-            group = optparse.OptionGroup(parser, 'Module description and '
-                'options', module.info)
-            module.add_options(group)
-            parser.add_option_group(group)
-        else:
-            parser.epilog = 'For module-specific help, type: {0} module ' \
-            '-h/--help'.format(prog)
-    except IndexError as e:
-        parser.print_help()
-        sys.exit()
-    except ImportError as e:
-        term.fail(e)
+        # Get terminal and add to builtins
+        builtins.term = terminal.Terminal()
 
-    opts, args = parser.parse_args()
+        # Register cleanup function
+        atexit.register(util.cleanup)
+        
+        banner()
+        
+        # Parse arguments and options
+        description = 'Inception is a physical memory manipulation ' \
+        'and hacking tool exploiting PCI-based DMA.'
+        usage = 'Usage: %prog module [options]'
+        parser = optparse.OptionParser(usage=usage, description = description)
+        add_options(parser)
+        try:
+            prog = sys.argv[0]
+            command = sys.argv[1]
 
-    # Load the selected interface
-    try:
-        interface = __import__("inception.interfaces.{0}"
-            .format(opts.interface), 
-            fromlist=["inception.interfaces"])
-    except ImportError as e:
-        term.fail(e)
+            if not command.startswith('-'):
+                module = __import__("inception.modules.{0}"
+                    .format(command), 
+                    fromlist=["inception.modules"])
+                group = optparse.OptionGroup(parser, 'Module description and '
+                    'options', module.info)
+                module.add_options(group)
+                parser.add_option_group(group)
+            else:
+                parser.epilog = 'For module-specific help, type: {0} module ' \
+                '-h/--help'.format(prog)
+        except IndexError as e:
+            parser.print_help()
+            sys.exit()
+        except ImportError as e:
+            term.fail(e)
 
-    # Initialize the interface, and wrap in memory space wrapper
-    memspace = None
-    if command not in CORE_MODULES:
-        device, memsize = interface.initialize(opts)
-        memspace = memory.MemorySpace(device, memsize)
+        opts, args = parser.parse_args()
 
-    # Add a handle_options method here to play music, etc.?
-
-    # Here we go
-    try:
         if opts.sound:
             cfg.eggs.append(sound.play('resources/rien.mp3'))
 
+        # Load the selected interface
+        try:
+            interface = __import__("inception.interfaces.{0}"
+                .format(opts.interface), 
+                fromlist=["inception.interfaces"])
+        except ImportError as e:
+            term.fail(e)
+
+        # Initialize the interface, and wrap in memory space wrapper
+        memspace = None
+        if command not in CORE_MODULES:
+            device, memsize = interface.initialize(opts)
+            memspace = memory.MemorySpace(device, memsize)
+
+        # Here we go
         module.run(opts, memspace)
-        
+
+        if opts.sound:
+            sound.play('resources/inception.wav')
+
+    # Catch whatever that hasn't been catched elsewhere
     except Exception as exc:
         term.warn('Um, something went dreadfully wrong: {0}'.format(exc))
         term.separator()
         traceback.print_exc()
         term.separator()
+
+    # Catch user interrupts        
     except KeyboardInterrupt:
-        term.warn('Aborted')
+        print()
 
     if memspace:
         memspace.release()

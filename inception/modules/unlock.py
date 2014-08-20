@@ -570,21 +570,20 @@ def run(opts, memspace):
     target = select_target(targets, selected=opts.target_number)
     term.info('Selected target: ' + target.name)
     
-    address, signature, offset, chunks = memspace.find(target).pop()
+    address, signature, offset, chunks = memspace.find(target).pop() # Todo:fix
     
     # Signature found, let's patch
     mask = 0xfffff000 # Mask away the lower bits to find the page number
     page = int((address & mask) / cfg.PAGESIZE)
-    term.info('Signature found at {0:#x} in page no. {1}'.format(address, page))
+    term.info('Signature found at {0:#x} in page no. {1}'
+        .format(address, page))
     if not opts.dry_run:
         success, backup = memspace.patch(address, chunks)
         if success:
-            if cfg.egg: # TODO: Fix
-                sound.play('resources/inception.wav')
             term.info('Patch verified; successful')
             term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         else:
-            term.warn('Write-back could not be verified; patching *may* ' +
+            term.fail('Write-back could not be verified; patching *may* ' +
                       'have been unsuccessful')
 
         if opts.revert: # TODO: Check that this works

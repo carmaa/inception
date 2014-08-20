@@ -85,6 +85,8 @@ def add_options(parser):
         default=cfg.delay)
     parser.add_option('--dry-run', action='store_true', dest='dry_run',
         help='dry run, do not write back to memory.')
+    parser.add_option('--sound', action='store_true', dest='sound',
+        help='sound, inception style.')
 
 
 def main(argv):
@@ -147,27 +149,10 @@ def main(argv):
 
     # Here we go
     try:
-        module.run(opts, memspace)
-        if memspace:
-            memspace.release()
-        sys.exit() # TODO: Remove
+        if opts.sound:
+            cfg.eggs.append(sound.play('resources/rien.mp3'))
 
-        if cfg.egg:
-                cfg.eggs.append(sound.play('resources/rien.mp3'))
-        if cfg.memdump:
-            if cfg.filemode and end == cfg.memsize: 
-                # Make sure we don't read past the end of the input file
-                end = os.stat(opts.filename).st_size
-            memdump.dump(start, end)
-        elif cfg.pickpocket:
-            if cfg.filemode:
-                term.fail("Pickpocket mode is not compatible with file mode")
-            pickpocket.lurk()
-        else:
-            address, page = screenlock.attack(targets)
-            if not address or not page:
-                term.fail('Could not locate signature(s).')
-                
+        module.run(opts, memspace)          
     except Exception as exc:
         term.warn('Um, something went dreadfully wrong: {0}'.format(exc))
         term.separator()
@@ -176,6 +161,9 @@ def main(argv):
     except KeyboardInterrupt:
         term.warn('Aborted')
 
+    if memspace:
+        memspace.release()
+        
     sys.exit()
 
 

@@ -22,6 +22,7 @@ Created on Jan 14, 2013
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
+
 class InceptionException(Exception):
     '''
     Non... rien de rien

@@ -22,12 +22,10 @@ Created on Jun 19, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 from inception import cfg
-from subprocess import call
 import binascii
 import os
 import platform
 import sys
-import time
 
 
 class EscapeAll(bytes):
@@ -41,12 +39,13 @@ def hexstr2bytes(s):
     corresponding byte string. That is, '0x41' becomes b'A'
     '''
     if isinstance(s, str) and s.startswith('0x'):
-        s = s.replace('0x', '') # Remove '0x' strings from hex string
-        if len(s) % 2 == 1: s = '0' + s # Pad with zero if odd-length string
+        s = s.replace('0x', '')  # Remove '0x' strings from hex string
+        if len(s) % 2 == 1:
+            s = '0' + s  # Pad with zero if odd-length string
         return binascii.unhexlify(bytes(s, sys.getdefaultencoding()))
     else:
         raise BytesWarning('Not a string starting with \'0x\': {0}'.format(s))
-    
+
 
 def bytes2hexstr(b):
     '''
@@ -90,7 +89,7 @@ def open_file(filename, mode):
     Opens a file that are a part of the package. The file must be in the folder
     tree beneath the main package
     '''
-    this_dir, this_filename = os.path.split(__file__) #@UnusedVariable
+    this_dir, this_filename = os.path.split(__file__)  # @UnusedVariable
     path = os.path.join(this_dir, filename)
     return open(path, mode)
     
@@ -133,10 +132,7 @@ def cleanup():
 
 def restart():
     '''
-    Restarts the current program. Note: this function does not return. 
+    Restarts the current program. Note: this function does not return.
     '''
     python = sys.executable
     os.execl(python, python, * sys.argv)
-    
-    
-

@@ -22,11 +22,11 @@ Created on Feb 3, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import util, cfg
+from inception import util, cfg, terminal
 from inception.exceptions import InceptionException
 import collections
-import os
-from pprint import pprint
+
+term = terminal.Terminal()
 
 
 class Target():
@@ -44,13 +44,12 @@ class Target():
         self.note = kwargs.get('note', 'None')
         self.signatures = kwargs.get('signatures', [])
 
-
     def __str__(self):
         return 'Name: {0}\n' \
-               'Note: {1}\n' \
-               '{2}' \
-               .format(self.name, self.note,
-                '\n'.join(map(str, self.signatures)))
+            'Note: {1}\n' \
+            '{2}' \
+            .format(self.name, self.note, '\n'.join(
+                    map(str, self.signatures)))
 
 
 class Signature(collections.namedtuple('Signature', ['os',
@@ -99,7 +98,7 @@ class Signature(collections.namedtuple('Signature', ['os',
         return value
 
 
-class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset', 
+class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset',
                                              'patch', 'patchoffset'])):
     '''
     A chunk of binary data to search for and a matching patch, with offsets.
@@ -139,11 +138,11 @@ class Chunk(collections.namedtuple('Chunk', ['chunk', 'chunkoffset',
         elif isinstance(patch, type(None)):
             pass
         else:
-            raise TypeError('Patch not bytes, int, str or NoneType: {0}'.format(patch))
+            raise TypeError('Patch not bytes, int, str or NoneType: {0}'
+                            .format(patch))
 
         return super(Chunk, cls).__new__(
             cls, chunk, chunkoffset, patch, patchoffset)
-
 
     def __str__(self):
         return '\n' \
@@ -167,13 +166,11 @@ class MemorySpace():
         self.interface = interface
         self.memsize = memsize
 
-
     def read(self, address, numb):
         '''
         Reads numb number of bytes from the address specified.
         '''
         return self.interface.read(address, numb)
-
 
     def write(self, address, data):
         '''
@@ -181,21 +178,18 @@ class MemorySpace():
         '''
         return self.interface.write(address, data)
 
-
     def release(self):
         '''
         Releases the interface (i.e., closes it).
         '''
         return self.interface.close()
 
-
     def page_no(self, address):
         '''
         Returns the page number of a given address
         '''
-        mask = 0xfffff000 # Mask away the lower bits
+        mask = 0xfffff000  # Mask away the lower bits
         return int((address & mask) / cfg.PAGESIZE)
-
 
     def match(self, candidate, chunks):
         '''
@@ -206,7 +200,6 @@ class MemorySpace():
             if c.chunk != candidate[coffset:coffset + len(c.chunk)]:
                 return False
         return True
-
 
     def patch(self, address, chunks):
         '''
@@ -221,12 +214,12 @@ class MemorySpace():
                 patch = cfg.patchfile
             else:
                 patch = c.patch
-            if not patch: # If no patch is set, skip this chunk
+            if not patch:  # If no patch is set, skip this chunk
                 continue
 
             coffset = c.chunkoffset
             poffset = c.patchoffset
-            if not poffset: 
+            if not poffset:
                 poffset = 0
             realaddress = address + coffset + poffset
 
@@ -240,7 +233,6 @@ class MemorySpace():
                 break
 
         return success, backup
-
 
     def rawfind(self, offset, data):
         '''
@@ -267,7 +259,6 @@ class MemorySpace():
                 ])
         return self.find(target)
 
-
     def find(self, target, findtag=False, findall=False, verbose=False):
         '''
         Searches through memory and returns a list of matches
@@ -285,16 +276,16 @@ class MemorySpace():
           chunks
         '''
         if findtag and findall:
-            raise InceptionException('Cannot search for a tagged ' \
-                'signature and all signatures at the same time')
+            raise InceptionException('Cannot search for a tagged signature '
+                                     'and all signatures at the same time')
 
         pageaddress = cfg.startaddress
         signatures = target.signatures
         
         # Progress bar
-        prog = term.ProgressBar(max_value = self.memsize,
-                                total_width = term.wrapper.width, 
-                                print_data = verbose)
+        prog = term.ProgressBar(max_value=self.memsize,
+                                total_width=term.wrapper.width,
+                                print_data=verbose)
         prog.draw()
 
         try:
@@ -303,9 +294,9 @@ class MemorySpace():
             j = 0
             count = 0
             cand = b'\x00'
-            r = [] # Read vector
-            p = [] # Match vector
-            z = [] # Vector to store matches
+            r = []  # Read vector
+            p = []  # Match vector
+            z = []  # Vector to store matches
             while pageaddress < self.memsize:
                 
                 # Iterate over signatures
@@ -331,12 +322,12 @@ class MemorySpace():
                                     if not findtag or (findtag and s.tag):
                                         print()
                                         return z
-                                m += 1                    
+                                m += 1
                             # Jump to next pages (we're finished with these)
                             mask = ~(cfg.PAGESIZE - 0x01)
                             pageaddress = address & mask
 
-                            # If we are at the last elements in the lists, 
+                            # If we are at the last elements in the lists,
                             # go to the next page
                             if s == signatures[-1] and o == s.offsets[-1]:
                                 pageaddress = pageaddress + cfg.PAGESIZE
@@ -351,75 +342,13 @@ class MemorySpace():
                             prog.update_amount(pageaddress, cand)
                             prog.draw()
                              
-                j += 1 # Increase read request count
+                j += 1  # Increase read request count
         
-        # Catch eventual exceptions, print a newline and pass them on   
+        # Catch eventual exceptions, print a newline and pass them on
         except:
-            print() # Next line
+            # print()  # Next line
             raise
         
         # If we get here, return all found sigs
-        print() # Next line  
+        print()  # Next line
         return z
-
-
-if __name__ == '__main__':
-    target = Target(
-        name='Test',
-        note='Testing',
-        signatures=[
-            Signature(
-                offsets=[0x18c],
-                chunks=[
-                    Chunk(
-                        chunk=b'\x00\x00\x00\x00\xe8',
-                        chunkoffset=0,
-                        patch=b'\x01\x02\x03\x04',
-                        patchoffset=99),
-                    Chunk(
-                        chunk=0x00,
-                        chunkoffset=5,
-                        patch=b'\x01\x02\x03\x04',
-                        patchoffset=99)
-                    ],
-                os='Windows',
-                os_versions=['SP0', 'SP1', 'SP2'],
-                os_architectures=['x86', 'x64'],
-                executable='explorer.exe',
-                version='4.3.2',
-                md5='fffffffffffffffffffffffffff',
-                tag=True)
-            ])
-    
-    # print(target)
-    # print(target.signatures[0].length)
-    # print(target.signatures[0].chunks[0].chunk)
-    # print(util.int2bytes(target.signatures[0].chunks[0].chunk))
-
-    # testsig = [{'chunk': 0x01020304,
-    #                                     'internaloffset': 0x00,
-    #                                     'patch': 0x90,
-    #                                     'patchoffset': 0x29},
-    #                                    {'chunk': 0xaa, # push ebx
-    #                                     'internaloffset': 0x56},
-    #                                    {'chunk': 0x00, # push esi; push edi
-    #                                     'internaloffset': 0x00}]
-
-    # prin.siglen(testsig))
-
-    memory = MemorySpace(util.MemoryFile(
-        '/Users/carsten/Documents/Virtual Machines.localized/Windows 7.vmwarevm/Windows 7-Snapshot9.vmem',
-        cfg.PAGESIZE), cfg.GiB)
-
-    try:
-        address, signature, offset, chunks = memory.find(target, findtag=True)[0]
-        print(address)
-        print(signature)
-        print(offset)
-        print(chunks)
-    except:
-        pass
-
-    memory.patch(address, chunks)
-
-

@@ -21,16 +21,16 @@ Created on Jun 23, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg, sound, util
+from inception import cfg, terminal
 from inception.memory import Target, Signature, Chunk
-import os
 import sys
-import time
+
+term = terminal.Terminal()
 
 info = 'Unlocks the target\'s screensaver or lock screen. After running ' \
 'this module you should be able to log in with any non-blank password.'
 
-# Target template for copying
+# Target template
 # Target(
 #     name=None,
 #     note=None,

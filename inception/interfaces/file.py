@@ -21,9 +21,11 @@ Created on Jan 23, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg
-from inception.exceptions import InceptionException
+from inception import cfg, terminal
 import os
+
+term = terminal.Terminal()
+
 
 def initialize(opts):
     '''
@@ -35,7 +37,7 @@ def initialize(opts):
     # Check if a file name has been set
     if not opts.filename:
         term.fail('You must specify a file name to utilize this '
-            'interface.', None)
+                  'interface.', None)
 
     # Warn user that using the interface may write to file
     dry_run = opts.dry_run
@@ -45,17 +47,16 @@ def initialize(opts):
             dry_run = True
             term.warn('OK, boss!')
 
-
     # Lower DMA shield, and set memsize
-    device = device = MemoryFile(opts.filename, cfg.PAGESIZE, dry_run)
+    device = MemoryFile(opts.filename, cfg.PAGESIZE, dry_run)
     memsize = os.path.getsize(opts.filename)
     return device, memsize
 
 
 class MemoryFile:
     '''
-    File that exposes a similar interface as the FireWire Device class. Used for
-    reading from RAM memory files of memory dumps
+    File that exposes a similar interface as the FireWire Device class. Used
+    for reading from RAM memory files of memory dumps
     '''
 
     def __init__(self, file_name, pagesize, dry_run):
@@ -68,7 +69,7 @@ class MemoryFile:
     
     def read(self, addr, numb, buf=None):
         self.file.seek(addr)
-        return self.file.read(numb)  
+        return self.file.read(numb)
     
     def readv(self, req):
         for r in req:

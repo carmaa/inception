@@ -21,12 +21,13 @@ Created on Jun 29, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg, util
 
 info = 'Prints FireWire bus information.'
 
+
 def add_options(parser):
     pass
+
 
 def run(opts, memory):
     memory.interface.businfo()

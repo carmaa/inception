@@ -24,17 +24,16 @@ Created on Oct 15, 2011
 '''
 
 from inception import cfg, util, terminal, sound, memory
-import getopt
-import os
 import sys
 import datetime
 import traceback
 import atexit
 import optparse
-import builtins
-import textwrap
 
 CORE_MODULES = ['test', 'unload']
+
+term = terminal.Terminal()
+
 
 def banner():
     '''
@@ -52,14 +51,12 @@ def banner():
         print('''
 INCEPTION
         ''')
-    
-    term.write('v.{0} (C) Carsten Maartmann-Moe {1}'
-               .format(cfg.version,
-               datetime.date.today().strftime("%Y")), 
-               indent = False)
-    term.write('Download: {0} | Twitter: @breaknenter'
-               .format(cfg.url), 
-               indent = False)
+
+    term.write('v.{0} (C) Carsten Maartmann-Moe {1}'.format(
+        cfg.version, datetime.date.today().strftime("%Y")), indent=False
+    )
+    term.write('Download: {0} | Twitter: @breaknenter'.format(cfg.url),
+               indent=False)
     print()
 
 
@@ -96,7 +93,7 @@ def main(argv):
         cfg.os = util.detectos()  
 
         # Get terminal and add to builtins
-        builtins.term = terminal.Terminal()
+        # builtins.term = terminal.Terminal()
 
         # Register cleanup function
         atexit.register(util.cleanup)

@@ -22,32 +22,38 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import cfg, util, memory
-from inception.interfaces import firewire
+from inception import cfg, util, terminal
 from inception.exceptions import InceptionException
 import time
-import os
+
+term = terminal.Terminal()
 
 info = 'Dumps memory content to a file.'
 
-filename_prefix = 'memdump' # Prefix for memory dump file
-filename_ext = 'bin'        # Binary extesnion for memory dumps
+filename_prefix = 'memdump'  # Prefix for memory dump file
+filename_ext = 'bin'         # Binary extesnion for memory dumps
 filename = ''
+
 
 def add_options(parser):
     parser.add_option('-a', '--address', dest='address',
-    help='start address for dump. Can be given as an integer, a hexadecimal '
-    'string prefixed with \'0x\', or as a page number prefixed with #. Note '
-    'that due to unreliable behavior on some targets when accessing data '
-    'below 1 MiB, this command will avoid that region of upper memory when '
-    'dumping, and replace the first MB with zeroes.')
+                      help='start address for dump. Can be given as an '
+                           'integer, a hexadecimal string prefixed with '
+                           '\'0x\', or as a page number prefixed with #. Note '
+                           'that due to unreliable behavior on some targets '
+                           'when accessing data below 1 MiB, this command '
+                           'will avoid that region of upper memory when '
+                           'dumping, and replace the first MB with zeroes.')
     parser.add_option('-s', '--size', dest='size',
-    help='the size (expressed in pages or memory size) to dump. The size can '
-    'be anumber of pages or a size of data using the denomination KiB, MiB '
-    'GiB. Example: If you give the arguments "-s 5MiB", tool dumps the 5 MiB '
-    'of memory. Another example: "-s 5 will dump 5 bytes.')
+                      help='the size (expressed in pages or memory size) to '
+                           'dump. The size can be anumber of pages or a size '
+                           'of data using the denomination KiB, MiB GiB. '
+                           'Example: If you give the arguments "-s 5MiB", '
+                           'tool dumps the 5 MiB of memory. Another example: '
+                           '"-s 5 will dump 5 bytes.')
     parser.add_option('-p', '--prefix', dest='prefix',
-    help='specify the file name prefix of the dump file.')
+                      help='specify the file name prefix of the dump file.')
+
 
 def calculate(address, size):
     '''Calculate the start and end memory addresses of the dump'''
@@ -56,9 +62,9 @@ def calculate(address, size):
         if isinstance(address, int):
             pass
         elif address.startswith('0x'):
-            address = int(address, 0) & 0xfffff000 # Address
+            address = int(address, 0) & 0xfffff000  # Address
         elif address.startswith('#'):
-            address = int(address) * cfg.PAGESIZE # Page number
+            address = int(address) * cfg.PAGESIZE  # Page number
         else:
             raise InceptionException('Could not parse address')
         # Fix size
@@ -72,7 +78,9 @@ def calculate(address, size):
         end = address + size
         return address, end
     except:
-        raise InceptionException('Could not calculate start and end memory address')
+        raise InceptionException('Could not calculate start and end memory '
+                                 'address')
+
 
 def run(opts, memspace):
     # Ensure that the filename is accessible outside this module
@@ -88,7 +96,7 @@ def run(opts, memspace):
     elif opts.size:
         term.fail('Missing parameter "address"')
     else:
-        start = 0 # May be overridden later
+        start = 0  # May be overridden later
 
     # Make sure that the right mode is set
     # cfg.memdump = True #TODO: do we really need this?
@@ -96,11 +104,11 @@ def run(opts, memspace):
     # Ensure correct denomination
     size = end - start
     if size % cfg.GiB == 0:
-        s = '{0} GiB'.format(size//cfg.GiB)
+        s = '{0} GiB'.format(size // cfg.GiB)
     elif size % cfg.MiB == 0:
-        s = '{0} MiB'.format(size//cfg.MiB)
+        s = '{0} MiB'.format(size // cfg.MiB)
     else:
-        s = '{0} KiB'.format(size//cfg.KiB)
+        s = '{0} KiB'.format(size // cfg.KiB)
     
     if opts.prefix:
         prefix = opts.prefix
@@ -109,7 +117,7 @@ def run(opts, memspace):
 
     # Open file for writing
     timestr = time.strftime("%Y%m%d-%H%M%S")
-    filename = '{0}_{1}-{2}_{3}.{4}'.format(prefix, 
+    filename = '{0}_{1}-{2}_{3}.{4}'.format(prefix,
                                             hex(start), hex(end),
                                             timestr,
                                             filename_ext)
@@ -118,9 +126,9 @@ def run(opts, memspace):
     file = open(filename, 'wb')
 
     # Progress bar
-    prog = term.ProgressBar(min_value = start, max_value = end, 
-                            total_width = term.wrapper.width, 
-                            print_data = opts.verbose)
+    prog = term.ProgressBar(min_value=start, max_value=end,
+                            total_width=term.wrapper.width,
+                            print_data=opts.verbose)
 
     if size < cfg.max_request_size:
         requestsize = size
@@ -135,7 +143,7 @@ def run(opts, memspace):
             start = cfg.startaddress
         for i in range(start, end, requestsize):
             # Edge case, make sure that we don't read beyond the end
-            if  i + requestsize > end:
+            if i + requestsize > end:
                 requestsize = end - i
             data = memspace.read(i, requestsize)
             file.write(data)
@@ -143,12 +151,12 @@ def run(opts, memspace):
             prog.update_amount(i + requestsize, data)
             prog.draw()
         file.close()
-        print() # Filler
+        print()  # Filler
         term.info('Dumped memory to file {0}'.format(filename))
         # device.close()
     except KeyboardInterrupt:
         file.close()
-        print() # Filler
+        print()  # Filler
         # device.close()
         term.info('Partial memory dumped to file {0}'.format(filename))
         raise KeyboardInterrupt

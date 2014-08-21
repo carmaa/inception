@@ -21,52 +21,51 @@ Created on Sep 6, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-#pylint: disable-msg=C0103,C0301
 from textwrap import TextWrapper
 
-#===============================================================================
+#==============================================================================
 # General information
-#===============================================================================
+#==============================================================================
 version = '0.3.4'
 url = 'http://breaknenter.org/projects/inception'
 
-#===============================================================================
+#==============================================================================
 # Global objects
-#===============================================================================
-wrapper = TextWrapper(subsequent_indent = ' ' * 4)
+#==============================================================================
+wrapper = TextWrapper(subsequent_indent=' ' * 4)
 
-#===============================================================================
+#==============================================================================
 # Constants
-#===============================================================================
+#==============================================================================
 DEBUG = 0                           # Debug off
 KiB = 1024                          # One KibiByte
 MiB = 1024 * KiB                    # One MebiByte
 GiB = 1024 * MiB                    # One GibiByte
-PAGESIZE = 4 * KiB                  # For the sake of this tool, always the case
+PAGESIZE = 4 * KiB                  # In this tool, always the case
 OUICONF = 'resources/oui.txt'       # FireWire OUI database relative to package
 LINUX = 'Linux'
 OSX = 'Darwin'
 WINDOWS = 'Windows'
     
-#===============================================================================
+#==============================================================================
 # Environment variables
-#===============================================================================
+#==============================================================================
 buflen = 15                     # Buffer length for checking if we get data
 memsize = 4 * GiB               # 4 GiB, theoretical FW max
 success = True                  # Optimistic-by-nature setting
 encoding = None                 # System encoding
 vectorsize = 128                # Read vector size
 max_request_size = PAGESIZE//2  # By default the max request size is the PSZ/2
-avoid = False                   # Do we need to avoid certain regions of memory?
-pc_avoid = [0xa0000, 0xfffff]   # Upper Win memory area (can cause BSOD if accessed)
+avoid = False                   # Do we need to avoid certain regions of memory
+pc_avoid = [0xa0000, 0xfffff]   # Memory area that can cause BSOD if accessed)
 apple_avoid = [0x0, 0xff000]    # Avoid this area if dumping memory from Macs
 apple_target = False            # Set to true if we are attacking a Mac
 polldelay = 1                   # 1 second delay between FireWire polls
 os = None                       # Detected host OS is None by default
 
-#===============================================================================
+#==============================================================================
 # Options (i.e. these are the defaults, but may be overridden at invocation)
-#===============================================================================
+#==============================================================================
 delay = 5                       # 5 seconds delay before attacking
 target = False                  # No target set
 memdump = False                 # Memory dump mode off
@@ -74,13 +73,13 @@ startaddress = MiB              # Default memory start address
 dumpsize = False                # Not set by default
 interactive = False             # Interactive mode off
 pickpocket = False              # Pickpocket mode off by default
-patchfile = ''                  # Read patch from file instead of the one from targets
+patchfile = ''                  # Read patch from file
 revert = False                  # Revert the patch after we are done
 forcewrite = False              # Do not write back to file in file mode
 list_signatures = False         # Don't list all signatures at startup
 
-#===============================================================================
+#==============================================================================
 # Easter
-#===============================================================================
+#==============================================================================
 egg = False
 eggs = []

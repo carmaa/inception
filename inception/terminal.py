@@ -29,11 +29,22 @@ import subprocess
 import time
 import textwrap
 
-class Terminal:
+
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(
+                *args, **kwargs)
+        return cls._instances[cls]
+
+
+class Terminal(metaclass=Singleton):
     
     def __init__(self):
-        self.wrapper = textwrap.TextWrapper(subsequent_indent = ' ' * 4,
-            replace_whitespace=False)
+        self.wrapper = textwrap.TextWrapper(subsequent_indent=' ' * 4,
+                                            replace_whitespace=False)
         self.wrapper.width = self.width()
 
     def width(self):
@@ -42,62 +53,61 @@ class Terminal:
         '''
         try:
             with open(os.devnull, 'w') as fnull:
-                r, c = subprocess.check_output(['stty','size'], stderr = fnull).split() #@UnusedVariable
+                r, c = subprocess.check_output(['stty', 'size'],
+                                               stderr=fnull).split()
             return int(c)
         except:
-            warn('Cannot detect terminal column width')
+            self.warn('Cannot detect terminal column width')
             return 80
         
-
-    def write(self, s, indent = True, end_newline = True):
+    def write(self, s, indent=True, end_newline=True):
         '''
         Prints a line and wraps each line at terminal width
         '''
         if not indent:
-            default_indent = self.wrapper.subsequent_indent # Save default indent
+            # Save default indent
+            default_indent = self.wrapper.subsequent_indent
             self.wrapper.subsequent_indent = ''
         wrapped = '\n'.join(self.wrapper.wrap(str(s)))
         if not end_newline:
-            print(wrapped, end = ' ')
+            print(wrapped, end=' ')
         else:
             print(wrapped)
         if not indent:
-            self.wrapper.subsequent_indent = default_indent # Restore default indent
+            # Restore default indent
+            self.wrapper.subsequent_indent = default_indent
 
-
-    def info(self, s, sign = '*'):
+    def info(self, s, sign='*'):
         '''
         Print an informational message with '*' as a sign
         '''
         self.write('[{0}] {1}'.format(sign, s))
 
-
-    def poll(self, s, sign = '?', default='', newline=False):
+    def poll(self, s, sign='?', default='', newline=False):
         '''
         Prints a question to the user. Returns the answer, in lower case
         '''
-        self.write('[{0}] {1}'.format(sign, s), end_newline = newline)
+        self.write('[{0}] {1}'.format(sign, s), end_newline=newline)
         user_input = input('{0}'.format(default + chr(8) * len(default)))
         if not user_input:
             user_input = default
         return user_input.lower()
-        
-        
-    def warn(self, s, sign = '!'):
+
+    def warn(self, s, sign='!'):
         '''
         Prints a warning message with '!' as a sign
         '''
         self.write('[{0}] {1}'.format(sign, s))
-        
-        
-    def fail(self, err = None):
+
+    def fail(self, err=None):
         '''
-        Called if Inception fails. Optional parameter is an error message string.
+        Called if Inception fails. Optional parameter is an error message
+        string.
         '''
-        if err: self.warn(err)
+        if err:
+            self.warn(err)
         self.warn('Attack unsuccessful')
         sys.exit(1)
-
 
     def separator(self):
         '''
@@ -105,7 +115,6 @@ class Terminal:
         '''
         print('-' * self.wrapper.width)
         
-
     class ProgressBar:
         '''
         Builds and displays a text-based progress bar
@@ -113,8 +122,8 @@ class Terminal:
         Based on https://gist.github.com/3306295
         '''
 
-        def __init__(self, min_value=0, max_value=100, total_width=80, 
-                     print_data = False):
+        def __init__(self, min_value=0, max_value=100, total_width=80,
+                     print_data=False):
             '''
             Initializes the progress bar
             '''
@@ -134,13 +143,12 @@ class Terminal:
                 self.width = self.width - (len(' {}') + self.data_width)
             else:
                 self.data_width = 0
-            self.amount = 0       # When amount == max, we are 100% done 
+            self.amount = 0  # When amount == max, we are 100% done
             self.update_amount(0)  # Build progress bar string
-
 
         def append_amount(self, append):
             '''
-            Increases the current amount of the value of append and 
+            Increases the current amount of the value of append and
             updates the progress bar to new ammount
             '''
             self.update_amount(self.amount + append)
@@ -151,8 +159,7 @@ class Terminal:
             '''
             self.update_amount((new_percentage * float(self.max)) / 100.0)
             
-
-        def update_amount(self, new_amount=0, data = b'\x00'):
+        def update_amount(self, new_amount=0, data=b'\x00'):
             '''
             Update the progress bar with the new amount (with min and max
             values set at initialization; if it is over or under, it takes the
@@ -175,26 +182,29 @@ class Terminal:
             num_hashes = (percent_done / 100.0) * all_full
             num_hashes = int(round(num_hashes))
 
-            # Build a progress bar with an arrow of equal signs; special cases for
-            # empty and full
+            # Build a progress bar with an arrow of equal signs; special cases
+            # for empty and full
             if num_hashes == 0:
                 self.progbar = '[>{0}]'.format(' ' * (all_full - 1))
             elif num_hashes == all_full:
                 self.progbar = '[{0}]'.format('=' * all_full)
             else:
-                self.progbar = '[{0}>{1}]'.format('=' * (num_hashes - 1),
-                                                  ' ' * (all_full - num_hashes))
+                self.progbar = '[{0}>{1}]'.format(
+                    '=' * (num_hashes - 1),
+                    ' ' * (all_full - num_hashes))
 
             # Generate string
-            percent_str = '{0:>4d} {1} ({2:>3}%)'.format(rel_amount // self.unit,
-                                                         self.unit_name,
-                                                         percent_done)
+            percent_str = '{0:>4d} {1} ({2:>3}%)'.format(
+                rel_amount // self.unit,
+                self.unit_name,
+                percent_done)
             
             # If we are to print data, append it
             if self.print_data:
                 data_hex = bytes.decode(binascii.hexlify(data))
-                data_str = ' {{{0:0>{1}.{1}}}}'.format(data_hex, self.data_width)
-                percent_str = percent_str + data_str    
+                data_str = ' {{{0:0>{1}.{1}}}}'.format(
+                    data_hex, self.data_width)
+                percent_str = percent_str + data_str
 
             # Slice the percentage into the bar
             self.progbar = ' '.join([self.progbar, percent_str])
@@ -206,7 +216,7 @@ class Terminal:
             if self.progbar != self.old_progbar:
                 self.old_progbar = self.progbar
                 sys.stdout.write(self.progbar + '\r')
-                sys.stdout.flush() # force updating of screen
+                sys.stdout.flush()  # force updating of screen
 
         def __str__(self):
             '''
@@ -214,26 +224,25 @@ class Terminal:
             '''
             return str(self.progbar)
         
-
     class BeachBall:
         '''
         An ASCII beach ball
         '''
         
-        def __init__(self, max_frequency = 0.1):
+        def __init__(self, max_frequency=0.1):
             self.states = ['-', '\\', '|', '/']
             self.state = 0
             self.max_frequency = max_frequency
             self.time_drawn = time.time()
             
-        def draw(self, force = False):
+        def draw(self, force=False):
             '''
-            Draws the beach ball if the time delta since last draw is greater than
-            the max_frequency
+            Draws the beach ball if the time delta since last draw is greater
+            than the max_frequency
             '''
             now = time.time()
             if self.max_frequency < now - self.time_drawn or force:
                 self.state = (self.state + 1) % len(self.states)
-                print('[{0}]\r'.format(self.states[self.state]), end = '')
+                print('[{0}]\r'.format(self.states[self.state]), end='')
                 sys.stdout.flush()
                 self.time_drawn = now

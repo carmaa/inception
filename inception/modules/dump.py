@@ -28,6 +28,8 @@ from inception import cfg, util, terminal
 from inception.exceptions import InceptionException
 
 
+IS_INTRUSIVE = False
+
 term = terminal.Terminal()
 
 info = 'Dumps memory content to a file.'
@@ -41,7 +43,7 @@ def add_options(parser):
     parser.add_option('-a', '--address', dest='address',
                       help='start address for dump. Can be given as an '
                            'integer, a hexadecimal string prefixed with '
-                           '\'0x\', or as a page number prefixed with #. Note '
+                           '\'0x\', or as a page number prefixed with p. Note '
                            'that due to unreliable behavior on some targets '
                            'when accessing data below 1 MiB, this command '
                            'will avoid that region of upper memory when '
@@ -61,14 +63,13 @@ def calculate(address, size):
     '''Calculate the start and end memory addresses of the dump'''
     try:
         # Fix address
-        if isinstance(address, int):
-            pass
-        elif address.startswith('0x'):
+        if address.startswith('0x'):
             address = int(address, 0) & 0xfffff000  # Address
-        elif address.startswith('#'):
-            address = int(address) * cfg.PAGESIZE  # Page number
+        elif address.startswith('p'):
+            address = int(address[1:]) * cfg.PAGESIZE  # Page number
         else:
-            raise InceptionException('Could not parse address')
+            address = int(address)  # Integer
+
         # Fix size
         try:
             size = util.parse_unit(size)

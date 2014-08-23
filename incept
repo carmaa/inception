@@ -30,6 +30,7 @@ import sys
 import traceback
 
 from inception import cfg, util, terminal, sound, memory
+from inception.exceptions import InceptionException
 
 
 CORE_MODULES = ['test', 'unload']
@@ -157,7 +158,7 @@ def main(argv):
         # Initialize the interface, and wrap in memory space wrapper
         memspace = None
         if command not in CORE_MODULES:
-            device, memsize = interface.initialize(opts)
+            device, memsize = interface.initialize(opts, module)
             memspace = memory.MemorySpace(device, memsize)
 
         # Here we go
@@ -165,6 +166,11 @@ def main(argv):
 
         if opts.sound:
             sound.play('resources/inception.wav')
+
+    # Catch inception-related errors and print them as warnings
+    # TODO unless in debug mode?
+    except InceptionException as exc:
+        term.warn(exc)
 
     # Catch whatever that hasn't been catched elsewhere
     except Exception as exc:

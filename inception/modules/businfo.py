@@ -22,6 +22,8 @@ Created on Jun 29, 2014
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
+IS_INTRUSIVE = False
+
 info = 'Prints FireWire bus information.'
 
 

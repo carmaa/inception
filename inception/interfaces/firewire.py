@@ -55,7 +55,7 @@ except OSError:
 OUI = {}
 
 
-def initialize(opts):
+def initialize(opts, module):
     '''
     Convenience function to initialize the interface.
 

@@ -26,6 +26,7 @@ import sys
 from inception import cfg, terminal
 from inception.memory import Target, Signature, Chunk
 
+IS_INTRUSIVE = True
 
 term = terminal.Terminal()
 
@@ -527,6 +528,10 @@ def add_options(parser):
                       dest='revert', help='revert patch after use.')
     parser.add_option('-t', '--target-number',
                       dest='target_number', help='specify a target number.')
+
+
+def intrusive():
+    return True
 
 
 def select_target(targets, selected=False):

@@ -29,7 +29,7 @@ from inception import cfg, terminal
 term = terminal.Terminal()
 
 
-def initialize(opts):
+def initialize(opts, module):
     '''
     Convenience function to initialize the interface.
 
@@ -43,7 +43,7 @@ def initialize(opts):
 
     # Warn user that using the interface may write to file
     dry_run = opts.dry_run
-    if not dry_run:
+    if module.IS_INTRUSIVE and not dry_run:
         answer = term.poll('Will write to file. OK? [y/N]', default='n')
         if answer in ['n']:
             dry_run = True

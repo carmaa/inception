@@ -32,6 +32,8 @@ import optparse
 import time
 import os
 
+IS_INTRUSIVE = True
+
 info = 'This module implants a (potentially memory-only) Metasploit ' \
 'payload directly to the volatile memory of the target machine.'
 

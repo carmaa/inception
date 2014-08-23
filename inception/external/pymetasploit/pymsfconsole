@@ -25,7 +25,8 @@ class MsfConsole(InteractiveConsole):
 
     def __init__(self, password, **kwargs):
         self.fl = True
-        self.client = MsfRpcConsole(MsfRpcClient(password, **kwargs), cb=self.callback)
+        self.client = MsfRpcConsole(MsfRpcClient(password, **kwargs),
+                                    cb=self.callback)
         InteractiveConsole.__init__(self, {'rpc': self.client})
         self.init_history(path.expanduser('~/.msfconsole_history'))
 

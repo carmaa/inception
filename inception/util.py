@@ -21,11 +21,12 @@ Created on Jun 19, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg
-import binascii
 import os
 import platform
 import sys
+
+import binascii
+from inception import cfg
 
 
 class EscapeAll(bytes):

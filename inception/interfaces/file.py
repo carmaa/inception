@@ -21,8 +21,10 @@ Created on Jan 23, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg, terminal
 import os
+
+from inception import cfg, terminal
+
 
 term = terminal.Terminal()
 

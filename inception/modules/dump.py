@@ -22,9 +22,11 @@ Created on Jan 22, 2012
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
+import time
+
 from inception import cfg, util, terminal
 from inception.exceptions import InceptionException
-import time
+
 
 term = terminal.Terminal()
 

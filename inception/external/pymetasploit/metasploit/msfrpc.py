@@ -1965,3 +1965,4 @@ class ConsoleManager(MsfManager):
         - cid : the console identifier.
         """
         self.rpc.call(MsfRpcMethod.ConsoleDestroy, cid)
+

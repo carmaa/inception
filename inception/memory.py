@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
 IEEE 1394 SBP-2 DMA.
@@ -22,9 +21,11 @@ Created on Feb 3, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
+import collections
+
 from inception import util, cfg, terminal
 from inception.exceptions import InceptionException
-import collections
+
 
 term = terminal.Terminal()
 

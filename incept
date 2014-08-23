@@ -23,12 +23,14 @@ Created on Oct 15, 2011
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-from inception import cfg, util, terminal, sound, memory
-import sys
-import datetime
-import traceback
 import atexit
+import datetime
 import optparse
+import sys
+import traceback
+
+from inception import cfg, util, terminal, sound, memory
+
 
 CORE_MODULES = ['test', 'unload']
 
@@ -61,39 +63,51 @@ INCEPTION
 
 
 def add_options(parser):
-    parser.add_option('-i', '--interface', dest='interface',
-        help='set the interface to attack through. The default is FireWire.',
-        default='firewire')
-    parser.add_option('-f', '--file', dest='filename',
-        help='use a file instead of FireWire data as input; for example '
-        'to facilitate attacks on VMware machine memory files (.vmem) and to '
-        'ease testing and signature creation. Must be used with the "file" '
-        'interface.')
-    parser.add_option('--force-write', action='store_true', dest='forcewrite',
-        help='forces patching when using files as input (see -f)') # TODO: Remove
-    parser.add_option('-v','--verbose', action='store_true', dest='verbose',
-        help='verbose mode - among other things, this prints read data to '
-        'stdout, useful for debugging.')
-    parser.add_option('-d','--delay', dest='delay',
-        help='delay attack by TIME seconds. This is useful in order to '
-        'guarantee that the target machine has successfully granted the host '
-        'DMA before attacking. If the attack fails, try to increase this '
-        'value. Default delay is 5 seconds.',
-        default=cfg.delay)
-    parser.add_option('--dry-run', action='store_true', dest='dry_run',
-        help='dry run, do not write back to memory.')
-    parser.add_option('--sound', action='store_true', dest='sound',
-        help='sound, inception style.')
+    parser.add_option('-i', '--interface',
+                      dest='interface',
+                      help='set the interface to attack through. The default '
+                      'is FireWire.',
+                      default='firewire')
+    parser.add_option('-f', '--file',
+                      dest='filename',
+                      help='use a file instead of FireWire data as input; '
+                      'for example to facilitate attacks on VMware machine '
+                      'memory files (.vmem) and to ease testing and '
+                      'signature creation. Must be used with the "file" '
+                      'interface.')
+    parser.add_option('--force-write',
+                      action='store_true',
+                      dest='forcewrite',
+                      help='forces patching when using files as input '
+                      '(see -f)')  # TODO: Remove
+    parser.add_option('-v', '--verbose',
+                      action='store_true',
+                      dest='verbose',
+                      help='verbose mode - among other things, this prints '
+                      'read data to stdout, useful for debugging.')
+    parser.add_option('-d', '--delay',
+                      dest='delay',
+                      help='delay attack by TIME seconds. This is useful in '
+                      'order to guarantee that the target machine has '
+                      'successfully granted the host DMA before attacking. '
+                      'If the attack fails, try to increase this value. '
+                      'Default delay is 5 seconds.',
+                      default=cfg.delay)
+    parser.add_option('--dry-run',
+                      action='store_true',
+                      dest='dry_run',
+                      help='dry run, do not write back to memory.')
+    parser.add_option('--sound',
+                      action='store_true',
+                      dest='sound',
+                      help='sound, inception style.')
 
 
 def main(argv):
 
     try:
         cfg.encoding = sys.getdefaultencoding()
-        cfg.os = util.detectos()  
-
-        # Get terminal and add to builtins
-        # builtins.term = terminal.Terminal()
+        cfg.os = util.detectos()
 
         # Register cleanup function
         atexit.register(util.cleanup)
@@ -101,25 +115,25 @@ def main(argv):
         banner()
         
         # Parse arguments and options
-        description = 'Inception is a physical memory manipulation ' \
+        description = 'Inception is a physical memory manipulation '
         'and hacking tool exploiting PCI-based DMA.'
         usage = 'Usage: %prog module [options]'
-        parser = optparse.OptionParser(usage=usage, description = description)
+        parser = optparse.OptionParser(usage=usage, description=description)
         add_options(parser)
         try:
             prog = sys.argv[0]
             command = sys.argv[1]
 
             if not command.startswith('-'):
-                module = __import__("inception.modules.{0}"
-                    .format(command), 
-                    fromlist=["inception.modules"])
+                module = __import__('inception.modules.{0}'
+                                    .format(command),
+                                    fromlist=['inception.modules'])
                 group = optparse.OptionGroup(parser, 'Module description and '
-                    'options', module.info)
+                                             'options', module.info)
                 module.add_options(group)
                 parser.add_option_group(group)
             else:
-                parser.epilog = 'For module-specific help, type: {0} module ' \
+                parser.epilog = 'For module-specific help, type: {0} module '
                 '-h/--help'.format(prog)
         except IndexError as e:
             parser.print_help()
@@ -134,9 +148,9 @@ def main(argv):
 
         # Load the selected interface
         try:
-            interface = __import__("inception.interfaces.{0}"
-                .format(opts.interface), 
-                fromlist=["inception.interfaces"])
+            interface = __import__('inception.interfaces.{0}'
+                                   .format(opts.interface),
+                                   fromlist=['inception.interfaces'])
         except ImportError as e:
             term.fail(e)
 
@@ -159,9 +173,9 @@ def main(argv):
         traceback.print_exc()
         term.separator()
 
-    # Catch user interrupts        
+    # Catch user interrupts
     except KeyboardInterrupt:
-        print()
+        pass
 
     if memspace:
         memspace.release()

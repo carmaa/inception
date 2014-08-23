@@ -23,10 +23,13 @@ Created on Jun 29, 2014
 '''
 import unittest
 
+
 info = 'This module runs all inception unit tests.'
+
 
 def add_options(parser):
     pass
+
 
 def run(opts, memory):
     suite = unittest.TestLoader().discover('./inception/test')

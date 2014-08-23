@@ -21,20 +21,21 @@ Created on Oct 11, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg
 import os.path
 import subprocess
+
+from inception import cfg
 
 
 def play(filename):
     '''
     Crude interface for playing wav sounds - dies silently if something fails
     '''
-    f = os.path.join(os.path.dirname(__file__), filename)
+    fn = filename
+    f = os.path.join(os.path.dirname(__file__), fn)
 
     try:
-        if (filename.endswith('.wav') or
-                filename.endswith('.mp3')) and os.path.exists(f):
+        if (fn.endswith('.wav') or fn.endswith('.mp3')) and os.path.exists(f):
             if cfg.os == 'Linux':
                 cmd = 'aplay'
             elif cfg.os == 'Darwin':

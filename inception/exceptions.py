@@ -17,7 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Created on Jan 14, 2013
+Created on Feb 3, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''

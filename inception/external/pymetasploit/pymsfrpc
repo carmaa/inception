@@ -22,7 +22,7 @@ __status__ = 'Development'
 class MsfRpc(InteractiveConsole):
     def __init__(self, password, **kwargs):
         self.client = MsfRpcClient(password, **kwargs)
-        InteractiveConsole.__init__(self, {'rpc' : self.client}, '<console>')
+        InteractiveConsole.__init__(self, {'rpc': self.client}, '<console>')
         self.init_history(path.expanduser('~/.msfrpc_history'))
 
     def init_history(self, histfile):

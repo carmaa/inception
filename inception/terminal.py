@@ -21,13 +21,14 @@ Created on Sep 6, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg
-import binascii
 import os
-import sys
 import subprocess
-import time
+import sys
 import textwrap
+import time
+
+import binascii
+from inception import cfg
 
 
 class Singleton(type):

@@ -34,14 +34,17 @@ class MsfRpcConsole(object):
         - rpc : an msfrpc client object
 
         Optional Arguments:
-        - cb : a callback function that gets called when data is received from the console.
+        - cb : a callback function that gets called when data is received from
+        the console.
         """
 
         self.callback = cb
 
         if sessionid is not None:
             self.console = rpc.sessions.session(sessionid)
-            self.type_ = MsfRpcConsoleType.Shell if isinstance(self.console, ShellSession) else MsfRpcConsoleType.Meterpreter
+            self.type_ = MsfRpcConsoleType.Shell if isinstance(
+                self.console, ShellSession
+                ) else MsfRpcConsoleType.Meterpreter
             self.prompt = '>>> '
             self.callback(dict(data='', prompt=self.prompt))
         else:

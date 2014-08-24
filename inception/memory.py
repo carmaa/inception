@@ -225,7 +225,6 @@ class MemorySpace():
         chunks
         '''
         # TODO: Fix this method so that it is usable for infection
-        success = True
         backup = self.interface.read(address, cfg.PAGESIZE)
         for c in chunks:
             if len(cfg.patchfile) > 0:
@@ -244,13 +243,13 @@ class MemorySpace():
             self.interface.write(realaddress, patch)
             read = self.interface.read(realaddress, len(patch))
             if read != patch:
-                success = False
+                raise InceptionException('Unable to verify patch')
 
             # Only patch once from file
             if len(cfg.patchfile) > 0:
                 break
 
-        return success, backup
+        return backup
 
     def rawfind(self, offset, data):
         '''

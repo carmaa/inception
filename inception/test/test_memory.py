@@ -226,14 +226,12 @@ class TestMemory(unittest.TestCase):
         memspace = memory.MemorySpace(device, memsize)
         address = 0x00000042
         read = memspace.read(address, 4)
-        success, backup = memspace.patch(address, sig.chunks)
+        backup = memspace.patch(address, sig.chunks)
         sys.stdout = sys.__stdout__  # Restore output
-        self.assertTrue(success)
         read_back = memspace.read(address, 4)
         # print(read_back)
         self.assertEqual(sig.chunks[0].patch, read_back)
         memspace.write(address, read)
-        self.assertTrue(success)
         read_back = memspace.read(address, 4)
         # print(read_back)
         self.assertEqual(read, read_back)

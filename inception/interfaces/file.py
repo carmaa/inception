@@ -24,6 +24,7 @@ Created on Jan 23, 2012
 import os
 
 from inception import cfg, terminal
+from inception.exceptions import InceptionException
 
 
 term = terminal.Terminal()
@@ -38,16 +39,16 @@ def initialize(opts, module):
     '''
     # Check if a file name has been set
     if not opts.filename:
-        term.fail('You must specify a file name to utilize this '
-                  'interface.', None)
+        raise InceptionException('You must specify a file name to utilize '
+                                 'this interface.')
 
     # Warn user that using the interface may write to file
     dry_run = opts.dry_run
     if module.IS_INTRUSIVE and not dry_run:
-        answer = term.poll('Will write to file. OK? [y/N]', default='n')
+        answer = term.poll('Will potentially write to file. OK? [y/N]',
+                           default='n')
         if answer in ['n']:
             dry_run = True
-            term.warn('OK, boss!')
 
     # Lower DMA shield, and set memsize
     device = MemoryFile(opts.filename, cfg.PAGESIZE, dry_run)

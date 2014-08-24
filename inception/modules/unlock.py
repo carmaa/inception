@@ -25,6 +25,7 @@ import sys
 
 from inception import cfg, terminal
 from inception.memory import Target, Signature, Chunk
+from inception.exceptions import InceptionException
 
 IS_INTRUSIVE = True
 
@@ -588,26 +589,22 @@ def run(opts, memspace):
     address, signature, offset = memspace.find(target)
     
     # Signature found, let's patch
-    mask = 0xfffff000  # Mask away the lower bits to find the page number
-    page = int((address & mask) / cfg.PAGESIZE)
     term.info('Signature found at {0:#x} in page no. {1}'
-        .format(address, page))
+        .format(address, memspace.page_no(address)))
     if not opts.dry_run:
-        success, backup = memspace.patch(address, signature.chunks)
-        if success:
+        try:
+            backup = memspace.patch(address, signature.chunks)
             term.info('Patch verified; successful')
             term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
-        else:
-            term.fail('Write-back could not be verified; patching *may* ' +
-                      'have been unsuccessful')
+        except InceptionException:
+            raise
 
         if opts.revert:  # TODO: Check that this works
             term.poll('Press [enter] to revert the patch:')
             memspace.write(address, backup)
 
             if backup == memspace.read(address, cfg.PAGESIZE):
-                term.info('Revert patch verified; successful')
+                term.info('Reverted patch verified; successful')
             else:
-                term.warn('Revert patch could not be verified')
-    
-    return address, page
+                raise InceptionException('Reverted patch could not be '
+                                         'verified')

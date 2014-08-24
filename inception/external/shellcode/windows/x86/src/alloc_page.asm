@@ -27,6 +27,3 @@ allocate:
 ; Copy pattern to new page and then jump to it
 	mov word [eax], 0xe0ff  ; Copy jmp eax (0xffe0) to the address stored in eax
 	jmp eax			; jump to page
-
-
-	

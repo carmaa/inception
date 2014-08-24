@@ -290,8 +290,7 @@ class MemorySpace():
         - findall: True if searching for all signatures
 
         Return:
-        - A list of matches containting the address, signature, offset and
-          chunks
+        - A list of matches containting the address, signature, and offset
         '''
         if findtag and findall:
             raise InceptionException('Cannot search for a tagged signature '
@@ -308,7 +307,7 @@ class MemorySpace():
         # print(signatures)
         try:
             # Build a batch of read requests of the form: [(addr1, len1), ...]
-            # and a corresponding match vector: [(chunk1, patchoffset1), ...]
+            # and a corresponding match vector: [signature1, ...]
             j = 0
             count = 0
             cand = b'\x00'
@@ -335,10 +334,12 @@ class MemorySpace():
                             for caddr, cand in self.interface.readv(r):
                                 if self.match(cand, p[m].chunks):
                                     result = (caddr, p[m], o)
-                                    z.append(result)  # TODO: Log this?
+                                    # TODO: Log this in verbose mode?
+                                    z.append(result)
                                     # If we have found the tagged signature,
                                     # or if we're only searching for the first
-                                    # hit, return
+                                    # hit, return the vector or tuple,
+                                    # respectively
                                     if findtag and p[m].tag:
                                         print()  # Filler
                                         return z
@@ -374,11 +375,10 @@ class MemorySpace():
             print()  # Next line
             raise
         
-        # If we get here, return all found sigs, or raise an exception if
-        # we're searching for just one
+        # If we end up here, return all found sigs, or raise an exception if
+        # we're searching for just one (getting here means we didn't find it)
         print()  # Next line
         if (findtag or findall) and z:
-            print('Returning all')
-            return z  # TODO: Log this
+            return z
         else:
             raise InceptionException('Could not locate signature(s)')

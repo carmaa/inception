@@ -25,7 +25,6 @@ from collections import UserDict
 import os
 import sys
 import unittest
-from pprint import pprint
 
 from _pyio import StringIO
 from inception import memory
@@ -137,6 +136,29 @@ targets = [
                     ]
                 )
             ]
+        ),
+    Target(
+        name='patch',
+        note=None,
+        signatures=[
+            Signature(
+                os=None,
+                os_versions=[],
+                os_architectures=['x86', 'x64'],
+                executable=None,
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x031],
+                chunks=[
+                    Chunk(
+                        chunk=0x00,
+                        chunkoffset=0x00,
+                        patch=0xdeadbeef,
+                        patchoffset=0x00)
+                    ]
+                )
+            ]
         )
     ]
 
@@ -194,6 +216,27 @@ class TestMemory(unittest.TestCase):
         sys.stdout = sys.__stdout__  # Restore output
         self.assertEqual(len(results), 2)
         self.assertEqual(results[1][1], targets[2].signatures[1])
+
+    def test_patch(self):
+        target = targets[3]
+        sig = target.signatures[0]
+        sys.stdout = StringIO()  # Suppress output
+        device, memsize = interface.initialize(self.opts, self.module)
+        device.dry_run = False
+        memspace = memory.MemorySpace(device, memsize)
+        address = 0x00000042
+        read = memspace.read(address, 4)
+        success, backup = memspace.patch(address, sig.chunks)
+        sys.stdout = sys.__stdout__  # Restore output
+        self.assertTrue(success)
+        read_back = memspace.read(address, 4)
+        # print(read_back)
+        self.assertEqual(sig.chunks[0].patch, read_back)
+        memspace.write(address, read)
+        self.assertTrue(success)
+        read_back = memspace.read(address, 4)
+        # print(read_back)
+        self.assertEqual(read, read_back)
 
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ IS_INTRUSIVE = True
 term = terminal.Terminal()
 
 info = 'This module implants a (potentially memory-only) Metasploit ' \
-'payload directly to the volatile memory of the target machine.'
+       'payload directly to the volatile memory of the target machine.'
 
 # class InfectSignature(collections.namedtuple('InfectSignature', 
 #                                              Signature._fields +

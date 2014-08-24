@@ -67,6 +67,7 @@ class Signature(collections.namedtuple('Signature', ['os',
     the signature. Can contain one or more chunks.
 
     Mandatory keyword arguments:
+    - tag: Set to True if you want to stop searching when this sig is found
     - offsets: The offsets within a page where the chunks should be found
     - chunks: Bits of the binary signatures
     - os: Operating system
@@ -76,6 +77,22 @@ class Signature(collections.namedtuple('Signature', ['os',
     - executable_ver: The version of the executable
     - md5: MD5 of the executable where the signature is located
     '''
+    def __new__(cls, os, os_versions, os_architectures, executable, version,
+                md5, tag, offsets, chunks):
+        '''
+        Checks that we have at least one offset, and that offsets are a list
+        of ints
+        '''
+        if not offsets:
+            raise TypeError('No offsets in signature (you need at least one)')
+
+        if not all(isinstance(item, int) for item in offsets):
+            raise TypeError('Offsets are not integers')
+
+        return super(Signature, cls).__new__(
+            cls, os, os_versions, os_architectures, executable, version,
+            md5, tag, offsets, chunks)
+
     def __str__(self):
         l = []
         for field in self._fields:
@@ -288,7 +305,7 @@ class MemorySpace():
                                 total_width=term.wrapper.width,
                                 print_data=verbose)
         prog.draw()
-
+        # print(signatures)
         try:
             # Build a batch of read requests of the form: [(addr1, len1), ...]
             # and a corresponding match vector: [(chunk1, patchoffset1), ...]
@@ -297,7 +314,7 @@ class MemorySpace():
             cand = b'\x00'
             r = []  # Read vector
             p = []  # Match vector
-            z = []  # Vector to store matches
+            z = []  # Vector to store matches (result vector)
             while pageaddress < self.memsize:
                 
                 # Iterate over signatures
@@ -307,7 +324,7 @@ class MemorySpace():
                     for o in s.offsets:
                         address = pageaddress + o + cfg.PAGESIZE * j
                         r.append((address, s.length))
-                        p.append(s.chunks)
+                        p.append(s)
                         count += 1
 
                         # If we have built a full vector, read from memory and
@@ -316,14 +333,21 @@ class MemorySpace():
                             # Read data from device
                             m = 0
                             for caddr, cand in self.interface.readv(r):
-                                if self.match(cand, p[m]):
-                                    # Add the data to the vector
-                                    z.append((caddr, s, o, p[m]))
-                                    # Return
-                                    if not findtag or (findtag and s.tag):
-                                        print()
+                                if self.match(cand, p[m].chunks):
+                                    result = (caddr, p[m], o)
+                                    z.append(result)  # TODO: Log this?
+                                    # If we have found the tagged signature,
+                                    # or if we're only searching for the first
+                                    # hit, return
+                                    if findtag and p[m].tag:
+                                        print()  # Filler
                                         return z
+                                    elif not (findall or findtag):
+                                        print()  # Filler
+                                        return result
+                                # Increment match vector counter
                                 m += 1
+
                             # Jump to next pages (we're finished with these)
                             mask = ~(cfg.PAGESIZE - 0x01)
                             pageaddress = address & mask
@@ -347,9 +371,14 @@ class MemorySpace():
         
         # Catch eventual exceptions, print a newline and pass them on
         except:
-            # print()  # Next line
+            print()  # Next line
             raise
         
-        # If we get here, return all found sigs
+        # If we get here, return all found sigs, or raise an exception if
+        # we're searching for just one
         print()  # Next line
-        return z
+        if (findtag or findall) and z:
+            print('Returning all')
+            return z  # TODO: Log this
+        else:
+            raise InceptionException('Could not locate signature(s)')

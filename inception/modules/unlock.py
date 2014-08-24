@@ -584,8 +584,8 @@ def run(opts, memspace):
     target = select_target(targets, selected=opts.target_number)
     term.info('Selected target: ' + target.name)
     
-    #  TODO:fix
-    address, signature, offset, chunks = memspace.find(target).pop()
+    #  Search for the target
+    address, signature, offset = memspace.find(target)
     
     # Signature found, let's patch
     mask = 0xfffff000  # Mask away the lower bits to find the page number
@@ -593,7 +593,7 @@ def run(opts, memspace):
     term.info('Signature found at {0:#x} in page no. {1}'
         .format(address, page))
     if not opts.dry_run:
-        success, backup = memspace.patch(address, chunks)
+        success, backup = memspace.patch(address, signature.chunks)
         if success:
             term.info('Patch verified; successful')
             term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')

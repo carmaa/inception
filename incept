@@ -169,12 +169,12 @@ def main(argv):
 
     # Catch inception-related errors and print them as warnings
     # TODO unless in debug mode?
-    except InceptionException as exc:
-        term.warn(exc)
+    except InceptionException as e:
+        term.warn(e)
 
     # Catch whatever that hasn't been catched elsewhere
-    except Exception as exc:
-        term.warn('Um, something went dreadfully wrong: {0}'.format(exc))
+    except Exception as e:
+        term.warn('Um, something went dreadfully wrong: {0}'.format(e))
         term.separator()
         traceback.print_exc()
         term.separator()

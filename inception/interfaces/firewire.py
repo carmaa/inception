@@ -28,7 +28,7 @@ import sys
 import time
 
 from inception import cfg, util, terminal
-from incpetion.exceptions import InceptionException
+from inception.exceptions import InceptionException
 
 
 term = terminal.Terminal()

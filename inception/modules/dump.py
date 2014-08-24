@@ -63,7 +63,9 @@ def calculate(address, size):
     '''Calculate the start and end memory addresses of the dump'''
     try:
         # Fix address
-        if address.startswith('0x'):
+        if isinstance(address, int):
+            pass
+        elif address.startswith('0x'):
             address = int(address, 0) & 0xfffff000  # Address
         elif address.startswith('p'):
             address = int(address[1:]) * cfg.PAGESIZE  # Page number

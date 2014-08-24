@@ -21,21 +21,20 @@ Created on Jan 30, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from _pyio import StringIO
-from inception import memory, cfg
-from inception.modules import unlock
-from inception.interfaces import file as interface
+from collections import UserDict
 from os import path
-import imp
 import os
 import sys
 import unittest
-import importlib
-from collections import UserDict
+
+from _pyio import StringIO
+from importlib.machinery import SourceFileLoader
+from inception import memory, cfg
+from inception.interfaces import file as interface
+from inception.modules import unlock
 
 
 class TestUnlock(unittest.TestCase):
-
 
     def setUp(self):
         self.samples = []
@@ -46,30 +45,34 @@ class TestUnlock(unittest.TestCase):
         self.opts.verbose = None
         self.opts.list_targets = None
         self.tests = None
-        for root, dirs, files in os.walk(path.join(os.path.dirname(__file__), 'samples/')): #@UnusedVariable
+        # self.module = UserDict()
+        # self.module.IS_INTRUSIVE = True
+        for root, dirs, files in os.walk(
+            path.join(
+                os.path.dirname(__file__), 'samples/')):  # @UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
-                mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1])
+                mod_name, file_ext = os.path.splitext(
+                    os.path.split(filepath)[-1])
                 if file_ext == '.py':
                     self.samples.append((mod_name, filepath))
-
 
     def tearDown(self):
         pass
 
-
-    def test_screenlock(self):
+    def test_unlock(self):
         for sample in self.samples:
             cfg.startaddress = 0x00000000
             mod_name = sample[0]
             # print(mod_name)
             filepath = sample[1]
             try:
-                module = importlib.machinery.SourceFileLoader(mod_name, filepath).load_module()
+                module = SourceFileLoader(mod_name, filepath).load_module()
             except ImportError:
                 assert(module)
             self.opts.interface = 'file'
-            self.opts.filename = path.join(path.dirname(__file__), 'samples/') + mod_name + '.bin'
+            self.opts.filename = path.join(
+                path.dirname(__file__), 'samples/') + mod_name + '.bin'
             foundtarget = False
             for i, target in enumerate(unlock.targets, 1):
                 if target.signatures[0].os == module.OS:
@@ -78,11 +81,12 @@ class TestUnlock(unittest.TestCase):
             # print(module.OS)
             self.assertTrue(foundtarget)
             self.assertIsNotNone(self.opts.target_number)
-            sys.stdout = StringIO() # Suppress output
-            device, memsize = interface.initialize(self.opts)
+            module.IS_INTRUSIVE = True
+            sys.stdout = StringIO()  # Suppress output
+            device, memsize = interface.initialize(self.opts, module)
             memspace = memory.MemorySpace(device, memsize)
             address, page = unlock.run(self.opts, memspace)
-            sys.stdout = sys.__stdout__ # Restore output
+            sys.stdout = sys.__stdout__  # Restore output
             # print(address & 0x00000fff)
             # print(module.offset)
             #self.assertEqual(address & 0x00000fff, module.offset)

@@ -21,36 +21,38 @@ Created on Jan 13, 2013
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from _pyio import StringIO
-from inception import cfg
 import sys
 import unittest
+
+from _pyio import StringIO
+from inception import terminal
+
+
+term = terminal.Terminal()
 
 
 class Test(unittest.TestCase):
 
-
     def setUp(self):
         pass
 
-
     def tearDown(self):
         pass
-    
-        
+            
     def test_write(self):
         s = 'A' * (3 * term.width())
         term.wrapper.width = term.width()
-        sys.stdout = StringIO() # Suppress output
+        sys.stdout = StringIO()  # Suppress output
         sys.stdout.write('')
         term.write(s)
         out = sys.stdout.getvalue()
-        sys.stdout = sys.__stdout__ # Restore output
+        sys.stdout = sys.__stdout__  # Restore output
         expected = 'A' * term.width()
         n = term.width()
         expected = 'A' * term.width() + '\n    '
         t = 'A' * (2 * term.width())
-        expected = expected + '\n    '.join([t[i:i+n-4] for i in range(0, len(t) -4 , n-4)]) + '\n'
+        expected = expected + '\n    '.join(
+            [t[i: i + n - 4] for i in range(0, len(t) - 4, n - 4)]) + '\n'
         self.assertEqual(out, expected)
 
 

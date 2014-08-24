@@ -21,20 +21,21 @@ Created on Nov 4, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from _pyio import StringIO
-from inception import cfg, memory
-from inception.modules import dump
-from inception.interfaces import file as interface
+from collections import UserDict
 import hashlib
 import os
 import random
 import shutil
 import sys
 import unittest
-from collections import UserDict
+
+from _pyio import StringIO
+from inception import memory
+from inception.interfaces import file as interface
+from inception.modules import dump
+
 
 class MemdumpTest(unittest.TestCase):
-
 
     def setUp(self):
         self.samples = []
@@ -45,33 +46,35 @@ class MemdumpTest(unittest.TestCase):
         self.opts.address = None
         self.opts.verbose = None
         self.opts.prefix = 'temp/unittest'
+        self.module = UserDict()
+        self.module.IS_INTRUSIVE = False
         if not os.path.exists('temp'):
             os.makedirs('temp')
-        for root, dirs, files in os.walk(os.path.join(os.path.dirname(__file__), 'samples/')): #@UnusedVariable
+        for root, dirs, files in os.walk(
+            os.path.join(
+                os.path.dirname(__file__), 'samples/')):  # @UnusedVariable
             for name in files:
                 filepath = os.path.join(root, name)
-                mod_name, file_ext = os.path.splitext(os.path.split(filepath)[-1]) #@UnusedVariable
+                mod_name, file_ext = os.path.splitext(
+                    os.path.split(filepath)[-1])  # @UnusedVariable
                 if file_ext == '.bin':
                     self.samples.append(filepath)
-                    
 
     def tearDown(self):
         shutil.rmtree('temp')
-
 
     def test_fulldump(self):
         for sample in self.samples:
             self.opts.interface = 'file'
             self.opts.filename = sample
-            sys.stdout = StringIO() # Suppress output
-            device, memsize = interface.initialize(self.opts)
+            sys.stdout = StringIO()  # Suppress output
+            device, memsize = interface.initialize(self.opts, self.module)
             memspace = memory.MemorySpace(device, memsize)
             dump.run(self.opts, memspace)
-            sys.stdout = sys.__stdout__ # Restore output
+            sys.stdout = sys.__stdout__  # Restore output
             output_fn = dump.filename
             self.assertTrue(os.path.exists(output_fn))
             self.assertEqual(self.file_md5(sample), self.file_md5(output_fn))
-    
     
     def test_random_read(self):
         '''
@@ -85,11 +88,11 @@ class MemdumpTest(unittest.TestCase):
         self.opts.address = random.randrange(sample_size)
         size_range = sample_size - self.opts.address
         self.opts.size = random.randrange(size_range)
-        sys.stdout = StringIO() # Suppress output
-        device, memsize = interface.initialize(self.opts)
+        sys.stdout = StringIO()  # Suppress output
+        device, memsize = interface.initialize(self.opts, self.module)
         memspace = memory.MemorySpace(device, memsize)
         dump.run(self.opts, memspace)
-        sys.stdout = sys.__stdout__ # Restore output
+        sys.stdout = sys.__stdout__  # Restore output
         output_fn = dump.filename
         self.assertTrue(os.path.exists(output_fn))
         md5 = hashlib.md5()
@@ -100,10 +103,9 @@ class MemdumpTest(unittest.TestCase):
         self.assertEqual(md5.digest(), self.file_md5(output_fn))
         f.close()
     
-    
     def file_md5(self, filename):
         md5 = hashlib.md5()
-        with open(filename,'rb') as f: 
+        with open(filename, 'rb') as f:
             for chunk in iter(lambda: f.read(128 * md5.block_size), b''):
                 md5.update(chunk)
         return md5.digest()

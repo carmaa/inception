@@ -126,6 +126,7 @@ class Terminal(metaclass=Singleton):
         while time.time() - start < seconds:
             bb.draw()
             time.sleep(0.1)
+        print()  # New line
 
     def separator(self):
         '''

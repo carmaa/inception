@@ -265,7 +265,7 @@ def run(opts, memspace):
     # Wait to ensure initial stage execution
     term.wait('Waiting to ensure stage 1 execution', 5)
     if isinstance(memspace.interface, MemoryFile):
-        input()
+        term.poll('Press any key to continue')
     # TODO: Modify payload exitfunk that is used if the payload fails -
     # this is needed for successful kernel exploitation
 

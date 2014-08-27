@@ -181,6 +181,8 @@ def main(argv):
 
     # Catch user interrupts
     except KeyboardInterrupt:
+        print()  # New line
+        term.warn('User aborted')
         pass
 
     if memspace:

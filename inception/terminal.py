@@ -94,6 +94,13 @@ class Terminal(metaclass=Singleton):
             user_input = default
         return user_input.lower()
 
+    def found_at(self, address, page):
+        '''
+        Print a sig found message
+        '''
+        self.info('Signature found at {0:#x} in page no. {1}'
+                  .format(address, page))
+
     def warn(self, s, sign='!'):
         '''
         Prints a warning message with '!' as a sign

@@ -217,6 +217,13 @@ def set_exitfunc(payload, exitfunk):
 
 def run(opts, memspace):
 
+    # Warning
+    term.warn('This module currently only work as a proof-of-concept against '
+              'Windows 7 SP1 x86. No other OSes, versions or architectures '
+              'are supported, nor is there any plans of supporting them. If '
+              'you want to change this, send me a wad of cash or a pull '
+              'request on github.')
+
     # Connect to msf and generate shellcode
     try:
         client = MsfRpcClient(opts.msfpw)

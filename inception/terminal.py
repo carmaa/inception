@@ -117,6 +117,16 @@ class Terminal(metaclass=Singleton):
         self.warn('Attack unsuccessful')
         sys.exit(1)
 
+    def wait(self, s, seconds):
+        '''
+        Wait x seconds and display a BeachBall while doing so
+        '''
+        bb = self.BeachBall(s)
+        start = time.time()
+        while time.time() - start < seconds:
+            bb.draw()
+            time.sleep(0.1)
+
     def separator(self):
         '''
         Prints a separator line with the width of the terminal
@@ -237,11 +247,12 @@ class Terminal(metaclass=Singleton):
         An ASCII beach ball
         '''
         
-        def __init__(self, max_frequency=0.1):
+        def __init__(self, s, max_frequency=0.1):
             self.states = ['-', '\\', '|', '/']
             self.state = 0
             self.max_frequency = max_frequency
             self.time_drawn = time.time()
+            self.s = s
             
         def draw(self, force=False):
             '''
@@ -251,6 +262,7 @@ class Terminal(metaclass=Singleton):
             now = time.time()
             if self.max_frequency < now - self.time_drawn or force:
                 self.state = (self.state + 1) % len(self.states)
-                print('[{0}]\r'.format(self.states[self.state]), end='')
+                print('[{0}] {1}\r'.format(self.states[self.state],
+                                           self.s), end='')
                 sys.stdout.flush()
                 self.time_drawn = now

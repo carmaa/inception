@@ -116,8 +116,8 @@ def main(argv):
         banner()
         
         # Parse arguments and options
-        description = 'Inception is a physical memory manipulation '
-        'and hacking tool exploiting PCI-based DMA.'
+        description = 'Inception is a physical memory manipulation ' \
+                      'and hacking tool exploiting PCI-based DMA.'
         usage = 'Usage: %prog module [options]'
         parser = optparse.OptionParser(usage=usage, description=description)
         add_options(parser)

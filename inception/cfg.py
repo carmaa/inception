@@ -67,7 +67,7 @@ os = None                       # Detected host OS is None by default
 #==============================================================================
 # Options (i.e. these are the defaults, but may be overridden at invocation)
 #==============================================================================
-delay = 5                       # 5 seconds delay before attacking
+delay = 2                       # 5 seconds delay before attacking
 target = False                  # No target set
 memdump = False                 # Memory dump mode off
 startaddress = 0                # Default memory start address

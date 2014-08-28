@@ -92,7 +92,7 @@ def add_options(parser):
                       'order to guarantee that the target machine has '
                       'successfully granted the host DMA before attacking. '
                       'If the attack fails, try to increase this value. '
-                      'Default delay is 5 seconds.',
+                      'Default delay is 2 seconds.',
                       default=cfg.delay)
     parser.add_option('--dry-run',
                       action='store_true',

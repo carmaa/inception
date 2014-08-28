@@ -1,18 +1,47 @@
 Inception
 =========
 
-Inception is a FireWire physical memory manipulation and hacking tool 
-exploiting IEEE 1394 SBP-2 DMA. The tool can unlock (any password accepted) 
-and escalate privileges to Administrator/root on almost* any powered on 
-machine you have physical access to. The tool can attack over FireWire, 
-Thunderbolt, ExpressCard, PC Card and any other PCI/PCIe interfaces.
+Inception is a physical memory manipulation and hacking tool exploiting PCI-
+based DMA. The tool can unlock (any password accepted)  and escalate privileges
+to Administrator/root on almost* any powered on  machine you have physical
+access to. The tool can attack over FireWire,  Thunderbolt, ExpressCard, PC
+Card and any other PCI/PCIe interfaces.
 
-Inception aims to provide a stable and easy way of performing intrusive and 
-non-intrusive memory hacks in order to unlock live computers using FireWire 
-SBP-2 DMA. It it primarily attended to do its magic against computers that 
-utilize full disk encryption such as BitLocker, FileVault, TrueCrypt or 
-Pointsec. There are plenty of other (and better) ways to hack a machine that 
-doesn't pack encryption.
+Inception aims to provide a relatively quick, stable and easy way of performing
+intrusive and  non-intrusive memory hacks in order to unlock live computers
+using DMA.
+
+
+Why?
+----
+
+The pros [are using it] [2], so why not you? Inception is free, as in beer!
+
+
+Key data
+--------
+
+ * Version: 0.4.0
+ * License: GPL
+ * Author:  Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
+ * Twitter: @breaknenter
+ * Site:    http://www.breaknenter.org/projects/inception
+ * Source:  https://github.com/carmaa/inception
+
+The tool makes use of the `libforensic1394` library courtesy of Freddie
+Witherden under a LGPL license.
+
+Modules
+-------
+
+As of version 0.4.0, Inception has been modularized. The current modules, and their functionality is described below.
+
+# Unlock
+
+The unlock module is primarily attended to do its magic against
+computers that utilize full disk encryption such as BitLocker, FileVault,
+TrueCrypt or  Pointsec. There are plenty of other (and better) ways to hack a
+machine that  doesn't pack encryption. After run
 
 As of version 0.3.4, it is able to unlock the following x86 and x64 operating
 systems:
@@ -50,36 +79,23 @@ systems:
 (2): Other Linux distributions that use PAM-based authentication may also work 
      using the Ubuntu signatures.
 
-The tool also effectively enables escalation of privileges, for instance via 
-the `runas` or `sudo -s` commands, respectively. More signatures will be added.
-The tool makes use of the `libforensic1394` library courtesy of Freddie Witherden
-under a LGPL license.
+The module also effectively enables escalation of privileges, for instance via
+the `runas` or `sudo -s` commands, respectively.
 
+# Implant
 
-Why?
-----
-
-The pros [are using it] [2], so why not you? Inception is free, as in beer!
-
-
-Key data
---------
-
- * Version:	0.3.4
- * License:	GPL
- * Author:	Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
- * Twitter:	@breaknenter
- * Site:	http://www.breaknenter.org/projects/inception
- * Source:	https://github.com/carmaa/inception
-
+# Dump
 
 Requirements
 ------------
 
 Inception requires:
 
- * Attacker machine: Linux or Mac OS X (host / attacker machine) with a FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port. Linux is currently recommended due to buggy firewire interfaces on OS X
- * Victim machine: A FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port
+ * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
+   FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
+   Linux is currently recommended due to buggy firewire interfaces on OS X
+ * Victim machine: A FireWire or Thunderbolt interface, or an
+   ExpressCard/PCMCIA expansion port
 
 
 Installation
@@ -159,8 +175,8 @@ Please see the [tool home page] [5].
 Planned features
 ----------------
 
- * Insert and execute memory-only rootkit
- * Other winlockpwn techniques
+ * More signatures
+ * Reliable implants on x64
  
  
 Development history
@@ -196,6 +212,7 @@ Development history
  * 0.3.2 - Bug fixes and support for Ubuntu 13.10
  * 0.3.3 - Bug fixes regarding output and error handling
  * 0.3.4 - Maestro!
+ * 0.4.0 - Complete restructuring and rewrite. Added implant mode
  
  
 Disclaimer

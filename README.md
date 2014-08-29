@@ -2,18 +2,35 @@ Inception
 =========
 
 Inception is a physical memory manipulation and hacking tool exploiting PCI-
-based DMA. The tool can unlock (any password accepted)  and escalate privileges
-to Administrator/root on almost* any powered on  machine you have physical
-access to. The tool can attack over FireWire,  Thunderbolt, ExpressCard, PC
+based DMA. The tool can attack over FireWire, Thunderbolt, ExpressCard, PC
 Card and any other PCI/PCIe interfaces.
 
 Inception aims to provide a relatively quick, stable and easy way of performing
-intrusive and  non-intrusive memory hacks in order to unlock live computers
-using DMA.
+intrusive and non-intrusive memory hacks against live computers using DMA.
 
+## How it all works
 
-Why?
-----
+Inception’s modules work as follows: By presenting a Serial Bus Protocol 2
+(SBP-2) unit directory to the victim machine over the IEEE1394 FireWire
+interface, the victim operating system thinks that a SBP-2 device has connected
+to the FireWire port. Since SBP-2 devices utilize Direct Memory Access (DMA)
+for fast, large bulk data transfers (e.g., FireWire hard drives and digital
+camcorders), the victim lowers its shields and enables DMA for the device. The
+tool now has full read/write access to the lower 4GB of RAM on the victim. Once
+DMA is granted, the tool proceeds to search through available memory pages for
+signatures at certain offsets in the operating system’s code. Once found, the
+tool manipulated this code. For instance, in the unlock module, the tool
+manipulates the operating system’s password authentication module that is 
+triggered if an incorrect password is entered.
+
+After running that module you should be able to log into the victim machine 
+using any password.
+
+An analogy for this operation is planting an idea into the memory of the
+machine; the idea that every password is correct. In other words, the 
+equivalent of a [memory inception] [http://inception.davepedu.com].
+
+## Why?
 
 The pros [are using it] [2], so why not you? Inception is free, as in beer!
 
@@ -31,60 +48,77 @@ Key data
 The tool makes use of the `libforensic1394` library courtesy of Freddie
 Witherden under a LGPL license.
 
+
 Modules
 -------
 
-As of version 0.4.0, Inception has been modularized. The current modules, and their functionality is described below.
+As of version 0.4.0, Inception has been modularized. The current modules, and
+their functionality is described below.
+
+# Important notice
+
+Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D 
+effectively re-mapping physical memory and thwarting almost all modules. Look 
+for `vtd[0] fault` entries in your log/console.
 
 # Unlock
 
-The unlock module is primarily attended to do its magic against
+The unlock can unlock (any password accepted) and escalate privileges
+to Administrator/root on almost* any powered on machine you have physical
+access to. module is primarily attended to do its magic against
 computers that utilize full disk encryption such as BitLocker, FileVault,
-TrueCrypt or  Pointsec. There are plenty of other (and better) ways to hack a
-machine that  doesn't pack encryption. After run
+TrueCrypt or Pointsec. There are plenty of other (and better) ways to hack a
+machine that doesn't pack encryption. 
+
+The unlock module is stable on machines that has 4 GiB of main memory or less.
+If your the target has more then that, you need to be lucky in order to find
+the signatures mapped to a physical memory page frame that the tool can reach.
 
 As of version 0.3.4, it is able to unlock the following x86 and x64 operating
 systems:
 
-|OS           |Version        |Unlock lock screen|Escalate privileges|Dump memory < 4 GiB|
-|:------------|:--------------|:----------------:|:-----------------:|:-----------------:|
-|Windows 8    |8.1            |        Yes       |        Yes        |        Yes        |
-|Windows 8    |8.0            |        Yes       |        Yes        |        Yes        |
-|Windows 7    |SP1            |        Yes       |        Yes        |        Yes        |
-|Windows 7    |SP0            |        Yes       |        Yes        |        Yes        |
-|Windows Vista|SP2            |        Yes       |        Yes        |        Yes        |
-|Windows Vista|SP1            |        Yes       |        Yes        |        Yes        |
-|Windows Vista|SP0            |        Yes       |        Yes        |        Yes        |
-|Windows XP   |SP3            |        Yes       |        Yes        |        Yes        |
-|Windows XP   |SP2            |        Yes       |        Yes        |        Yes        |
-|Windows XP   |SP1            |                  |                   |        Yes        |
-|Windows XP   |SP0            |                  |                   |        Yes        |
-|Mac OS X     |Mavericks      |       Yes (1)    |       Yes (1)     |      Yes (1)      |
-|Mac OS X     |Mountain Lion  |       Yes (1)    |       Yes (1)     |      Yes (1)      |
-|Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |      Yes (1)      |
-|Mac OS X     |Snow Leopard   |        Yes       |        Yes        |        Yes        |
-|Mac OS X     |Leopard        |                  |                   |        Yes        |
-|Ubuntu (2)   |Saucy          |        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Raring         |        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Quantal        |        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Precise        |        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Oneiric        |        Yes       |        Yes        |        Yes        |
-|Ubuntu       |Natty          |        Yes       |        Yes        |        Yes        |
-|Linux Mint   |13             |        Yes       |        Yes        |        Yes        |
-|Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
-|Linux Mint   |12             |        Yes       |        Yes        |        Yes        |
+|OS           |Version        |Unlock lock screen|Escalate privileges|
+|:------------|:--------------|:----------------:|:-----------------:|
+|Windows 8    |8.1            |        Yes       |        Yes        |
+|Windows 8    |8.0            |        Yes       |        Yes        |
+|Windows 7    |SP1            |        Yes       |        Yes        |
+|Windows 7    |SP0            |        Yes       |        Yes        |
+|Windows Vista|SP2            |        Yes       |        Yes        |
+|Windows Vista|SP1            |        Yes       |        Yes        |
+|Windows Vista|SP0            |        Yes       |        Yes        |
+|Windows XP   |SP3            |        Yes       |        Yes        |
+|Windows XP   |SP2            |        Yes       |        Yes        |
+|Windows XP   |SP1            |                  |                   |
+|Windows XP   |SP0            |                  |                   |
+|Mac OS X     |Mavericks      |       Yes (1)    |       Yes (1)     |
+|Mac OS X     |Mountain Lion  |       Yes (2)    |       Yes (2)     |
+|Mac OS X     |Lion           |       Yes (2)    |       Yes (2)     |
+|Mac OS X     |Snow Leopard   |        Yes       |        Yes        |
+|Mac OS X     |Leopard        |                  |                   |
+|Ubuntu (3)   |Saucy          |        Yes       |        Yes        |
+|Ubuntu       |Raring         |        Yes       |        Yes        |
+|Ubuntu       |Quantal        |        Yes       |        Yes        |
+|Ubuntu       |Precise        |        Yes       |        Yes        |
+|Ubuntu       |Oneiric        |        Yes       |        Yes        |
+|Ubuntu       |Natty          |        Yes       |        Yes        |
+|Linux Mint   |13             |        Yes       |        Yes        |
+|Linux Mint   |12             |        Yes       |        Yes        |
+|Linux Mint   |12             |        Yes       |        Yes        |
 
-(1): If FileVault 2 is enabled, the tool will only work when the operating
-     system is unlocked.
+(1): Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D
+     effectively re-mapping physical memory and thwarting this attack. Look
+     for `vtd[0] fault` entries in your log/console.
+(2): If FileVault 2 is enabled, the tool will only work when the operating
+     system is unlocked as of OS X Lion.
 (2): Other Linux distributions that use PAM-based authentication may also work 
      using the Ubuntu signatures.
 
 The module also effectively enables escalation of privileges, for instance via
 the `runas` or `sudo -s` commands, respectively.
 
-# Implant
+## Implant
 
-# Dump
+## Dump
 
 Requirements
 ------------

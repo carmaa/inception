@@ -8,7 +8,7 @@ Card and any other PCI/PCIe interfaces.
 Inception aims to provide a relatively quick, stable and easy way of performing
 intrusive and non-intrusive memory hacks against live computers using DMA.
 
-## How it all works
+### How it all works
 
 Inception’s modules work as follows: By presenting a Serial Bus Protocol 2
 (SBP-2) unit directory to the victim machine over the IEEE1394 FireWire
@@ -16,21 +16,22 @@ interface, the victim operating system thinks that a SBP-2 device has connected
 to the FireWire port. Since SBP-2 devices utilize Direct Memory Access (DMA)
 for fast, large bulk data transfers (e.g., FireWire hard drives and digital
 camcorders), the victim lowers its shields and enables DMA for the device. The
-tool now has full read/write access to the lower 4GB of RAM on the victim. Once
-DMA is granted, the tool proceeds to search through available memory pages for
-signatures at certain offsets in the operating system’s code. Once found, the
-tool manipulated this code. For instance, in the unlock module, the tool
-manipulates the operating system’s password authentication module that is 
+tool now has full read/write access to the lower 4GB of RAM on the victim.
+
+Once DMA is granted, the tool proceeds to search through available memory pages
+for signatures at certain offsets in the operating system’s code. Once found,
+the tool manipulates this code. For instance, in the unlock module, the tool
+short circuits the operating system’s password authentication module that is
 triggered if an incorrect password is entered.
 
-After running that module you should be able to log into the victim machine 
-using any password.
+*After running that module you should be able to log into the victim machine 
+using any password.*
 
 An analogy for this operation is planting an idea into the memory of the
 machine; the idea that every password is correct. In other words, the 
 equivalent of a [memory inception] [http://inception.davepedu.com].
 
-## Why?
+### BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!! But why?
 
 The pros [are using it] [2], so why not you? Inception is free, as in beer!
 
@@ -49,19 +50,92 @@ The tool makes use of the `libforensic1394` library courtesy of Freddie
 Witherden under a LGPL license.
 
 
+Requirements
+------------
+
+Inception requires:
+
+ * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
+   FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
+   Linux is currently recommended due to buggy firewire interfaces on OS X
+ * Victim machine: A FireWire or Thunderbolt interface, or an
+   ExpressCard/PCMCIA expansion port
+
+
+Installation
+------------
+
+For now you should be able to run the tool without any installation except
+dependencies on Mac OS X and Linux distros. Check out the README file in 
+`libforensic1394` for installation and FireWire pro-tips.
+
+### Dependencies
+
+ * Python 3
+ * git
+ * gcc (incl. g++)
+ * cmake
+ * [libforensic1394] [3]
+
+#### Linux
+
+On Debian-based distributions the installation command lines can be summarized
+as:
+
+    sudo apt-get install git cmake python3 g++
+
+#### Mac OS X
+
+On OS X, you can install the tool dependencies with [homebrew] [4]:
+
+    brew install git cmake python3
+
+After installing the dependencies, download and install libforensic1394:
+
+    git clone git://git.freddie.witherden.org/forensic1394.git
+    cd forensic1394
+    cmake CMakeLists.txt
+    sudo make install
+    cd python
+    sudo python3 setup.py install
+
+### Download and install Inception
+
+    git clone git://github.com/carmaa/inception.git
+    cd inception
+    sudo python3 setup.py install
+
+
+General usage
+-------------
+
+ 1. Connect the attacker machine (host) and the victim (target) with a FireWire
+    cable
+ 2. Run Inception
+
+Simply type:
+
+    incept [module name]
+
+For a more complete and up-to-date description, please run:
+
+    incept [module name] -h
+
+or see the [tool home page] [5].
+
+
 Modules
 -------
 
 As of version 0.4.0, Inception has been modularized. The current modules, and
 their functionality is described below.
 
-# Important notice
-
-Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D 
-effectively re-mapping physical memory and thwarting almost all modules. Look 
+Note: Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D 
+effectively blocking DMA requests and thwarting almost all modules. Look 
 for `vtd[0] fault` entries in your log/console.
 
-# Unlock
+
+### Unlock
 
 The unlock can unlock (any password accepted) and escalate privileges
 to Administrator/root on almost* any powered on machine you have physical
@@ -106,8 +180,8 @@ systems:
 |Linux Mint   |12             |        Yes       |        Yes        |
 
 (1): Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D
-     effectively re-mapping physical memory and thwarting this attack. Look
-     for `vtd[0] fault` entries in your log/console.
+     effectively blocking DMA requests and thwarting this attack. Look for 
+     `vtd[0] fault` entries in your log/console.
 (2): If FileVault 2 is enabled, the tool will only work when the operating
      system is unlocked as of OS X Lion.
 (2): Other Linux distributions that use PAM-based authentication may also work 
@@ -116,82 +190,15 @@ systems:
 The module also effectively enables escalation of privileges, for instance via
 the `runas` or `sudo -s` commands, respectively.
 
-## Implant
 
-## Dump
+### Implant
 
-Requirements
-------------
-
-Inception requires:
-
- * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
-   FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
-   Linux is currently recommended due to buggy firewire interfaces on OS X
- * Victim machine: A FireWire or Thunderbolt interface, or an
-   ExpressCard/PCMCIA expansion port
+texte 
 
 
-Installation
-------------
+### Dump
 
-For now you should be able to run the tool without any installation except
-dependencies on Mac OS X and Linux distros. Check out the README file in 
-`libforensic1394` for installation and FireWire pro-tips.
-
-### Dependencies
-
- * Python 3
- * git
- * gcc (incl. g++)
- * cmake
- * [libforensic1394] [3]
-
-#### Linux
-
-On Debian-based distributions the installation command lines can be summarized
-as:
-
-	sudo apt-get install git cmake python3 g++
-
-#### Mac OS X
-
-On OS X, you can install the tool dependencies with [homebrew] [4]:
-
-	brew install git cmake python3
-
-After installing the dependencies, download and install libforensic1394:
-
-	git clone git://git.freddie.witherden.org/forensic1394.git
-	cd forensic1394
-	cmake CMakeLists.txt
-	sudo make install
-	cd python
-	sudo python3 setup.py install
-
-### Download and install Inception
-
-	git clone git://github.com/carmaa/inception.git
-	cd inception
-	sudo python3 setup.py install
-
-
-Usage
------
-
- 1. Connect the attacker machine (host) and the victim (target) with a FireWire cable
- 2. Run Inception
- 3. Logon to the target using any password
-
-Simply type:
-
-	incept
-
-For a more complete and up-to-date description, please run:
-
-	incept -h
-
-or see the [tool home page] [5].
+text
 
 
 Known bugs / caveats
@@ -209,8 +216,9 @@ Please see the [tool home page] [5].
 Planned features
 ----------------
 
- * More signatures
  * Reliable implants on x64
+ * VT-D bypass
+ * More signatures
  
  
 Development history
@@ -260,3 +268,5 @@ request.
 [3]: http://freddie.witherden.org/tools/libforensic1394/
 [4]: http://mxcl.github.io/homebrew/
 [5]: http://www.breaknenter.org/projects/inception/
+
+

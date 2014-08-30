@@ -48,8 +48,8 @@ except OSError:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
         util.restart()
     else:
-        term.fail('Could not load libforensic1394, try running inception as '
-                  'root')
+        raise InceptionException('Could not load libforensic1394, try running '
+                                 'inception as root')
 
 # List of FireWire OUIs
 OUI = {}
@@ -65,8 +65,8 @@ def initialize(opts, module):
     try:
         fw = FireWire(opts.delay)
     except IOError:
-        term.fail('Could not initialize FireWire. Are the modules '
-                  'loaded into the kernel?')
+        raise InceptionException('Could not initialize FireWire. Are FW '
+                                 'modules loaded into the kernel?')
     starttime = time.time()
     device_index = fw.select_device()
     elapsed = int(time.time() - starttime)
@@ -91,7 +91,7 @@ def unload_fw_ip():
             term.info('To reload: sudo kextload /System/Library/Extensions/'
                       'IOFireWireIP.kext')
         else:
-            term.fail('Could not unload IOFireWireIP.kext')
+            raise InceptionException('Could not unload IOFireWireIP.kext')
 
 
 class FireWire:
@@ -134,14 +134,16 @@ class FireWire:
                                     )
                         term.info('FireWire modules loaded successfully')
                     else:
-                        term.fail('Could not load FireWire modules, try '
-                                  'running inception as root')
+                        raise InceptionException('Could not load FireWire '
+                                                 'modules, try running '
+                                                 'inception as root')
                 else:
-                    term.fail('FireWire modules not loaded')
+                    raise InceptionException('FireWire modules not loaded')
             else:
-                term.fail('FireWire modules are not loaded and we have '
-                          'insufficient privileges to load them. Try running '
-                          'inception as root')
+                raise InceptionException('FireWire modules are not loaded and '
+                                         'we have insufficient privileges to '
+                                         'load them. Try running inception as '
+                                         'root')
                 
         # Enable SBP-2 support to ensure we get DMA
         self._devices = self._bus.devices()
@@ -193,8 +195,8 @@ class FireWire:
         list
         '''
         if not self._devices:
-            term.fail('Could not detect any FireWire devices connected to '
-                      'this system')
+            raise InceptionException('Could not detect any FireWire devices '
+                                     'connected to this system')
         term.info('FireWire devices on the bus (names may appear blank):')
         term.separator()
         for n, device in enumerate(self._devices, 1):

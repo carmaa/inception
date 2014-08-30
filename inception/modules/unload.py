@@ -23,6 +23,7 @@ Created on Jun 29, 2014
 '''
 from inception import cfg, terminal
 from inception.interfaces import firewire
+from inception.exceptions import InceptionException
 
 
 term = terminal.Terminal()
@@ -42,4 +43,4 @@ def run(opts, memory):
     if cfg.os == cfg.OSX:
         firewire.unload_fw_ip()
     else:
-        term.fail('Host system is not OS X, aborting')
+        raise InceptionException('Host system is not OS X, aborting')

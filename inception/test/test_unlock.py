@@ -54,7 +54,7 @@ class TestUnlock(unittest.TestCase):
                 filepath = os.path.join(root, name)
                 mod_name, file_ext = os.path.splitext(
                     os.path.split(filepath)[-1])
-                if file_ext == '.py':
+                if file_ext == '.py' and mod_name != '__init__':
                     self.samples.append((mod_name, filepath))
 
     def tearDown(self):
@@ -64,7 +64,6 @@ class TestUnlock(unittest.TestCase):
         for sample in self.samples:
             cfg.startaddress = 0x00000000
             mod_name = sample[0]
-            # print(mod_name)
             filepath = sample[1]
             try:
                 module = SourceFileLoader(mod_name, filepath).load_module()

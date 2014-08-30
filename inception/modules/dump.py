@@ -75,16 +75,17 @@ def calculate(address, size):
         # Fix size
         try:
             size = util.parse_unit(size)
-        except ValueError:
-            term.fail("Could not convert '{0}' to a data size")
+        except ValueError as e:
+            raise InceptionException('Could not parse "{0}" to a valid data '
+                                     'size: {1}'.format(size, e))
         if size < cfg.PAGESIZE:
             term.warn('Minimum dump size is a page, {0} KiB'
                       .format(cfg.PAGESIZE // cfg.KiB))
         end = address + size
         return address, end
-    except:
+    except Exception as e:
         raise InceptionException('Could not calculate start and end memory '
-                                 'address')
+                                 'address', e)
 
 
 def run(opts, memspace):
@@ -97,9 +98,9 @@ def run(opts, memspace):
     if opts.address and opts.size:
         start, end = calculate(opts.address, opts.size)
     elif opts.address:
-        term.fail('Missing parameter "size"')
+        raise InceptionException('Missing parameter "size"')
     elif opts.size:
-        term.fail('Missing parameter "address"')
+        raise InceptionException('Missing parameter "address"')
     else:
         start = 0  # May be overridden later
 

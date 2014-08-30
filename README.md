@@ -29,11 +29,14 @@ using any password.*
 
 An analogy for this operation is planting an idea into the memory of the
 machine; the idea that every password is correct. In other words, the 
-equivalent of a [memory inception] [http://inception.davepedu.com].
+equivalent of a [memory inception] [1].
 
-### BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!! But why?
 
-The pros [are using it] [2], so why not you? Inception is free, as in beer!
+### BRRRRRAAAAAWWWWRWRRMRMRMMMMM!!! (But why?)
+
+The professionals [are using this technique] [2], so why not you? Inception is
+free, as in beer. A professional equivalent tool will set you back 10 000 USD.
+Hack back!
 
 
 Key data
@@ -148,7 +151,7 @@ The unlock module is stable on machines that has 4 GiB of main memory or less.
 If your the target has more then that, you need to be lucky in order to find
 the signatures mapped to a physical memory page frame that the tool can reach.
 
-As of version 0.3.4, it is able to unlock the following x86 and x64 operating
+As of this version, it is able to unlock the following x86 and x64 operating
 systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|
@@ -264,6 +267,7 @@ see weird code that bugs your pythonesque purity senses, drop me a note on how
 I can improve it. Or even better, fork my code, change it and issue a pull
 request.
 
+[1]: http://inception.davepedu.com
 [2]: https://wikileaks.org/spyfiles/files/0/293_GAMMA-201110-FinFireWire.pdf
 [3]: http://freddie.witherden.org/tools/libforensic1394/
 [4]: http://mxcl.github.io/homebrew/

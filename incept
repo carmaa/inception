@@ -76,11 +76,6 @@ def add_options(parser):
                       'memory files (.vmem) and to ease testing and '
                       'signature creation. Must be used with the "file" '
                       'interface.')
-    parser.add_option('--force-write',
-                      action='store_true',
-                      dest='forcewrite',
-                      help='forces patching when using files as input '
-                      '(see -f)')  # TODO: Remove
     parser.add_option('-v', '--verbose',
                       action='store_true',
                       dest='verbose',
@@ -94,11 +89,7 @@ def add_options(parser):
                       'If the attack fails, try to increase this value. '
                       'Default delay is 2 seconds.',
                       default=cfg.delay)
-    parser.add_option('--dry-run',
-                      action='store_true',
-                      dest='dry_run',
-                      help='dry run, do not write back to memory.')
-    parser.add_option('--sound',
+    parser.add_option('-s', '--sound',
                       action='store_true',
                       dest='sound',
                       help='sound, inception style.')
@@ -164,6 +155,8 @@ def main(argv):
         # Here we go
         module.run(opts, memspace)
 
+        # Successful
+        term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         if opts.sound:
             sound.play('resources/inception.wav')
 

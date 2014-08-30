@@ -522,13 +522,16 @@ targets = [
 
 
 def add_options(parser):
-    parser.add_option('-l', '--list', action='store_true',
-                      dest='list_targets',
-                      help='list available targets.')
+    parser.add_option('-l', '--list', action='callback',
+                      callback=list_targets)
     parser.add_option('-r', '--revert', action='store_true',
                       dest='revert', help='revert patch after use.')
     parser.add_option('-t', '--target-number',
                       dest='target_number', help='specify a target number.')
+    parser.add_option('--dry-run',
+                      action='store_true',
+                      dest='dry_run',
+                      help='dry run, do not write back to memory.')
 
 
 def intrusive():
@@ -562,13 +565,12 @@ def select_target(targets, selected=False):
         return select_target(targets)
 
     
-def list_targets(details=False):
+def list_targets(*args, **kwargs):
     term.info('Available targets (known signatures):')
     term.separator()
     for number, target in enumerate(targets, 1):
         term.info('{0}'.format(target.name), sign=number)
-    if details:
-        term.write(target)
+    # TODO: Make detailed listing of targets work: opts.verbose
     term.separator()
 
 
@@ -576,17 +578,15 @@ def run(opts, memspace):
     '''
     Main attack logic
     '''
-    list_targets(details=opts.verbose)
-    # List targets only?
-    if opts.list_targets:
-        sys.exit(0)
+    if not opts.target_number:
+        list_targets()
        
     # Select target, print selection
     target = select_target(targets, selected=opts.target_number)
     term.info('Selected target: ' + target.name)
     
     #  Search for the target
-    address, signature, offset = memspace.find(target)
+    address, signature, offset = memspace.find(target, verbose=opts.verbose)
     
     # Signature found, let's patch
     page = memspace.page_no(address)
@@ -596,7 +596,6 @@ def run(opts, memspace):
         try:
             backup = memspace.patch(address, signature.chunks)
             term.info('Patch verified; successful')
-            term.info('BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!')
         except InceptionException:
             raise
 

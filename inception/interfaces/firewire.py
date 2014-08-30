@@ -252,16 +252,9 @@ class FireWire:
         
     def getdevice(self, num, elapsed):
         didwait = False
-        bb = term.BeachBall()
         try:
-            for i in range(self.delay - elapsed, 0, -1):
-                print('[*] Initializing bus and enabling SBP-2, ' +
-                      'please wait %2d seconds or press Ctrl+C\r'
-                      % i, end='')
-                sys.stdout.flush()
-                bb.draw()
-                didwait = True
-                time.sleep(1)
+            term.wait('Initializing bus and enabling SBP-2, please wait '
+                      'or press Ctrl+C', seconds=self.delay - elapsed)
         except KeyboardInterrupt:
             pass
         d = self._bus.devices()[num]

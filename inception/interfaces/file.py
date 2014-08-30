@@ -43,8 +43,8 @@ def initialize(opts, module):
                                  'this interface.')
 
     # Warn user that using the interface may write to file
-    dry_run = opts.dry_run
-    if module.IS_INTRUSIVE and not dry_run:
+    dry_run = False
+    if module.IS_INTRUSIVE and not opts.dry_run:
         answer = term.poll('Will potentially write to file. OK? [y/N]',
                            default='n')
         if answer in ['n']:

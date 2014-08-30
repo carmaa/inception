@@ -89,7 +89,7 @@ def add_options(parser):
                       'If the attack fails, try to increase this value. '
                       'Default delay is 2 seconds.',
                       default=cfg.delay)
-    parser.add_option('-s', '--sound',
+    parser.add_option('--sound',
                       action='store_true',
                       dest='sound',
                       help='sound, inception style.')

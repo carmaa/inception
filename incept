@@ -56,7 +56,7 @@ INCEPTION
         ''')
 
     term.write('v.{0} (C) Carsten Maartmann-Moe {1}'.format(
-        cfg.version, datetime.date.today().strftime("%Y")), indent=False
+        cfg.version, datetime.date.today().strftime('%Y')), indent=False
     )
     term.write('Download: {0} | Twitter: @breaknenter'.format(cfg.url),
                indent=False)

@@ -23,29 +23,37 @@ Created on Jan 14, 2013
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-# Inception's setup.py
-from distutils.core import setup
+# Inception's setup.py - use setuptools if available
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    print('Warning: setuptools not available, you will have to install'
+          'dependencies manually')
+    from distutils.core import setup, find_packages
+
 from inception import cfg
 
 setup(
     name='inception',
-    packages=['inception'],
+    packages=find_packages(),
     scripts=['incept'],
     package_data={'inception': ['resources/oui.txt',
                                 'resources/inception.wav',
                                 'resources/rien.mp3',
                                 'test/*.py',
                                 'test/samples/*.py',
-                                'test/samples/*.bin']},
+                                'test/samples/*.bin',
+                                'shellcode/*.*']},
     version=cfg.version,
-    description='Memory manipulation tool exploiting FireWire SBP2 DMA.',
+    description='Memory manipulation tool exploiting PCI DMA.',
     author='Carsten Maartmann-Moe',
     author_email='carsten@carmaa.com',
     url=cfg.url,
     download_url='http://github.com/carmaa/inception',
     license='GPL',
     requires=['forensic1394'],
-    keywords=['hack', 'physical security', 'firewire'],
+    install_requires=['msgpack-python'],
+    keywords=['hack', 'physical security', 'firewire', 'pci'],
     classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.2',

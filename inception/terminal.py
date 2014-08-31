@@ -132,7 +132,8 @@ class Terminal(metaclass=Singleton):
         '''
         Prints a separator line with the width of the terminal
         '''
-        print('-' * self.wrapper.width)
+        print()
+        # print('-' * self.wrapper.width)
         
     class ProgressBar:
         '''

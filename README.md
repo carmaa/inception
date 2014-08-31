@@ -84,15 +84,13 @@ dependencies on Mac OS X and Linux distros. Check out the README file in
  * gcc (incl. g++)
  * cmake
  * [libforensic1394] [3]
-
-#### Linux
+ * msgpack
+ * pip (for automatic resolution of dependencies)
 
 On Debian-based distributions the installation command lines can be summarized
 as:
 
     sudo apt-get install git cmake python3 g++
-
-#### Mac OS X
 
 On OS X, you can install the tool dependencies with [homebrew] [4]:
 
@@ -111,7 +109,7 @@ After installing the dependencies, download and install libforensic1394:
 
     git clone git://github.com/carmaa/inception.git
     cd inception
-    sudo python3 setup.py install
+    pip-3.3 install -e .
 
 
 General usage
@@ -204,7 +202,7 @@ the `runas` or `sudo -s` commands, respectively.
 
 #### Execution
     
-    To unlock, simply type:
+To unlock, simply type:
 
     incept unlock
 
@@ -219,7 +217,7 @@ the `runas` or `sudo -s` commands, respectively.
 
     [?] Will potentially write to file. OK? [y/N] y
     [*] Available targets (known signatures):
-    --------------------------------------------------------------------------------
+    
     [1] Windows 8 MsvpPasswordValidate unlock/privilege escalation
     [2] Windows 7 MsvpPasswordValidate unlock/privilege escalation
     [3] Windows Vista MsvpPasswordValidate unlock/privilege escalation
@@ -227,7 +225,7 @@ the `runas` or `sudo -s` commands, respectively.
     [5] Mac OS X DirectoryService/OpenDirectory unlock/privilege escalation
     [6] Ubuntu libpam unlock/privilege escalation
     [7] Linux Mint libpam unlock/privilege escalation
-    --------------------------------------------------------------------------------
+    
     [?] Please select target (or enter 'q' to quit): 2
     [*] Selected target: Windows 7 MsvpPasswordValidate unlock/privilege escalation
     [=============>                                                ]  227 MiB ( 22%)
@@ -304,7 +302,6 @@ Then, in another terminal, we launch Inception:
     [*] Signature found at 0x219d118c in page no. 137681
     [*] Patching at 0x219d118c
     [\] Waiting to ensure stage 1 execution
-    [?] Press [enter] to continue 
     [*] Restoring memory at initial injection point
     [*] Stage 2: Searching for page allocated in stage 1
     [=========================>                                    ]  434 MiB ( 42%)

@@ -523,11 +523,12 @@ targets = [
 
 def add_options(parser):
     parser.add_option('-l', '--list', action='callback',
-                      callback=list_targets)
-    parser.add_option('-r', '--revert', action='store_true',
-                      dest='revert', help='revert patch after use.')
+                      callback=list_targets,
+                      help='list available targets (operating systems).')
     parser.add_option('-t', '--target-number',
                       dest='target_number', help='specify a target number.')
+    parser.add_option('-r', '--revert', action='store_true',
+                      dest='revert', help='revert patch after use.')
     parser.add_option('--dry-run',
                       action='store_true',
                       dest='dry_run',

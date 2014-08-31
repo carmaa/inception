@@ -183,13 +183,18 @@ targets = [
                 version=None,
                 md5=None,
                 tag=False,
-                offsets=[0x312],
+                offsets=[0x312, 0x6aa],
                 chunks=[
                     Chunk(
-                        chunk=0x83f8100f8550940000b0018b,
+                        chunk=0x83f8100f85,
                         chunkoffset=0x00,
                         patch=0x83f810909090909090b0018b,
-                        patchoffset=0x00)
+                        patchoffset=0x00),
+                    Chunk(
+                        chunk=0xb0018b,
+                        chunkoffset=0x09,
+                        patch=None,
+                        patchoffset=0x00),
                     ]
                 )
             ]

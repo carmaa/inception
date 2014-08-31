@@ -1,8 +1,8 @@
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -82,7 +82,8 @@ def unload_fw_ip():
     Unloads IP over FireWire modules if present on OS X
     '''
     unload = term.poll('Unload the IOFireWireIP modules that may cause '
-                       'kernel panics? [Y/n]: ')
+                       'kernel panics? [y/n]:',
+                       default='y')
     if unload in ['y', '']:
         command = 'kextunload /System/Library/Extensions/IOFireWireIP.kext'
         status = call(command, shell=True)
@@ -114,7 +115,8 @@ class FireWire:
         except IOError:
             if os.geteuid() == 0:  # Check if we are running as root
                 answer = term.poll('FireWire modules are not loaded. Try '
-                                   'loading them? [Y/n]: ')
+                                   'loading them? [y/n]:',
+                                   default='y')
                 if answer in ['y', '']:
                     status_modprobe = call('modprobe firewire-ohci',
                                            shell=True)

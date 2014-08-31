@@ -63,40 +63,34 @@ Requirements
 
 Inception requires:
 
- * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
-   FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
-   Linux is currently recommended due to buggy firewire interfaces on OS X
- * Victim machine: A FireWire or Thunderbolt interface, or an
-   ExpressCard/PCMCIA expansion port
-
+ * Hardware:
+     * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
+       FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
+       Linux is currently recommended due to buggy firewire interfaces on OS X
+     * Victim machine: A FireWire or Thunderbolt interface, or an
+       ExpressCard/PCMCIA expansion port
+ * Software:
+     * Python 3
+     * git
+     * gcc (incl. g++)
+     * cmake
+     * pip (for automatic resolution of dependencies)
+     * [libforensic1394] [3]
+     * msgpack
 
 Installation
 ------------
 
-For now you should be able to run the tool without any installation except
-dependencies on Mac OS X and Linux distros. Check out the README file in 
-`libforensic1394` for installation and FireWire pro-tips.
-
-### Dependencies
-
- * Python 3
- * git
- * gcc (incl. g++)
- * cmake
- * [libforensic1394] [3]
- * msgpack
- * pip (for automatic resolution of dependencies)
-
 On Debian-based distributions the installation command lines can be summarized
 as:
 
-    sudo apt-get install git cmake python3 g++
+    sudo apt-get install git cmake g++ python3 python3-pip
 
-On OS X, you can install the tool dependencies with [homebrew] [4]:
+On OS X, you can install the tool requirements with [homebrew] [4]:
 
     brew install git cmake python3
 
-After installing the dependencies, download and install libforensic1394:
+After installing the requirements, download and install libforensic1394:
 
     git clone git://git.freddie.witherden.org/forensic1394.git
     cd forensic1394
@@ -109,8 +103,9 @@ After installing the dependencies, download and install libforensic1394:
 
     git clone git://github.com/carmaa/inception.git
     cd inception
-    pip-3.3 install -e .
+    ./setup.py install
 
+The setup script should be able to
 
 General usage
 -------------

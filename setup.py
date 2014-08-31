@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,10 +26,10 @@ Created on Jan 14, 2013
 # Inception's setup.py - use setuptools if available
 try:
     from setuptools import setup, find_packages
-except ImportError:
+except ImportError as e:
     print('Warning: setuptools not available, you will have to install'
-          'dependencies manually')
-    from distutils.core import setup, find_packages
+          'manually')
+    raise e
 
 from inception import cfg
 

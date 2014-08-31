@@ -1,8 +1,8 @@
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@ filename = ''
 
 
 def add_options(parser):
-    parser.add_option('-a', '--address', dest='address',
+    parser.add_option('-a', '--address',
+                      dest='address',
                       help='start address for dump. Can be given as an '
                            'integer, a hexadecimal string prefixed with '
                            '\'0x\', or as a page number prefixed with p. Note '
@@ -48,14 +49,16 @@ def add_options(parser):
                            'when accessing data below 1 MiB, this command '
                            'will avoid that region of upper memory when '
                            'dumping, and replace the first MB with zeroes.')
-    parser.add_option('-s', '--size', dest='size',
+    parser.add_option('-s', '--size',
+                      dest='size',
                       help='the size (expressed in pages or memory size) to '
                            'dump. The size can be anumber of pages or a size '
                            'of data using the denomination KiB, MiB GiB. '
                            'Example: If you give the arguments "-s 5MiB", '
                            'tool dumps the 5 MiB of memory. Another example: '
                            '"-s 5 will dump 5 bytes.')
-    parser.add_option('-p', '--prefix', dest='prefix',
+    parser.add_option('-p', '--prefix',
+                      dest='prefix',
                       help='specify the file name prefix of the dump file.')
 
 

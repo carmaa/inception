@@ -1,8 +1,8 @@
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ def initialize(opts, module):
                                  'this interface.')
 
     # Warn user that using the interface may write to file
-    try:
+    try:  # TODO: Fix this more elegantly
         dry_run = opts.dry_run
     except AttributeError:
         dry_run = False

@@ -41,7 +41,7 @@ equivalent of a [memory inception] [1].
 
 The world's forensics experts, government and agencies are using 
 [similar tools] [2] allready, so why not you? Inception is free, as in beer. A
-professional equivalent tool will set you back 10 000 USD. Hack back!
+professional equivalent tool will set you back ~10 000 USD. Hack back!
 
 
 Key data
@@ -64,19 +64,19 @@ Requirements
 Inception requires:
 
  * Hardware:
-     * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
-       FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
-       Linux is currently recommended due to buggy firewire interfaces on OS X
-     * Victim machine: A FireWire or Thunderbolt interface, or an
-       ExpressCard/PCMCIA expansion port
+   * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
+     FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
+     Linux is currently recommended due to buggy firewire interfaces on OS X
+   * Victim machine: A FireWire or Thunderbolt interface, or an
+     ExpressCard/PCMCIA expansion port
  * Software:
-     * Python 3
-     * git
-     * gcc (incl. g++)
-     * cmake
-     * pip (for automatic resolution of dependencies)
-     * [libforensic1394] [3]
-     * msgpack
+   * Python 3
+   * git
+   * gcc (incl. g++)
+   * cmake
+   * pip (for automatic resolution of dependencies)
+   * [libforensic1394] [3]
+   * msgpack
 
 Installation
 ------------
@@ -105,7 +105,8 @@ After installing the requirements, download and install libforensic1394:
     cd inception
     ./setup.py install
 
-The setup script should be able to
+The setup script should be able to install dependencies if you have `pip`
+installed.
 
 General usage
 -------------

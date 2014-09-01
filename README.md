@@ -6,8 +6,8 @@ _|  _|    _|_|  _|        _|        _|          _|    _|  _|    _|  _|    _|_|
 _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 ```
 
-Inception is a physical memory manipulation and hacking tool exploiting PCI-
-based DMA. The tool can attack over FireWire, Thunderbolt, ExpressCard, PC
+Inception is a physical memory manipulation and hacking tool exploiting 
+PCI-based DMA. The tool can attack over FireWire, Thunderbolt, ExpressCard, PC
 Card and any other PCI/PCIe interfaces.
 
 Inception aims to provide a relatively quick, stable and easy way of performing
@@ -39,9 +39,9 @@ equivalent of a [memory inception] [1].
 
 ### Awesome! But why?
 
-The world's forensics experts, government and agencies are using 
-[similar tools] [2] allready, so why not you? Inception is free, as in beer. A
-professional equivalent tool will set you back ~10 000 USD. Hack back!
+The world's forensics experts, governments and three-letter acronym agencies
+are using [similar tools] [2] already, so why not? Inception is free, as in
+beer. A professional equivalent tool will set you back ~10 000 USD. Hack back!
 
 
 Key data
@@ -78,6 +78,7 @@ Inception requires:
    * [libforensic1394] [3]
    * msgpack
 
+
 Installation
 ------------
 
@@ -107,6 +108,7 @@ After installing the requirements, download and install libforensic1394:
 
 The setup script should be able to install dependencies if you have `pip`
 installed.
+
 
 General usage
 -------------
@@ -325,6 +327,7 @@ In your MSF console, you should see something similar to this:
 
     meterpreter > getuid
     Server username: NT AUTHORITY\SYSTEM
+
 
 ### Dump
 

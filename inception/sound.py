@@ -1,8 +1,8 @@
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,26 +21,28 @@ Created on Oct 11, 2012
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg
 import os.path
 import subprocess
 
-    
+from inception import cfg
+
+
 def play(filename):
     '''
     Crude interface for playing wav sounds - dies silently if something fails
     '''
-    f = os.path.join(os.path.dirname(__file__),filename)
+    fn = filename
+    f = os.path.join(os.path.dirname(__file__), fn)
 
     try:
-        if (filename.endswith('.wav') or filename.endswith('.mp3')) and os.path.exists(f):
-            if cfg.os == cfg.LINUX:
+        if (fn.endswith('.wav') or fn.endswith('.mp3')) and os.path.exists(f):
+            if cfg.os == 'Linux':
                 cmd = 'aplay'
-            elif cfg.os == cfg.OSX:
+            elif cfg.os == 'Darwin':
                 cmd = 'afplay'
             else:
                 raise Exception
             with open(os.devnull, "w") as fnull:
-                return subprocess.Popen([cmd,f], stdout = fnull, stderr = fnull)
+                return subprocess.Popen([cmd, f], stdout=fnull, stderr=fnull)
     except:
-        pass
+        raise

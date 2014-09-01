@@ -17,17 +17,30 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Created on Feb 3, 2014
+Created on Jun 29, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
+from inception import cfg, terminal
+from inception.interfaces import firewire
+from inception.exceptions import InceptionException
 
 
-class InceptionException(Exception):
-    '''
-    Non... rien de rien
-    Non je ne regrette rien
-    Ni le bien... qu'on m'a fait
-    Ni le mal, tout ça m'est bien égale...
-    '''
+term = terminal.Terminal()
+
+
+info = 'OS X only: Unloads IOFireWireIP.kext (OS X IP over FireWire module) ' \
+       'which are known to cause kernel panics when the host (attacking ' \
+       'system) is OS X. Must be executed BEFORE any FireWire devices are ' \
+       'connected to the host.'
+
+
+def add_options(parser):
     pass
+
+
+def run(opts, memory):
+    if cfg.os == cfg.OSX:
+        firewire.unload_fw_ip()
+    else:
+        raise InceptionException('Host system is not OS X, aborting')

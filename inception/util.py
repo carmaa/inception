@@ -1,8 +1,8 @@
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,12 +21,17 @@ Created on Jun 19, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from inception import cfg, term
-from subprocess import call
-import binascii
 import os
 import platform
 import sys
+
+import binascii
+from inception import cfg
+
+
+class EscapeAll(bytes):
+    def __str__(self):
+        return ''.join('\\x{:02x}'.format(b) for b in self)
 
 
 def hexstr2bytes(s):
@@ -35,12 +40,13 @@ def hexstr2bytes(s):
     corresponding byte string. That is, '0x41' becomes b'A'
     '''
     if isinstance(s, str) and s.startswith('0x'):
-        s = s.replace('0x', '') # Remove '0x' strings from hex string
-        if len(s) % 2 == 1: s = '0' + s # Pad with zero if odd-length string
+        s = s.replace('0x', '')  # Remove '0x' strings from hex string
+        if len(s) % 2 == 1:
+            s = '0' + s  # Pad with zero if odd-length string
         return binascii.unhexlify(bytes(s, sys.getdefaultencoding()))
     else:
         raise BytesWarning('Not a string starting with \'0x\': {0}'.format(s))
-    
+
 
 def bytes2hexstr(b):
     '''
@@ -51,7 +57,17 @@ def bytes2hexstr(b):
         return '0x' + bytes.decode(binascii.hexlify(b))
     else:
         raise BytesWarning('Not a byte string')
-        
+
+
+def str2bytes(s):
+    '''
+    Takes a string of the format '\x01\xff' and converts it to a bytes object.
+    '''
+    if isinstance(s, str):
+        return s.encode('latin-1')
+    else:
+        raise TypeError('Not a string: {0}'.format(s))
+
 
 def bytelen(s):
     '''
@@ -60,7 +76,7 @@ def bytelen(s):
     return (len(hex(s))) // 2
 
 
-def int2binhex(i):
+def int2bytes(i):
     '''
     Converts positive integer to its binary hexadecimal representation
     '''
@@ -74,7 +90,7 @@ def open_file(filename, mode):
     Opens a file that are a part of the package. The file must be in the folder
     tree beneath the main package
     '''
-    this_dir, this_filename = os.path.split(__file__) #@UnusedVariable
+    this_dir, this_filename = os.path.split(__file__)  # @UnusedVariable
     path = os.path.join(this_dir, filename)
     return open(path, mode)
     
@@ -85,6 +101,8 @@ def parse_unit(size):
     size in either multiplies of the page size (if no unit is given) or the
     size in KiB, MiB or GiB
     '''
+    if isinstance(size, int):
+        return size
     size = size.lower()
     if size.find('kib') != -1 or size.find('kb') != -1:
         size = int(size.rstrip(' kib')) * cfg.KiB
@@ -104,73 +122,18 @@ def detectos():
     return platform.system()
 
 
-def unload_fw_ip():
-    '''
-    Unloads IP over FireWire modules if present on OS X
-    '''
-    term.poll('IOFireWireIP on OS X may cause kernel panics. Unload? [Y/n]: ')
-    unload = input().lower()
-    if unload in ['y', '']:
-        status = call('kextunload /System/Library/Extensions/IOFireWireIP.kext',
-                      shell=True)
-        if status == 0:
-            term.info('IOFireWireIP.kext unloaded')
-            term.info('To reload: sudo kextload /System/Library/Extensions/' +
-                 'IOFireWireIP.kext')
-        else:
-            term.fail('Could not unload IOFireWireIP.kext')
-
 def cleanup():
     '''
     Cleans up at exit
     '''
-    for egg in cfg.eggs:
-        egg.terminate()
+    if cfg.eggs:
+        for egg in cfg.eggs:
+            egg.terminate()
 
 
 def restart():
     '''
-    Restarts the current program. Note: this function does not return. 
+    Restarts the current program. Note: this function does not return.
     '''
     python = sys.executable
     os.execl(python, python, * sys.argv)
-
-
-class MemoryFile:
-    '''
-    File that exposes a similar interface as the FireWire class. Used for
-    reading from RAM memory files of memory dumps
-    '''
-
-    def __init__(self, file_name, pagesize):
-        '''
-        Constructor
-        '''
-        self.file = open(file_name, mode='r+b')
-        self.pagesize = pagesize
-    
-    def read(self, addr, numb, buf=None):
-        self.file.seek(addr)
-        return self.file.read(numb)  
-    
-    def readv(self, req):
-        for r in req:
-            self.file.seek(r[0])
-            yield (r[0], self.file.read(r[1]))
-    
-    def write(self, addr, buf):
-        if cfg.forcewrite:
-            term.poll('Are you sure you want to write to file [y/N]? ')
-            answer = input().lower()
-            if answer in ['y', 'yes']:
-                self.file.seek(addr)
-                self.file.write(buf)
-        else:
-            term.warn('File not patched. To enable file writing, use the ' +
-                      '--force-write switch')
-    
-    def close(self):
-        self.file.close()
-    
-    
-

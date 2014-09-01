@@ -17,17 +17,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Created on Feb 3, 2014
+Created on Jun 29, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
+IS_INTRUSIVE = False
 
-class InceptionException(Exception):
-    '''
-    Non... rien de rien
-    Non je ne regrette rien
-    Ni le bien... qu'on m'a fait
-    Ni le mal, tout ça m'est bien égale...
-    '''
+info = 'Prints FireWire bus information.'
+
+
+def add_options(parser):
     pass
+
+
+def run(opts, memory):
+
+    memory.interface.businfo()

@@ -17,17 +17,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Created on Feb 3, 2014
+Created on Jun 29, 2014
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
+import unittest
 
 
-class InceptionException(Exception):
-    '''
-    Non... rien de rien
-    Non je ne regrette rien
-    Ni le bien... qu'on m'a fait
-    Ni le mal, tout ça m'est bien égale...
-    '''
+info = 'This module runs all inception unit tests.'
+
+
+def add_options(parser):
     pass
+
+
+def run(opts, memory):
+    suite = unittest.TestLoader().discover('./inception/test')
+    unittest.TextTestRunner().run(suite)

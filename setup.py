@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 '''
 Inception - a FireWire physical memory manipulation and hacking tool exploiting
-IEEE 1394 SBP-2 DMA.
+PCI-based and IEEE 1394 SBP-2 DMA.
 
-Copyright (C) 2011-2013  Carsten Maartmann-Moe
+Copyright (C) 2011-2014  Carsten Maartmann-Moe
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,30 +23,38 @@ Created on Jan 14, 2013
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
 
-# Inception's setup.py
-from distutils.core import setup
+# Inception's setup.py - use setuptools if available
+try:
+    from setuptools import setup, find_packages
+except ImportError as e:
+    print('Warning: setuptools not available, you will have to install'
+          'manually')
+    raise e
+
 from inception import cfg
 
 setup(
-    name = 'inception',
-    packages = ['inception'],
-    scripts = ['incept'],
-    package_data= {'inception': ['resources/oui.txt', 
-                                 'resources/inception.wav',
-                                 'resources/rien.mp3',
-                                 'test/*.py',
-                                 'test/samples/*.py',
-                                 'test/samples/*.bin']},
-    version = cfg.version,
-    description = 'Memory manipulation tool exploiting FireWire SBP2 DMA.',
-    author = 'Carsten Maartmann-Moe',
-    author_email = 'carsten@carmaa.com',
-    url = cfg.url,
-    download_url = 'http://github.com/carmaa/inception',
-    license = 'GPL',
-    requires = ['forensic1394'],
-    keywords = ['hack', 'physical security', 'firewire'],
-    classifiers = [
+    name='inception',
+    packages=find_packages(),
+    scripts=['incept'],
+    package_data={'inception': ['resources/oui.txt',
+                                'resources/inception.wav',
+                                'resources/rien.mp3',
+                                'test/*.py',
+                                'test/samples/*.py',
+                                'test/samples/*.bin',
+                                'shellcode/*.*']},
+    version=cfg.version,
+    description='Memory manipulation tool exploiting PCI DMA.',
+    author='Carsten Maartmann-Moe',
+    author_email='carsten@carmaa.com',
+    url=cfg.url,
+    download_url='http://github.com/carmaa/inception',
+    license='GPL',
+    requires=['forensic1394'],
+    install_requires=['msgpack-python'],
+    keywords=['hack', 'physical security', 'firewire', 'pci'],
+    classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.2',
         'Development Status :: 4 - Beta',

@@ -403,6 +403,7 @@ Development history
  * 0.3.2 - Bug fixes and support for Ubuntu 13.10
  * 0.3.3 - Bug fixes regarding output and error handling
  * 0.3.4 - Maestro!
+ * 0.3.5 - Added Ubuntu 10.10 and 10.04 x86 signatures
  * 0.4.0 - Complete restructuring and rewrite. Added implant mode
  
  
@@ -418,5 +419,4 @@ request.
 [3]: http://freddie.witherden.org/tools/libforensic1394/
 [4]: http://mxcl.github.io/homebrew/
 [5]: http://www.breaknenter.org/projects/inception/
-
 

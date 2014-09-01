@@ -403,7 +403,7 @@ targets = [
         signatures=[
             Signature(
                 os='Ubuntu',
-                os_versions=['10.10', '10.04', '11.10', '11.04', '12.04'],
+                os_versions=['10.04', '10.10', '11.10', '11.04', '12.04'],
                 os_architectures=['x86'],
                 executable=None,
                 version=None,

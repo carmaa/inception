@@ -21,19 +21,12 @@ Created on Sep 6, 2011
 
 @author: Carsten Maartmann-Moe <carsten@carmaa.com> aka ntropy
 '''
-from textwrap import TextWrapper
-
 
 #==============================================================================
 # General information
 #==============================================================================
 version = '0.4.0'
 url = 'http://breaknenter.org/projects/inception'
-
-#==============================================================================
-# Global objects
-#==============================================================================
-#wrapper = TextWrapper(subsequent_indent=' ' * 4)
 
 #==============================================================================
 # Constants

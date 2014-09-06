@@ -54,12 +54,12 @@ def initialize(opts, module):
             dry_run = True
 
     # Lower DMA shield, and set memsize
-    device = MemoryFile(opts.filename, cfg.PAGESIZE, dry_run)
+    device = MemoryInterface(opts.filename, cfg.PAGESIZE, dry_run)
     memsize = os.path.getsize(opts.filename)
     return device, memsize
 
 
-class MemoryFile:
+class MemoryInterface:
     '''
     File that exposes a similar interface as the FireWire Device class. Used
     for reading from RAM memory files of memory dumps

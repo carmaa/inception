@@ -403,7 +403,7 @@ Development history
  * 0.3.3 - Bug fixes regarding output and error handling
  * 0.3.4 - Maestro!
  * 0.3.5 - Added Ubuntu 10.10 and 10.04 x86 signatures
- * 0.4.0 - Complete restructuring and rewrite. Added implant mode
+ * 0.4.0 - Complete restructuring and rewrite. Added implant module
  
  
 Disclaimer

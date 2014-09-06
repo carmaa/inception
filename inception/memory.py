@@ -177,7 +177,7 @@ class MemorySpace():
     Abstraction of the memory space we are operating on.
 
     Mandatory arguments:
-    - interface: A firewire device or a MemoryFile interface
+    - interface: A firewire device or a MemoryInterface interface
     - memsize: The size of the memory space we're searching
     '''
     def __init__(self, interface, memsize):

@@ -534,6 +534,10 @@ def add_options(parser):
     parser.add_option('-t', '--target-number',
                       dest='target_number',
                       help='specify a target number.')
+    parser.add_option('-p', '--payload',
+                      dest='payload_filename',
+                      help='specify a file that contains a binary payload to '
+                           'patch with instead of the signature patch.')
     parser.add_option('-r', '--revert',
                       action='store_true',
                       dest='revert',
@@ -600,12 +604,19 @@ def run(opts, memspace):
         .format(address, page))
     if not opts.dry_run:
         try:
-            backup = memspace.patch(address, signature.chunks)
+            if opts.payload_filename:
+                try:
+                    payload = open(opts.payload_filename, 'rb').read()
+                except Exception as e:
+                    raise InceptionException(e)
+                backup = memspace.write(address, payload)
+            else:
+                backup = memspace.patch(address, signature.chunks)
             term.info('Patch verified; successful')
         except InceptionException:
             raise
 
-        if opts.revert:  # TODO: Check that this works
+        if opts.revert:
             term.poll('Press [enter] to revert the patch:')
             memspace.write(address, backup)
 

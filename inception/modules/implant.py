@@ -26,7 +26,7 @@ from inception.exceptions import InceptionException
 from inception.external.pymetasploit.metasploit.msfrpc \
     import MsfRpcClient, MsfRpcError, PayloadModule
 from inception.memory import Target, Signature, Chunk
-from inception.interfaces.file import MemoryFile
+from inception.interfaces.file import MemoryInterface
 
 
 IS_INTRUSIVE = True
@@ -192,7 +192,7 @@ def add_options(group):
                      dest='msfpw',
                      help='password for the MSFRPC daemon')
     group.add_option('--payload',
-                     dest='payload_fn',
+                     dest='payload_filename',
                      help='implant binary payload from file')
 
 
@@ -233,9 +233,9 @@ def run(opts, memspace):
               'wad of cash in unmarked dollar bills or a pull request on '
               'github.')
 
-    if opts.payload_fn:
+    if opts.payload_filename:
         try:
-            payload = open(opts.payload_fn, 'rb').read()
+            payload = open(opts.payload_filename, 'rb').read()
         except Exception as e:
             raise InceptionException(e)
     else:
@@ -282,7 +282,7 @@ def run(opts, memspace):
 
     # Wait to ensure initial stage execution
     term.wait('Waiting to ensure stage 1 execution', 5)
-    if isinstance(memspace.interface, MemoryFile):
+    if isinstance(memspace.interface, MemoryInterface):
         term.poll('Press [enter] to continue')
     # TODO: Modify payload exitfunk that is used if the payload fails -
     # this is needed for stable kernel exploitation

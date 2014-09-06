@@ -48,8 +48,8 @@ except OSError:
         os.putenv('LD_LIBRARY_PATH', "/usr/local/lib")
         util.restart()
     else:
-        raise InceptionException('Could not load libforensic1394, try running '
-                                 'inception as root')
+        raise InceptionException('Could not load libforensic1394, please make '
+                                 'sure that libforensic1394 is in your PATH')
 
 # List of FireWire OUIs
 OUI = {}
@@ -107,12 +107,13 @@ class FireWire:
         '''
         # Warn OS X users
         if cfg.os == cfg.OSX:
-            term.warn('Attacking from OS X may cause host system crashes')
+            term.warn('Attacking from OS X may cause host and/or target '
+                      'system crashes, and is not recommended')
         self.delay = delay
         self._bus = Bus()
         try:
             self._bus.enable_sbp2()
-        except IOError:
+        except IOError as e:
             if os.geteuid() == 0:  # Check if we are running as root
                 answer = term.poll('FireWire modules are not loaded. Try '
                                    'loading them? [y/n]:',
@@ -125,27 +126,27 @@ class FireWire:
                     if status_modprobe == 0 and status_rescan == 0:
                         try:
                             self._bus.enable_sbp2()
-                        except IOError:
+                        except IOError as e:
                             time.sleep(2)  # Give some more time
                             try:
                                 self._bus.enable_sbp2()
-                            except IOError:
+                            except IOError as e:
                                 raise InceptionException(
                                     'Unable to detect any local FireWire '
-                                    'ports.'
-                                    )
+                                    'ports.', e)
                         term.info('FireWire modules loaded successfully')
                     else:
                         raise InceptionException('Could not load FireWire '
                                                  'modules, try running '
-                                                 'inception as root')
+                                                 'inception as root', e)
                 else:
-                    raise InceptionException('FireWire modules not loaded')
+                    raise InceptionException('FireWire modules not loaded per '
+                                             'user\'s request')
             else:
                 raise InceptionException('FireWire modules are not loaded and '
                                          'we have insufficient privileges to '
                                          'load them. Try running inception as '
-                                         'root')
+                                         'root', e)
                 
         # Enable SBP-2 support to ensure we get DMA
         self._devices = self._bus.devices()

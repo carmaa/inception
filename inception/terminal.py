@@ -112,17 +112,7 @@ class Terminal(metaclass=Singleton):
         Prints a warning message with '!' as a sign
         '''
         self.write('[{0}] Error: {1}'.format(sign, s))
-
-    def fail(self, err=None):
-        '''
-        Called if Inception fails. Optional parameter is an error message
-        string.
-        '''
-        if err:
-            self.warn(err)
-        self.warn('Attack unsuccessful')
-        sys.exit(1)
-
+        
     def wait(self, s, seconds):
         '''
         Wait x seconds and display a BeachBall while doing so

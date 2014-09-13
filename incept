@@ -27,7 +27,11 @@ import atexit
 import datetime
 import optparse
 import sys
+import os
 import traceback
+import pkgutil
+
+import inception.modules
 
 from inception import cfg, util, terminal, sound, memory
 from inception.exceptions import InceptionException
@@ -96,7 +100,8 @@ def add_options(parser):
 
 
 def main(argv):
-
+    memspace = None
+    
     try:
         cfg.encoding = sys.getdefaultencoding()
         cfg.os = util.detectos()
@@ -107,31 +112,38 @@ def main(argv):
         banner()
         
         # Parse arguments and options
-        description = 'Inception is a physical memory manipulation ' \
-                      'and hacking tool exploiting PCI-based DMA.'
+        description = ('Inception is a physical memory manipulation '
+                       'and hacking tool exploiting PCI-based DMA.')
         usage = 'Usage: %prog module [options]'
         parser = optparse.OptionParser(usage=usage, description=description)
         add_options(parser)
         try:
             prog = sys.argv[0]
             command = sys.argv[1]
+            pkgpath = os.path.dirname(inception.modules.__file__)
+            modules = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
 
             if not command.startswith('-'):
                 module = __import__('inception.modules.{0}'
                                     .format(command),
-                                    fromlist=['inception.modules'])
+                                    fromlist=modules)
                 group = optparse.OptionGroup(parser, 'Module description and '
                                              'options', module.info)
                 module.add_options(group)
                 parser.add_option_group(group)
             else:
-                parser.epilog = 'For module-specific help, type: {0} [module '
-                'name] -h/--help'.format(prog)
+                epilog = ('Available modules: {} For module-specific help, '
+                          'type: {} [module name] -h/--help'
+                          .format(modules, prog))
+                parser.epilog = epilog
+                parser.print_help()
+                sys.exit()
+
         except IndexError as e:
             parser.print_help()
             sys.exit()
         except ImportError as e:
-            term.fail(e)
+            raise InceptionException(e)
 
         opts, args = parser.parse_args()
 
@@ -144,10 +156,9 @@ def main(argv):
                                    .format(opts.interface),
                                    fromlist=['inception.interfaces'])
         except ImportError as e:
-            term.fail(e)
+            raise InceptionException(e)
 
         # Initialize the interface, and wrap in memory space wrapper
-        memspace = None
         if command not in CORE_MODULES:
             device, memsize = interface.initialize(opts, module)
             memspace = memory.MemorySpace(device, memsize)

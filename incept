@@ -92,7 +92,8 @@ def add_options(parser):
                       'successfully granted the host DMA before attacking. '
                       'If the attack fails, try to increase this value. '
                       'Default delay is {0} seconds.'.format(cfg.delay),
-                      default=cfg.delay)
+                      default=cfg.delay,
+                      type=int)
     parser.add_option('--sound',
                       action='store_true',
                       dest='sound',

@@ -144,12 +144,6 @@ def run(opts, memspace):
     else:
         requestsize = cfg.max_request_size
     try:
-        # Fill the first MB and avoid reading from that region
-        if not opts.filename:
-            fillsize = cfg.startaddress - start
-            data = b'\x00' * fillsize
-            file.write(data)
-            start = cfg.startaddress
         for i in range(start, end, requestsize):
             # Edge case, make sure that we don't read beyond the end
             if i + requestsize > end:

@@ -219,12 +219,13 @@ class MemorySpace():
                 return False
         return True
 
-    def patch(self, address, chunks):
+    def patch(self, address, signature):
         '''
         Writes to the device at address, using the patches in the signature
         chunks
         '''
-        backup = self.interface.read(address, cfg.PAGESIZE)
+        backup = self.interface.read(address, signature.length)
+        chunks = signature.chunks
         for c in chunks:
             if not c.patch:  # If no patch is set, skip this chunk
                 continue

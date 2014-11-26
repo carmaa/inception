@@ -57,7 +57,7 @@ os = None                       # Detected host OS is None by default
 #==============================================================================
 # Options (i.e. these are the defaults, but may be overridden at invocation)
 #==============================================================================
-delay = 2                       # 2 seconds delay before attacking
+delay = 5                       # 2 seconds delay before attacking
 startaddress = 0                # Default memory start address
 
 #==============================================================================

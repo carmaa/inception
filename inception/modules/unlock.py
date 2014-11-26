@@ -380,7 +380,7 @@ targets = [
                 os='Mac OS X',
                 os_versions=['10.9'],
                 os_architectures=['x64'],
-                executable=None,
+                executable='CFOpenDirectory',
                 version=None,
                 md5=None,
                 tag=False,
@@ -577,11 +577,11 @@ def select_target(targets, selected=False):
     
 def list_targets(*args, **kwargs):
     term.info('Available targets (known signatures):')
-    term.separator()
+    print()
     for number, target in enumerate(targets, 1):
         term.info('{0}'.format(target.name), sign=number)
     # TODO: Make detailed listing of targets work: opts.verbose
-    term.separator()
+    print()
 
 
 def run(opts, memspace):

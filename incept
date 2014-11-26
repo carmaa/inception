@@ -87,9 +87,9 @@ def add_options(parser):
                       'read data to stdout, useful for debugging.')
     parser.add_option('-d', '--delay',
                       dest='delay',
-                      help='delay attack by TIME seconds. This is useful in '
-                      'order to guarantee that the target machine has '
-                      'successfully granted the host DMA before attacking. '
+                      help='delay attack by TIME seconds. Useful to increase '
+                      'the chance that the target machine has successfully '
+                      'granted the host DMA before attacking. '
                       'If the attack fails, try to increase this value. '
                       'Default delay is {0} seconds.'.format(cfg.delay),
                       default=cfg.delay,
@@ -181,9 +181,9 @@ def main(argv):
     except Exception as e:
         term.warn('Something went dreadfully wrong, full stack trace below: '
                   '{0}'.format(e))
-        term.separator()
+        print()
         traceback.print_exc()
-        term.separator()
+        print()
 
     # Catch user interrupts
     except KeyboardInterrupt:

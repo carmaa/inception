@@ -112,7 +112,7 @@ class Terminal(metaclass=Singleton):
         Prints a warning message with '!' as a sign
         '''
         self.write('[{0}] Error: {1}'.format(sign, s))
-        
+
     def wait(self, s, seconds):
         '''
         Wait x seconds and display a BeachBall while doing so
@@ -124,13 +124,6 @@ class Terminal(metaclass=Singleton):
             time.sleep(0.1)
         print()  # New line
 
-    def separator(self):
-        '''
-        Prints a separator line with the width of the terminal
-        '''
-        print()
-        # print('-' * self.wrapper.width)
-        
     class ProgressBar:
         '''
         Builds and displays a text-based progress bar

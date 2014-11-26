@@ -201,7 +201,7 @@ class FireWire:
             raise InceptionException('Could not detect any FireWire devices '
                                      'connected to this system')
         term.info('FireWire devices on the bus (names may appear blank):')
-        term.separator()
+        print()
         for n, device in enumerate(self._devices, 1):
             vid = device.vendor_id
             # In the current version of libforensic1394, the
@@ -214,7 +214,7 @@ class FireWire:
             productname = device.product_name.decode(cfg.encoding)
             term.info('Vendor (ID): {0} ({1:#x}) | Product (ID): {2} ({3:#x})'
                       .format(vendorname, vid, productname, pid), sign=n)
-        term.separator()
+        print()
 
     def select_device(self):
         selected = self.select()

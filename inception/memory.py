@@ -295,7 +295,7 @@ class MemorySpace():
                                 total_width=term.wrapper.width,
                                 print_data=verbose)
         prog.draw()
-        # print(signatures)
+
         try:
             # Build a batch of read requests of the form: [(addr1, len1), ...]
             # and a corresponding match vector: [signature1, ...]

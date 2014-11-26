@@ -42,6 +42,10 @@ def initialize(opts, module):
         raise InceptionException('You must specify a file name to utilize '
                                  'this interface.')
 
+    # Check if the file exists
+    if not os.path.isfile(opts.filename):
+        raise InceptionException('No such file: \'{0}\''.format(opts.filename))
+
     # Warn user that using the interface may write to file
     try:  # TODO: Fix this more elegantly
         dry_run = opts.dry_run

@@ -36,16 +36,16 @@ equivalent of a [memory inception] [1].
 
 The world's forensics experts, governments and three-letter acronym agencies
 are using [similar tools] [2] already, so why not? Inception is free, as in
-beer. A professional equivalent tool will set you back ~10 000 USD. Hack back!
+beer. A professional equivalent tool will set you back thousands of USD.
 
 
 ### Caveats
 
-OS X > 10.7.2 and Windows > 8.1 disables FireWire DMA when the user has locked 
+[OS X > 10.7.2] [6] and [Windows > 8.1] [7] disables FireWire DMA when the user has locked 
 the OS and thus prevents inception. The tool will still work while a user is 
 logged on. However, this is a less probable attack scenario IRL.
 
-In addition, OS X Mavericks > 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled 
+In addition, [OS X Mavericks > 10.8.2 on Ivy Bridge (>= 2012 Macs)] [8] have enabled 
 VT-D, effectively blocking DMA requests and thwarting all inception modules. 
 Look for `vtd[0] fault` entries in your log/console.
 
@@ -242,8 +242,7 @@ through the `msfrpcd` daemon that is included in all versions of Metasploit.
 
 The current version only work as a proof-of-concept against Windows 7 SP1 x86.
 No other OSes, versions or architectures are supported, nor is there any
-guarantee that they will be supported in the future. If you want to change
-this, send me a wad of cash in unmarked dollar bills or a pull request.
+guarantee that they will be supported in the future.
 
 #### Execution
 
@@ -289,9 +288,7 @@ Then, in another terminal, we launch Inception:
     [?] Will potentially write to file. OK? [y/N] y
     [!] This module currently only work as a proof-of-concept against Windows 7 SP1
         x86. No other OSes, versions or architectures are supported, nor is there
-        any guarantee that they will be supported in the future. If you want to
-        change this, send me a wad of cash in unmarked dollar bills or a pull
-        request on github.
+        any guarantee that they will be supported in the future.
     [?] What MSF payload do you want to use? windows/meterpreter/reverse_tcp
     [*] Selected options:
     [*] LPORT: 4444
@@ -358,7 +355,7 @@ attacking host.
 Known bugs / caveats
 --------------------
 
-Please see the [tool home page] [5].
+Please see the comments at the top and the [tool home page] [5].
    
 
 Troubleshooting
@@ -425,4 +422,6 @@ request.
 [3]: http://freddie.witherden.org/tools/libforensic1394/
 [4]: http://mxcl.github.io/homebrew/
 [5]: http://www.breaknenter.org/projects/inception/
-
+[6]: http://support.apple.com/en-us/HT202348
+[7]: http://www.microsoft.com/en-us/download/details.aspx?id=41671
+[8]: https://www.youtube.com/watch?v=0FoVmBOdbhg

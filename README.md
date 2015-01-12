@@ -3,9 +3,9 @@ INCEPTION
 
 Inception is a physical memory manipulation and hacking tool exploiting 
 PCI-based DMA. The tool can attack over FireWire, Thunderbolt, ExpressCard, PC
-Card and any other PCI/PCIe interfaces.
+Card and any other PCI/PCIe HW interfaces.
 
-Inception aims to provide a relatively quick, stable and easy way of performing
+Inception aims to provide a *relatively* quick, stable and easy way of performing
 intrusive and non-intrusive memory hacks against live computers using DMA.
 
 ### How it works
@@ -37,6 +37,17 @@ equivalent of a [memory inception] [1].
 The world's forensics experts, governments and three-letter acronym agencies
 are using [similar tools] [2] already, so why not? Inception is free, as in
 beer. A professional equivalent tool will set you back ~10 000 USD. Hack back!
+
+
+### Caveats
+
+OS X > 10.7.2 and Windows > 8.1 disables FireWire DMA when the user has locked 
+the OS and thus prevents inception. The tool will still work while a user is 
+logged on. However, this is a less probable attack scenario IRL.
+
+In addition, OS X Mavericks > 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled 
+VT-D, effectively blocking DMA requests and thwarting all inception modules. 
+Look for `vtd[0] fault` entries in your log/console.
 
 
 Key data
@@ -132,10 +143,6 @@ their functionality is described below.
 For detailed options on usage, run:
 
     incept [module name] -h
-
-Note: Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D 
-effectively blocking DMA requests and thwarting almost all modules. Look 
-for `vtd[0] fault` entries in your log/console.
 
 
 ### Unlock

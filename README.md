@@ -409,7 +409,13 @@ Development history
  * 0.3.5 - Added Ubuntu 10.10 and 10.04 x86 signatures
  * 0.4.0 - Complete restructuring and rewrite. Added implant module
  
- 
+Shopping List
+----------
+* One computer.
+* Another computer.
+* FireWire, Thunderbolt, ExpressCard, PC
+* Card and any other PCI/PCIe HW interfaces.
+
 Disclaimer
 ----------
 Do no evil with this tool. Also, I am a pentester, not a developer. So if you

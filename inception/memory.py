@@ -293,8 +293,7 @@ class MemorySpace():
         
         # Progress bar
         prog = term.ProgressBar(max_value=self.memsize,
-                                total_width=term.wrapper.width,
-                                print_data=verbose)
+                                total_width=term.wrapper.width)
         prog.draw()
 
         try:

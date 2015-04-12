@@ -52,7 +52,7 @@ setup(
     download_url='http://github.com/carmaa/inception',
     license='GPL',
     requires=['forensic1394'],
-    install_requires=['msgpack-python'],
+    install_requires=['msgpack-python', 'pyusb'],
     keywords=['hack', 'physical security', 'firewire', 'pci'],
     classifiers=[
         'Programming Language :: Python',

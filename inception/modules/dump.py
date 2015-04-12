@@ -136,8 +136,7 @@ def run(opts, memspace):
 
     # Progress bar
     prog = term.ProgressBar(min_value=start, max_value=end,
-                            total_width=term.wrapper.width,
-                            print_data=opts.verbose)
+                            total_width=term.wrapper.width)
 
     if size < cfg.max_request_size:
         requestsize = size

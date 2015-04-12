@@ -132,7 +132,7 @@ class Terminal(metaclass=Singleton):
         '''
 
         def __init__(self, min_value=0, max_value=100, total_width=80,
-                     print_data=False):
+                     print_data=True):
             '''
             Initializes the progress bar
             '''

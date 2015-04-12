@@ -33,51 +33,47 @@ SLOTSCREAMER initial authors: Joe Fitz - joefitz@securinghardware.com and
 Miles Crabilll - miles@milescrabill.com
 '''
 
-import os
-
 from inception import cfg, terminal
 from inception.exceptions import InceptionException
 
-#import binascii
-#import platform
-#import sys
 import usb.core
 import usb.util
 import struct
-import math
 
 
 term = terminal.Terminal()
 
 
 def initialize(opts, module):
-    #Convenience function to initialize the interface.
+    # Convenience function to initialize the interface.
 
-    #Mandatory arguments:
+    # Mandatory arguments:
 
     # Lower DMA shield, and set memsize
-    device = slotscreamer()
+    device = SlotScreamer()
     memsize = cfg.memsize
     return device, memsize
 
 
-class slotscreamer:
-    #interface to the SlotScreamer native PCIe device over USB with pyusb
+class SlotScreamer:
+    # Interface to the SlotScreamer native PCIe device over USB with pyusb
 
     def __init__(self):
         
         # find our device
-        dev = usb.core.find(idVendor=0x0525, idProduct=0x3380)
-        assert dev is not None, 'SLOTSCREAMER device not found'
+        try:
+            dev = usb.core.find(idVendor=0x0525, idProduct=0x3380)
+        except ValueError:
+            raise InceptionException('SLOTSCREAMER device not found')
         dev.set_configuration()
         cfg = dev.get_active_configuration()
-        intf = cfg[0,0]
+        intf = cfg[0, 0]
 
-        self.pciin = usb.util.find_descriptor(intf,custom_match = lambda e: e.bEndpointAddress==0x8e)
+        self.pciin = usb.util.find_descriptor(intf, custom_match=lambda e: e.bEndpointAddress==0x8e)
         assert self.pciin is not None, 'SLOTSCREAMER pciin endpoint not found'
         term.info('SLOTSCREAMER PCIIN found: '+str(self.pciin)+'\n')
         
-        self.pciout = usb.util.find_descriptor(intf,custom_match = lambda e: e.bEndpointAddress==0xe)
+        self.pciout = usb.util.find_descriptor(intf, custom_match=lambda e: e.bEndpointAddress==0xe)
         assert self.pciout is not None, 'pciout endpoint not found'
         term.info('SLOTSCREAMER PCIOUT found: '+str(self.pciout)+'\n')
         self.cache=[]
@@ -113,7 +109,7 @@ class slotscreamer:
 
     def write(self, addr, buf):
         offset=addr%256
-        baseAddress=addr-offset        
+        baseAddress=addr-offset
         byteCount=len(buf)
         endOffset=(addr+byteCount)%256
         endAddress=addr+byteCount-endOffset+256
@@ -138,5 +134,3 @@ class slotscreamer:
        
     def close(self):
         self.cache=[]
-
-

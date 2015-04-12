@@ -611,7 +611,7 @@ def run(opts, memspace):
                     raise InceptionException(e)
                 backup = memspace.write(address, payload)
             else:
-                backup = memspace.patch(address, signature.chunks)
+                backup = memspace.patch(address, signature)
             term.info('Patch verified; successful')
         except InceptionException:
             raise
@@ -620,7 +620,7 @@ def run(opts, memspace):
             term.poll('Press [enter] to revert the patch:')
             memspace.write(address, backup)
 
-            if backup == memspace.read(address, cfg.PAGESIZE):
+            if backup == memspace.read(address, signature.length):
                 term.info('Reverted patch verified; successful')
             else:
                 raise InceptionException('Reverted patch could not be '

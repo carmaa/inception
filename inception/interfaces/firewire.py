@@ -70,9 +70,14 @@ def initialize(opts, module):
     starttime = time.time()
     device_index = fw.select_device()
     elapsed = int(time.time() - starttime)
+
+    try:  # TODO: Fix this more elegantly
+        dry_run = opts.dry_run
+    except AttributeError:
+        dry_run = False
     
     # Lower DMA shield, and set memsize
-    device = fw.getdevice(device_index, elapsed)
+    device = FireWireDevice(fw.getdevice(device_index, elapsed), dry_run)
     memsize = cfg.memsize
     return device, memsize
 
@@ -98,6 +103,7 @@ def unload_fw_ip():
 class FireWire:
     '''
     FireWire wrapper class to handle some attack-specific functions
+    TODO: Rename FireWireInterface
     '''
 
     def __init__(self, delay):
@@ -294,3 +300,44 @@ class FireWire:
         The list of vendors
         '''
         return self._vendors
+
+class FireWireDevice:
+    '''
+    Device wrapper class that handles the more finicky
+    parts of reading memory. The device will return
+    zeroes or simply not write to memory if the tool
+    attempts to access memory regions that are protected
+    '''
+    def __init__(self, dev, dry_run):
+        '''
+        Constructor
+        '''
+        self.avoid = [0xa0000, 0xfffff] # Windows
+        self._dev = dev
+        self.dry_run = dry_run
+
+    def read(self, addr, numb, buf=None):
+        if self.avoid[0] <= addr <= self.avoid[1]:
+            return b'\x00' * numb
+        else:
+            return self._dev.read(addr, numb, buf)
+    
+    def readv(self, req):
+        # This will increase performance since we don't
+        # have to check all elements in the list
+        if self.avoid[0] <= req[0][0] <= self.avoid[1] or self.avoid[0] <= req[-1][0] <= self.avoid[1]:
+            for r in req:
+                if self.avoid[0] <= r[0] <= self.avoid[1]:
+                    yield (r[0], b'\x00' * r[1])
+                else:
+                    yield (r[0], self._dev.read(r[0], r[1]))
+        else:
+            for r in self._dev.readv(req):
+                yield r
+
+    def write(self, addr, buf):
+        if not self.dry_run and not (self.avoid[0] <= addr <= self.avoid[1]):
+            self._dev.write(addr, buf)
+    
+    def close(self):
+        self._dev.close()

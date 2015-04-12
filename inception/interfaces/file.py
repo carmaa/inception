@@ -47,7 +47,7 @@ def initialize(opts, module):
         raise InceptionException('No such file: \'{0}\''.format(opts.filename))
 
     # Warn user that using the interface may write to file
-    try:  # TODO: Fix this more elegantly
+    try:  # TODO: Fix this more elegantly?
         dry_run = opts.dry_run
     except AttributeError:
         dry_run = False

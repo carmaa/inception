@@ -32,6 +32,7 @@ import traceback
 import pkgutil
 
 import inception.modules
+import inception.interfaces
 
 from inception import cfg, util, terminal, sound, memory
 from inception.exceptions import InceptionException
@@ -122,10 +123,14 @@ def main(argv):
             prog = sys.argv[0]
             pkgpath = os.path.dirname(inception.modules.__file__)
             modules = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
-            epilog = ('Available modules: {}. For module-specific help, '
-                      'type: {} [module name] -h/--help'
-                      .format(', '.join(modules), prog))
-            parser.epilog = epilog
+            pkgpath = os.path.dirname(inception.interfaces.__file__)
+            ifaces = [name for _, name, _ in pkgutil.iter_modules([pkgpath])]
+            parser.epilog = ('Available modules: {}. '
+                             'For module-specific help, '
+                             'type: {} [module name] -h/--help. '
+                             'Available interfaces: {}.'
+                             .format(', '.join(modules), prog,
+                                     ', '.join(ifaces)))
 
             command = sys.argv[1]
             if not command.startswith('-'):
@@ -177,7 +182,11 @@ def main(argv):
     except InceptionException as e:
         term.error(e)
 
-    # Catch whatever that hasn't been catched elsewhere
+    # Catch FireWire-related exeptions
+    except IOError as e:
+        term.error(e)
+
+    # Catch whatever that hasn't been catched elsewhere and print stack trace
     except Exception as e:
         term.warn('Something went dreadfully wrong, full stack trace below: '
                   '{0}'.format(e))

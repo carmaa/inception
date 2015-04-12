@@ -226,7 +226,7 @@ class TestMemory(unittest.TestCase):
         memspace = memory.MemorySpace(device, memsize)
         address = 0x00000042
         read = memspace.read(address, 4)
-        backup = memspace.patch(address, sig.chunks)
+        memspace.patch(address, sig)
         sys.stdout = sys.__stdout__  # Restore output
         read_back = memspace.read(address, 4)
         # print(read_back)

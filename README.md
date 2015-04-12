@@ -11,7 +11,7 @@ intrusive and non-intrusive memory hacks against live computers using DMA.
 ### How it works
 
 Inception’s modules work as follows: By presenting a Serial Bus Protocol 2
-(SBP-2) unit directory to the victim machine over the IEEE1394 FireWire
+(SBP-2) unit directory to the victim machine over a IEEE1394 FireWire
 interface, the victim operating system thinks that a SBP-2 device has connected
 to the FireWire port. Since SBP-2 devices utilize Direct Memory Access (DMA)
 for fast, large bulk data transfers (e.g., FireWire hard drives and digital
@@ -31,23 +31,31 @@ An analogy for this operation is planting an idea into the memory of the
 machine; the idea that every password is correct. In other words, the 
 equivalent of a [memory inception] [1].
 
+Inception is free as in beer and a side project of mine. 
+
 
 ### Awesome! But why?
 
 The world's forensics experts, governments and three-letter acronym agencies
-are using [similar tools] [2] already, so why not? Inception is free, as in
-beer. A professional equivalent tool will set you back thousands of USD.
+are using [similar tools] [2] already. So if you are a dissident or facing 
+an opressive regime, this tool illustrates why OPSEC is important. Never 
+leave your laptop out of sight.
 
 
 ### Caveats
 
-[OS X > 10.7.2] [6] and [Windows > 8.1] [7] disables FireWire DMA when the user has locked 
-the OS and thus prevents inception. The tool will still work while a user is 
-logged on. However, this is a less probable attack scenario IRL.
+[OS X > 10.7.2] [6] and [Windows > 8.1] [7] disables FireWire DMA when the 
+user has locked the OS and thus prevents inception. The tool will still work 
+while a user is logged on. However, this is a less probable attack scenario IRL.
 
-In addition, [OS X Mavericks > 10.8.2 on Ivy Bridge (>= 2012 Macs)] [8] have enabled 
-VT-D, effectively blocking DMA requests and thwarting all inception modules. 
-Look for `vtd[0] fault` entries in your log/console.
+In addition, [OS X Mavericks > 10.8.2 on Ivy Bridge (>= 2012 Macs)] [8] have 
+enabled VT-D, effectively blocking DMA requests and thwarting all inception 
+modules even when the user is logged in.Look for `vtd[0] fault` entries in 
+your log/console.
+
+Even though these two caveats gradually will reduce the number of scenarios 
+where this tool is useful, as of March 2015 [70 % of machines out there are 
+still vulnerable] [9].
 
 
 Key data
@@ -71,10 +79,16 @@ Inception requires:
 
  * Hardware:
    * Attacker machine: Linux or Mac OS X (host / attacker machine) with a
-     FireWire or Thunderbolt interface, or an ExpressCard/PCMCIA expansion port.
-     Linux is currently recommended due to buggy firewire interfaces on OS X
+     FireWire interface, either through a native FireWire port, an 
+     ExpressCard/PCMCIA expansion port or a Thunderbolt to FireWire adapter.
    * Victim machine: A FireWire or Thunderbolt interface, or an
      ExpressCard/PCMCIA expansion port
+
+Linux is currently recommended on the attacker side due to buggy firewire 
+interfaces on OS X. Note that direct ThunderBolt to ThunderBolt does *not*
+work, you need a FireWire adapter. Your mileage may very when attempting
+to use Thunderbolt on Linux.
+
  * Software:
    * Python 3
    * git
@@ -236,7 +250,7 @@ To unlock, simply type:
 
 ### Implant
 
-The `implant` module implants a (potentially memory-only) Metasploit payload
+The `implant` module implants a (memory-only) Metasploit payload
 directly to the volatile memory of the target machine. It integrates with MSF
 through the `msfrpcd` daemon that is included in all versions of Metasploit.
 
@@ -425,3 +439,4 @@ request.
 [6]: http://support.apple.com/en-us/HT202348
 [7]: http://www.microsoft.com/en-us/download/details.aspx?id=41671
 [8]: https://www.youtube.com/watch?v=0FoVmBOdbhg
+[9]: http://www.w3schools.com/browsers/browsers_os.asp

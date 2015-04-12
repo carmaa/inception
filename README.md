@@ -189,7 +189,7 @@ systems:
 |Windows XP   |SP1            |                  |                   |
 |Windows XP   |SP0            |                  |                   |
 |Mac OS X     |Mavericks      |       Yes (1)    |       Yes (1)     |
-|Mac OS X     |Mountain Lion  |       Yes (1)    |       Yes (2)     |
+|Mac OS X     |Mountain Lion  |       Yes (1)    |       Yes (1)     |
 |Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |
 |Mac OS X     |Leopard        |                  |                   |

@@ -177,7 +177,7 @@ systems:
 
 |OS           |Version        |Unlock lock screen|Escalate privileges|
 |:------------|:--------------|:----------------:|:-----------------:|
-|Windows 8    |8.1            |        Yes       |        Yes        |
+|Windows 8    |8.1            |       Yes (1)    |       Yes (1)     |
 |Windows 8    |8.0            |        Yes       |        Yes        |
 |Windows 7    |SP1            |        Yes       |        Yes        |
 |Windows 7    |SP0            |        Yes       |        Yes        |
@@ -189,11 +189,11 @@ systems:
 |Windows XP   |SP1            |                  |                   |
 |Windows XP   |SP0            |                  |                   |
 |Mac OS X     |Mavericks      |       Yes (1)    |       Yes (1)     |
-|Mac OS X     |Mountain Lion  |       Yes (2)    |       Yes (2)     |
-|Mac OS X     |Lion           |       Yes (2)    |       Yes (2)     |
+|Mac OS X     |Mountain Lion  |       Yes (1)    |       Yes (2)     |
+|Mac OS X     |Lion           |       Yes (1)    |       Yes (1)     |
 |Mac OS X     |Snow Leopard   |        Yes       |        Yes        |
 |Mac OS X     |Leopard        |                  |                   |
-|Ubuntu (3)   |Saucy          |        Yes       |        Yes        |
+|Ubuntu       |Saucy          |        Yes       |        Yes        |
 |Ubuntu       |Raring         |        Yes       |        Yes        |
 |Ubuntu       |Quantal        |        Yes       |        Yes        |
 |Ubuntu       |Precise        |        Yes       |        Yes        |
@@ -203,13 +203,10 @@ systems:
 |Linux Mint   |12             |        Yes       |        Yes        |
 |Linux Mint   |12             |        Yes       |        Yes        |
 
-(1): Mavericks since 10.8.2 on Ivy Bridge (>= 2012 Macs) have enabled VT-D
-     effectively blocking DMA requests and thwarting this attack. Look for 
-     `vtd[0] fault` entries in your log/console.
-(2): If FileVault 2 is enabled, the tool will only work when the operating
-     system is unlocked as of OS X Lion.
-(2): Other Linux distributions that use PAM-based authentication may also work 
-     using the Ubuntu signatures.
+(1): See caveats above.
+
+Other Linux distributions that use PAM-based authentication may also work 
+using the Ubuntu signatures.
 
 The module also effectively enables escalation of privileges, for instance via
 the `runas` or `sudo -s` commands, respectively.

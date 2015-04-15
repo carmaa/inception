@@ -62,7 +62,7 @@ Key data
 --------
 
  * Version: 0.4.0
- * License: GPL
+ * License: BSD
  * Author:  Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
  * Twitter: @breaknenter
  * Site:    http://www.breaknenter.org/projects/inception

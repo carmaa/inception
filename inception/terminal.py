@@ -176,10 +176,10 @@ class Terminal(metaclass=Singleton):
             '''
             if new_amount < self.min:
                 new_amount = self.min
+            rel_amount = new_amount - self.min
             if new_amount > self.max:
                 new_amount = self.max
             self.amount = new_amount
-            rel_amount = new_amount - self.min
 
             # Figure out the new percent done, round to an integer
             diff_from_min = float(self.amount - self.min)

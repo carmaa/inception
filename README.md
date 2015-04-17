@@ -61,9 +61,9 @@ still vulnerable] [9].
 Key data
 --------
 
- * Version: 0.4.0
+ * Version: 0.4.1
  * License: GPL
- * Author:  Carsten Maartmann-Moe (carsten@carmaa.com) AKA ntropy
+ * Author:  Carsten Maartmann-Moe (carsten@carmaa.com)
  * Twitter: @breaknenter
  * Site:    http://www.breaknenter.org/projects/inception
  * Source:  https://github.com/carmaa/inception
@@ -103,9 +103,9 @@ Installation
 ------------
 
 On Debian-based distributions the installation command lines can be summarized
-as:
+as (apply `sudo` as needed if you're not root):
 
-    sudo apt-get install git cmake g++ python3 python3-pip
+    apt-get install git cmake g++ python3 python3-pip
 
 On OS X, you can install the tool requirements with [homebrew] [4]:
 
@@ -113,12 +113,12 @@ On OS X, you can install the tool requirements with [homebrew] [4]:
 
 After installing the requirements, download and install libforensic1394:
 
-    git clone git://git.freddie.witherden.org/forensic1394.git
-    cd forensic1394
+    git clone git://github.com/FreddieWitherden/libforensic1394.git
+    cd libforensic1394
     cmake CMakeLists.txt
-    sudo make install
+    make install
     cd python
-    sudo python3 setup.py install
+    python3 setup.py install
 
 ### Download and install Inception
 
@@ -419,6 +419,7 @@ Development history
  * 0.3.4 - Maestro!
  * 0.3.5 - Added Ubuntu 10.10 and 10.04 x86 signatures
  * 0.4.0 - Complete restructuring and rewrite. Added implant module
+ * 0.4.1 - Merged SLOTSCREAMER interface support
  
  
 Disclaimer

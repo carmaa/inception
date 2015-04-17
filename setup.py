@@ -27,7 +27,7 @@ Created on Jan 14, 2013
 try:
     from setuptools import setup, find_packages
 except ImportError as e:
-    print('Warning: setuptools not available, you will have to install'
+    print('Warning: setuptools not available, you will have to install '
           'manually')
     raise e
 

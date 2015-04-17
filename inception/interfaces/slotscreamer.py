@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 This module provides the ability to use inception using SLOTSCREAMER.
-Most of the code is adopted from the slotscreamer samples with slight 
+Most of the code is adopted from the slotscreamer samples with slight
 modification.
 
 Created on Jan 16th, 2015
@@ -69,68 +69,74 @@ class SlotScreamer:
         cfg = dev.get_active_configuration()
         intf = cfg[0, 0]
 
-        self.pciin = usb.util.find_descriptor(intf, custom_match=lambda e: e.bEndpointAddress==0x8e)
+        self.pciin = usb.util.find_descriptor(intf, custom_match=lambda e:
+                                              e.bEndpointAddress == 0x8e)
         assert self.pciin is not None, 'SLOTSCREAMER pciin endpoint not found'
-        term.info('SLOTSCREAMER PCIIN found: '+str(self.pciin)+'\n')
+        term.info('SLOTSCREAMER PCIIN found: ' + str(self.pciin) + '\n')
         
-        self.pciout = usb.util.find_descriptor(intf, custom_match=lambda e: e.bEndpointAddress==0xe)
+        self.pciout = usb.util.find_descriptor(intf, custom_match=lambda e:
+                                               e.bEndpointAddress == 0xe)
         assert self.pciout is not None, 'pciout endpoint not found'
-        term.info('SLOTSCREAMER PCIOUT found: '+str(self.pciout)+'\n')
-        self.cache=[]
+        term.info('SLOTSCREAMER PCIOUT found: ' + str(self.pciout) + '\n')
+        self.cache = []
     
     def read(self, addr, numb, buf=None):
         try:
             # round down to multiple of 256
             offset = addr % 256
-            baseAddress = addr - offset
-            endOffset = (addr+numb) % 256
-            endAddress = addr + numb - offset+256
+            base_addr = addr - offset
+            end_offset = (addr + numb) % 256
+            end_addr = addr + numb - offset + 256
             # cache most recent read
             # check if anything is cached
-            if (len(self.cache)>0):
-                if((self.cacheBase<=addr)and((self.cacheBase+len(self.cache))>(addr+numb))):
-                    return bytes(self.cache[(addr-self.cacheBase):(addr+numb)-self.cacheBase])
-            self.cache=[]
-            self.cacheBase=baseAddress
-            while baseAddress<endAddress:
-                self.pciout.write(struct.pack('BBBBI',0xcf,0,0,0x40,baseAddress))
-                self.cache+=self.pciin.read(0x100)
-                baseAddress+=256
+            if (len(self.cache) > 0):
+                if((self.cacheBase <= addr) and
+                   ((self.cacheBase + len(self.cache)) > (addr + numb))):
+                    return bytes(self.cache[(addr - self.cacheBase):
+                                            (addr + numb) - self.cacheBase])
+            self.cache = []
+            self.cacheBase = base_addr
+            while base_addr < end_addr:
+                self.pciout.write(struct.pack('BBBBI', 0xcf, 0, 0, 0x40,
+                                              base_addr))
+                self.cache += self.pciin.read(0x100)
+                base_addr += 256
         except IOError:
-            self.cache=[]
+            self.cache = []
             return bytes(b"bad" + b"\x10") * 64
-        return bytes(self.cache[offset:offset+numb])
+        return bytes(self.cache[offset:offset + numb])
 
-    def readv(self,req):
+    def readv(self, req):
         # sort requests so sequential reads are cached
-        #req.sort()
+        # req.sort()
         for r in req:
-            yield(r[0], self.read(r[0],r[1]))
+            yield(r[0], self.read(r[0], r[1]))
 
     def write(self, addr, buf):
-        offset=addr%256
-        baseAddress=addr-offset
-        byteCount=len(buf)
-        endOffset=(addr+byteCount)%256
-        endAddress=addr+byteCount-endOffset+256
+        offset = addr % 256
+        base_addr = addr - offset
+        byte_count = len(buf)
+        end_offset = (addr + byte_count) % 256
+        end_addr = addr + byte_count - end_offset + 256
 
-        #readbuffer 
-        readbuf=bytearray(self.read(baseAddress,endAddress-baseAddress))
+        # readbuffer
+        readbuf = bytearray(self.read(base_addr, end_addr - base_addr))
 
-        #modify buffer 
-        for i in range(offset,endOffset):
-            readbuf[i]=buf[i-offset]
+        # modify buffer
+        for i in range(offset, end_offset):
+            readbuf[i] = buf[i - offset]
 
-        #writebuffer
-        bufferIndex=0
-        while baseAddress<endAddress:
-            subbuf=readbuf[bufferIndex:bufferIndex+128]
-            self.pciout.write(struct.pack('BBBBI'+'B'*128,0x4f,0,0,0x20,baseAddress,*subbuf))
-            baseAddress+=128
-            bufferIndex+=128
+        # writebuffer
+        buffer_index = 0
+        while base_addr < end_addr:
+            subbuf = readbuf[buffer_index:buffer_index + 128]
+            self.pciout.write(struct.pack('BBBBI' + 'B' * 128, 0x4f, 0, 0,
+                                          0x20, base_addr, *subbuf))
+            base_addr += 128
+            buffer_index += 128
 
         global cache
-        self.cache=[]
+        self.cache = []
        
     def close(self):
-        self.cache=[]
+        self.cache = []

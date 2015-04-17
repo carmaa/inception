@@ -206,8 +206,7 @@ class MemorySpace():
         '''
         Returns the page number of a given address
         '''
-        mask = 0xfffff000  # Mask away the lower bits
-        return int((address & mask) / cfg.PAGESIZE)
+        return int((address) // cfg.PAGESIZE)
 
     def match(self, candidate, chunks):
         '''

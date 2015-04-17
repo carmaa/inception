@@ -113,8 +113,8 @@ On OS X, you can install the tool requirements with [homebrew] [4]:
 
 After installing the requirements, download and install libforensic1394:
 
-    git clone git://github.com/FreddieWitherden/libforensic1394.git
-    cd libforensic1394
+    wget https://freddie.witherden.org/tools/libforensic1394/releases/libforensic1394-0.2.tar.gz -O - | tar xz
+    cd libforensic1394-0.2
     cmake CMakeLists.txt
     make install
     cd python

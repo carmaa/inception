@@ -50,7 +50,7 @@ while a user is logged on. However, this is a less probable attack scenario IRL.
 
 In addition, [OS X Mavericks > 10.8.2 on Ivy Bridge (>= 2012 Macs)] [8] have 
 enabled VT-D, effectively blocking DMA requests and thwarting all inception 
-modules even when the user is logged in.Look for `vtd[0] fault` entries in 
+modules even when the user is logged in. Look for `vtd[0] fault` entries in 
 your log/console.
 
 Even though these two caveats gradually will reduce the number of scenarios 
@@ -86,7 +86,7 @@ Inception requires:
 
 Linux is currently recommended on the attacker side due to buggy firewire 
 interfaces on OS X. Note that direct ThunderBolt to ThunderBolt does *not*
-work, you need a FireWire adapter. Your mileage may very when attempting
+work, you need a FireWire adapter. Your mileage may vary when attempting
 to use Thunderbolt on Linux.
 
  * Software:
@@ -102,7 +102,7 @@ to use Thunderbolt on Linux.
 Installation
 ------------
 
-On Debian-based distributions the installation command lines can be summarized
+On Debian-based distributions the installation commands can be summarized
 as (apply `sudo` as needed if you're not root):
 
     apt-get install git cmake g++ python3 python3-pip
@@ -163,7 +163,7 @@ For detailed options on usage, run:
 
 The `unlock` module can unlock (any password accepted) and escalate privileges
 to Administrator/root on almost* any powered on machine you have physical
-access to. module is primarily attended to do its magic against
+access to. The module is primarily attended to do its magic against
 computers that utilize full disk encryption such as BitLocker, FileVault,
 TrueCrypt or Pointsec. There are plenty of other (and better) ways to hack a
 machine that doesn't pack encryption. 
@@ -261,7 +261,7 @@ To use it, start `msfrpcd`:
 
     msfrpcd -P [password]
 
-Then launch inception:
+Then launch inception in another terminal:
 
     incept implant --msfpw [password] --msfopts [options]
 

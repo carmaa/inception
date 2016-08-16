@@ -209,7 +209,7 @@ targets = [
                 version=None,
                 md5=None,
                 tag=False,
-                offsets=[0x312, 0x6aa],
+                offsets=[0x312, 0x6aa, 0x642],
                 chunks=[
                     Chunk(
                         chunk=0x83f8100f85,

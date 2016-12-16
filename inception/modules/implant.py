@@ -269,7 +269,7 @@ def run(opts, memspace):
     # TODO: Allow users to set required options
 
     # --- STAGE 1 ---
-    term.info('Stage 1: Searcing for injection point')
+    term.info('Stage 1: Searching for injection point')
     address, signature, offset = memspace.find(stage1, verbose=opts.verbose)
     
     # Signature found, let's patch
@@ -284,13 +284,12 @@ def run(opts, memspace):
     term.wait('Waiting to ensure stage 1 execution', 5)
     if isinstance(memspace.interface, MemoryInterface):
         term.poll('Press [enter] to continue')
-    # TODO: Modify payload exitfunk that is used if the payload fails -
-    # this is needed for stable kernel exploitation
 
     # --- STAGE 2 ---
     # Concatenate shellcode and payload
     payload = shellcode['create_thread'] + shellcode['reg_add'] + payload
-
+    # TODO: Modify payload exitfunk that is used if the payload fails -
+    # this is needed for stable kernel exploitation
     # Replace EXITFUNC with THREAD (it's hardcoded as PROCESS)
     # This helps ensure that the process doesn't crash if the exploit fails
 

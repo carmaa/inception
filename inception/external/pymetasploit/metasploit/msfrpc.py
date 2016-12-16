@@ -2,6 +2,7 @@
 
 from http.client import HTTPConnection, HTTPSConnection
 from numbers import Number
+import ssl
 
 from msgpack import packb, unpackb
 
@@ -196,14 +197,20 @@ class MsfRpcClient(object):
         - port : the remote msfrpcd port to connect to (default: 55553)
         - server : the remote server IP address hosting msfrpcd (default: localhost)
         - ssl : if true uses SSL else regular HTTP (default: SSL enabled)
+        - verify : if true, verify SSL cert when using SSL (default: False)
         """
         self.uri = kwargs.get('uri', '/api/')
         self.port = kwargs.get('port', 55553)
         self.server = kwargs.get('server', '127.0.0.1')
         self.ssl = kwargs.get('ssl', True)
+        self.verify_ssl = kwargs.get('verify', False)
         self.sessionid = kwargs.get('token')
         if self.ssl:
             self.client = HTTPSConnection(self.server, self.port)
+            if self.verify_ssl:
+                self.client = HTTPSConnection(self.server, self.port)
+            else:
+                self.client = HTTPSConnection(self.server, self.port, context=ssl._create_unverified_context())
         else:
             self.client = HTTPConnection(self.server, self.port)
         self.login(kwargs.get('username', 'msf'), password)

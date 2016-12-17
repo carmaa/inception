@@ -421,7 +421,13 @@ Development history
  * 0.4.0 - Complete restructuring and rewrite. Added implant module
  * 0.4.1 - Merged SLOTSCREAMER interface support
  
- 
+Shopping List
+----------
+* One computer.
+* Another computer.
+* FireWire, Thunderbolt, ExpressCard, PC
+* Card and any other PCI/PCIe HW interfaces.
+
 Disclaimer
 ----------
 Do no evil with this tool. Also, I am a pentester, not a developer. So if you

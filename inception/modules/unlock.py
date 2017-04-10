@@ -170,7 +170,7 @@ targets = [
                 version=None,
                 md5=None,
                 tag=False,
-                offsets=[0x2a8, 0x2a1, 0x291, 0x321, 0xe59, 0xe71, 0xe09, 0xdf1, 0xe19],
+                offsets=[0x2a8, 0x2a1, 0x291, 0x321, 0x3c9, 0xe59, 0xe71, 0xe09, 0xdf1, 0xe19],
                 chunks=[
                     Chunk(
                         chunk=0xc60f85,

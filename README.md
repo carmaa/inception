@@ -64,8 +64,7 @@ Key data
  * Version: 0.4.1
  * License: GPL
  * Author:  Carsten Maartmann-Moe (carsten@carmaa.com)
- * Twitter: @breaknenter
- * Site:    http://www.breaknenter.org/projects/inception
+ * Twitter: @MaartmannMoe
  * Source:  https://github.com/carmaa/inception
 
 The tool makes use of the `libforensic1394` library courtesy of Freddie

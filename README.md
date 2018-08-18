@@ -61,7 +61,7 @@ still vulnerable] [9].
 Key data
 --------
 
- * Version: 0.4.1
+ * Version: 0.4.2
  * License: GPL
  * Author:  Carsten Maartmann-Moe (carsten@carmaa.com)
  * Twitter: @MaartmannMoe

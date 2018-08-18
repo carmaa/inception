@@ -419,6 +419,7 @@ Development history
  * 0.3.5 - Added Ubuntu 10.10 and 10.04 x86 signatures
  * 0.4.0 - Complete restructuring and rewrite. Added implant module
  * 0.4.1 - Merged SLOTSCREAMER interface support
+ * 0.4.2 - New signatures
  
  
 Disclaimer

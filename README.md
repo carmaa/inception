@@ -223,7 +223,7 @@ To unlock, simply type:
      _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
     v.0.4.0 (C) Carsten Maartmann-Moe 2014
-    Download: http://breaknenter.org/projects/inception | Twitter: @breaknenter
+    Download: https://github.com/carmaa/inception | Twitter: @MaartmannMoe
 
     [?] Will potentially write to file. OK? [y/N] y
     [*] Available targets (known signatures):
@@ -293,7 +293,7 @@ Then, in another terminal, we launch Inception:
      _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
     v.0.4.0 (C) Carsten Maartmann-Moe 2014
-    Download: http://breaknenter.org/projects/inception | Twitter: @breaknenter
+    Download: https://github.com/carmaa/inception | Twitter: @MaartmannMoe
 
     [?] Will potentially write to file. OK? [y/N] y
     [!] This module currently only work as a proof-of-concept against Windows 7 SP1
@@ -354,7 +354,7 @@ attacking host.
      _|  _|      _|    _|_|_|  _|_|_|_|  _|          _|    _|    _|_|    _|      _|
 
     v.0.4.0 (C) Carsten Maartmann-Moe 2014
-    Download: http://breaknenter.org/projects/inception | Twitter: @breaknenter
+    Download: https://github.com/carmaa/inception | Twitter: @MaartmannMoe
 
     [*] Dumping from 0x0 to 0x40000000, a total of 1 GiB:
     [==============================================================] 1024 MiB (100%)

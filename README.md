@@ -89,7 +89,7 @@ work, you need a FireWire adapter. Your mileage may vary when attempting
 to use Thunderbolt on Linux.
 
  * Software:
-   * Python 3
+   * [Python 3](https://www.scaler.com/topics/python/install-python-on-linux/)
    * git
    * gcc (incl. g++)
    * cmake

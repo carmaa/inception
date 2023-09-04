@@ -1,3 +1,5 @@
+Note: This tool is no longer under active development, please look at [PCILeech](https://github.com/ufrisk/pcileech) instead.
+
 INCEPTION
 =========
 

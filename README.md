@@ -7,8 +7,9 @@ Inception is a physical memory manipulation and hacking tool exploiting
 PCI-based DMA. The tool can attack over FireWire, Thunderbolt, ExpressCard, PC
 Card and any other PCI/PCIe HW interfaces.
 
-Inception aims to provide a *relatively* quick, stable and easy way of performing
-intrusive and non-intrusive memory hacks against live computers using DMA.
+Inception aims to provide a *relatively* quick, stable, easy and extendable way 
+of performing intrusive and non-intrusive memory hacks against live computers 
+using DMA.
 
 ### How it works
 
